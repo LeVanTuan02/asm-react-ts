@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.store__list-map iframe {
+    @apply w-full h-full rounded-lg
+}
