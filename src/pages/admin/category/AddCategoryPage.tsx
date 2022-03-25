@@ -1,6 +1,60 @@
+import { useForm, SubmitHandler } from "react-hook-form";
+import slugify from "slugify";
+import toastr from "toastr";
 import { Link } from "react-router-dom";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from "react";
+import { add } from "../../../api/category";
+import { uploadFile } from "../../../utils";
+
+type InputsType = {
+    name: string,
+    image: string
+};
+
+const schema = yup.object().shape({
+    name: yup
+        .string()
+        .required("Vui lòng nhập tên danh mục"),
+    image: yup
+        .mixed()
+        .test("require", "Vui lòng chọn ảnh danh mục", value => value.length)
+});
 
 const AddCategoryPage = () => {
+    const [preview, setPreview] = useState<string>();
+    const [slug, setSlug] = useState<string>();
+
+    const handleSlug = (e: any) => {
+        setSlug(slugify(e.target.value, { lower: true }));
+    }
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm<InputsType>({ resolver: yupResolver(schema) });
+
+    const onSubmit: SubmitHandler<InputsType> = async dataInput => {
+        try {
+            // upload image
+            dataInput.image = await uploadFile(dataInput.image[0]);
+            await add(dataInput)
+            toastr.success("Thêm danh mục thành công")
+            reset();
+            setPreview("");
+        } catch (error: any) {
+            toastr.error(error.response.data.error.message || error.response.data.message);
+        }
+    }
+
+    // preview image
+    const handlePreview = (e: any) => {
+        setPreview(URL.createObjectURL(e.target.files[0]));
+    }
+
     return (
         <>
             <header className="z-10 fixed top-14 left-0 md:left-60 right-0 px-4 py-1.5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center justify-between">
@@ -10,27 +64,63 @@ const AddCategoryPage = () => {
                     </h5>
                     <span>Thêm danh mục</span>
                 </div>
-                <Link to="/admin/category">
-                    <button type="button" className="inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        DS danh mục
+
+                <div>
+                    <button
+                        onClick={() => {
+                            reset();
+                            setPreview("");
+                        }}
+                        type="button"
+                        className="mr-2 inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                        Reset
                     </button>
-                </Link>
+                    <Link to="/admin/category">
+                        <button type="button" className="inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            DS danh mục
+                        </button>
+                    </Link>
+                </div>
             </header>
 
             <div className="p-6 mt-24 overflow-hidden">
-                <form action="" method="POST" id="form__add-cate">
+                <form action="" method="POST" id="form__add-cate" onSubmit={handleSubmit(onSubmit)}>
                     <div className="shadow overflow-hidden sm:rounded-md">
                         <div className="px-4 py-5 bg-white sm:p-6">
                             <span className="font-semibold mb-4 block text-xl">Thông tin chi tiết danh mục:</span>
                             <div className="grid grid-cols-6 gap-6">
                                 <div className="col-span-6">
                                     <label htmlFor="form__add-cate-title" className="block text-sm font-medium text-gray-700">Tên danh mục</label>
-                                    <input type="text" name="form__add-cate-title" id="form__add-cate-title" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập tiêu đề bài viết" />
+                                    <input
+                                        {...register("name")}
+                                        onChange={e => handleSlug(e)}
+                                        type="text"
+                                        id="form__add-cate-title"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập tiêu đề bài viết"
+                                    />
+                                    <div className="error-image text-sm mt-0.5 text-red-500">{errors.name?.message}</div>
                                 </div>
+
+                                <div className="col-span-6">
+                                    <label htmlFor="customer-name" className="block text-sm font-medium text-gray-700">Slug</label>
+                                    <input type="text"
+                                        disabled
+                                        name="customer-name"
+                                        className="py-2 px-3 mt-1 border block w-full outline-none shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm"
+                                        defaultValue={slug}
+                                    />
+                                </div>
+
                                 <div className="col-span-3">
                                     <label className="block text-sm font-medium text-gray-700">Xem trước ảnh danh mục</label>
                                     <div className="mt-1">
-                                        <img src="https://res.cloudinary.com/levantuan/image/upload/v1644302455/assignment-js/thumbnail-image-vector-graphic-vector-id1147544807_ochvyr.jpg" alt="Preview Img" id="form__add-cate-preview" className="h-60 w-full object-cover rounded-md" />
+                                        <img
+                                            src={preview || "https://res.cloudinary.com/levantuan/image/upload/v1644302455/assignment-js/thumbnail-image-vector-graphic-vector-id1147544807_ochvyr.jpg"}
+                                            alt="Preview Img"
+                                            className="h-60 w-full object-cover rounded-md"
+                                        />
                                     </div>
                                 </div>
                                 <div className="col-span-6">
@@ -43,14 +133,20 @@ const AddCategoryPage = () => {
                                             <div className="flex text-sm text-gray-600">
                                                 <label htmlFor="form__add-cate-img" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                                     <span>Upload a file</span>
-                                                    <input id="form__add-cate-img" data-error=".error-image" name="form__add-cate-img" type="file" className="sr-only" />
+                                                    <input
+                                                        {...register("image")}
+                                                        onChange={e => handlePreview(e)}
+                                                        id="form__add-cate-img"
+                                                        type="file"
+                                                        className="sr-only"
+                                                    />
                                                 </label>
                                                 <p className="pl-1">or drag and drop</p>
                                             </div>
                                             <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                                         </div>
                                     </div>
-                                    <div className="error-image text-sm mt-0.5 text-red-500" />
+                                    <div className="error-image text-sm mt-0.5 text-red-500">{errors.image?.message}</div>
                                 </div>
                             </div>
                         </div>

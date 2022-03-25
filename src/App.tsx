@@ -1,3 +1,5 @@
+import "toastr/build/toastr.css";
+import 'sweetalert2/dist/sweetalert2.css';
 import { Route, Routes } from "react-router-dom"
 import NotFound from "./components/NotFound";
 import CartDetailPage from "./pages/admin/cart/CartDetailPage";
@@ -148,7 +150,7 @@ const App = () => {
                 <Route path="category">
                     <Route index element={<CategoryListPage />} />
                     <Route path="add" element={<AddCategoryPage />} />
-                    <Route path=":id/edit" element={<EditCategoryPage />} />
+                    <Route path=":slug/edit" element={<EditCategoryPage />} />
                 </Route>
 
                 <Route path="contact">
