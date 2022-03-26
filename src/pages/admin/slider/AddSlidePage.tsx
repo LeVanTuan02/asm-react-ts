@@ -1,6 +1,60 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import toastr from "toastr";
+import * as yup from "yup";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { uploadFile } from "../../../utils";
+import { add } from "../../../api/slider";
+
+type InputsType = {
+    title: string,
+    image: string,
+    url: string,
+    status: number
+}
+
+const schema = yup.object().shape({
+    title: yup
+        .string()
+        .required("Vui lòng nhập tên slide"),
+    url: yup
+        .string()
+        .required("Vui lòng nhập Url slide"),
+    image: yup
+        .mixed()
+        .test("require", "Vui lòng chọn ảnh", value => value.length),
+    status: yup
+        .string()
+        .required("Vui lòng chọn trạng thái slide")
+})
 
 const AddSlidePage = () => {
+    const [preview, setPreview] = useState<string>();
+
+    const handlePreview = (e: any) => {
+        setPreview(URL.createObjectURL(e.target.files[0]));
+    }
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm<InputsType>({ resolver: yupResolver(schema) });
+
+    const onSubmit: SubmitHandler<InputsType> = async data => {
+        try {
+            const url = await uploadFile(data.image[0]);
+            await add({ ...data, image: url });
+            toastr.success("Thêm slide thành công")
+            setPreview("");
+            reset();
+        } catch (error: any) {
+            toastr.error(error.response.data.error.message || error.response.data.message);
+        }
+    }
+    
     return (
         <>
             <header className="z-10 fixed top-14 left-0 md:left-60 right-0 px-4 py-1.5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center justify-between">
@@ -18,31 +72,50 @@ const AddSlidePage = () => {
             </header>
 
             <div className="p-6 mt-24 overflow-hidden">
-                <form action="" method="POST" id="form__add-slider">
+                <form action="" method="POST" onSubmit={handleSubmit(onSubmit)}>
                     <div className="shadow overflow-hidden sm:rounded-md">
                         <div className="px-4 py-5 bg-white sm:p-6">
                             <span className="font-semibold mb-4 block text-xl">Thông tin chi tiết slider:</span>
                             <div className="grid grid-cols-6 gap-6">
                                 <div className="col-span-6">
                                     <label htmlFor="form__add-slider-title" className="block text-sm font-medium text-gray-700">Tên slider</label>
-                                    <input type="text" name="form__add-slider-title" id="form__add-slider-title" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập tên slide" />
+                                    <input
+                                        type="text"
+                                        {...register("title")}
+                                        id="form__add-slider-title"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập tên slide"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.title?.message}</div>
                                 </div>
                                 <div className="col-span-6">
                                     <label htmlFor="form__add-slider-url" className="block text-sm font-medium text-gray-700">Url slider</label>
-                                    <input type="text" name="form__add-slider-url" id="form__add-slider-url" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập url slide" />
+                                    <input
+                                        type="text"
+                                        {...register("url")}
+                                        id="form__add-slider-url"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập url slide"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.url?.message}</div>
                                 </div>
                                 <div className="col-span-6 md:col-span-3">
                                     <label htmlFor="form__add-slider-stt" className="block text-sm font-medium text-gray-700">Trạng thái</label>
-                                    <select id="form__add-slider-stt" name="form__add-slider-stt" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select {...register("status")} id="form__add-slider-stt" defaultValue={0} className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option value="">-- Chọn trạng thái slide --</option>
-                                        <option value={0} selected>Ẩn</option>
+                                        <option value={0}>Ẩn</option>
                                         <option value={1}>Hiển thị</option>
                                     </select>
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.status?.message}</div>
                                 </div>
                                 <div className="col-span-3">
                                     <label className="block text-sm font-medium text-gray-700">Xem trước ảnh</label>
                                     <div className="mt-1">
-                                        <img src="https://res.cloudinary.com/levantuan/image/upload/v1644302455/assignment-js/thumbnail-image-vector-graphic-vector-id1147544807_ochvyr.jpg" alt="Preview Img" id="form__add-slider-preview" className="h-60 w-full object-cover rounded-md" />
+                                        <img
+                                            src={ preview || "https://res.cloudinary.com/levantuan/image/upload/v1644302455/assignment-js/thumbnail-image-vector-graphic-vector-id1147544807_ochvyr.jpg" }
+                                            alt="Preview Img"
+                                            className="h-60 w-full object-cover rounded-md"
+                                        />
                                     </div>
                                 </div>
                                 <div className="col-span-6">
@@ -55,14 +128,20 @@ const AddSlidePage = () => {
                                             <div className="flex text-sm text-gray-600">
                                                 <label htmlFor="form__add-slider-img" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                                     <span>Upload a file</span>
-                                                    <input id="form__add-slider-img" data-error=".error-image" name="form__add-slider-img" type="file" className="sr-only" />
+                                                    <input
+                                                        {...register("image")}
+                                                        onChange={e => handlePreview(e)}
+                                                        id="form__add-slider-img"
+                                                        type="file"
+                                                        className="sr-only"
+                                                    />
                                                 </label>
                                                 <p className="pl-1">or drag and drop</p>
                                             </div>
                                             <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                                         </div>
                                     </div>
-                                    <div className="error-image text-sm mt-0.5 text-red-500" />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.image?.message}</div>
                                 </div>
                             </div>
                         </div>
