@@ -11,7 +11,7 @@ export const uploadFile = async (fileName: string) => {
 export const formatCurrency = (currency: number) => currency.toLocaleString("it-IT", { style: "currency", currency: "VND" });
 
 // format date
-export const formatDate = (dateString: string) => {
+export const formatDate = (dateString: Date) => {
     const date = new Date(dateString);
 
     const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
