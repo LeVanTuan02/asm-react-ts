@@ -1,9 +1,46 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import toastr from "toastr";
+import * as yup from "yup";
 import { Link } from "react-router-dom";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { add } from "../../../api/size";
+
+type InputsType = {
+    name: string,
+    priceIncrease: number,
+}
+
+const schema = yup.object().shape({
+    name: yup
+        .string()
+        .required("Vui lòng nhập tên size"),
+    priceIncrease: yup
+        .number()
+        .min(0, "Vui lòng nhập lại giá")
+        .required("Vui lòng nhập giá size")
+})
 
 const AddSizePage = () => {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm<InputsType>({ resolver: yupResolver(schema) });
+
+    const onSubmit: SubmitHandler<InputsType> = async data => {
+        try {
+            await add(data);
+            toastr.success("Thêm size thành công")
+            reset();
+        } catch (error: any) {
+            toastr.error(error.response.data.error.message || error.response.data.message);
+        }
+    }
+    
     return (
         <>
-            <header className="z-10fixed top-14 left-0 md:left-60 right-0 px-4 py-1.5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center justify-between">
+            <header className="z-10 fixed top-14 left-0 md:left-60 right-0 px-4 py-1.5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center justify-between">
                 <div className="flex items-center text-sm text-gray-600">
                     <h5 className="relative pr-5 after:content-[''] after:absolute after:w-[1px] after:h-4 after:top-1/2 after:-translate-y-1/2 after:right-2.5 after:bg-gray-300">
                     Size
@@ -18,18 +55,32 @@ const AddSizePage = () => {
             </header>
 
             <div className="p-6 mt-24 overflow-hidden">
-                <form action="" method="POST" id="form__add-size">
+                <form action="" method="POST" onSubmit={handleSubmit(onSubmit)}>
                     <div className="shadow overflow-hidden sm:rounded-md">
                         <div className="px-4 py-5 bg-white sm:p-6">
                             <span className="font-semibold mb-4 block text-xl">Thông tin chi tiết size:</span>
                             <div className="grid grid-cols-6 gap-3">
                                 <div className="col-span-6">
                                     <label htmlFor="form__add-size-name" className="block text-sm font-medium text-gray-700">Tên size</label>
-                                    <input type="text" name="form__add-size-name" id="form__add-size-name" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập tên size" />
+                                    <input
+                                        type="text"
+                                        id="form__add-size-name"
+                                        {...register("name")}
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập tên size"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.name?.message}</div>
                                 </div>
                                 <div className="col-span-6">
                                     <label htmlFor="form__add-size-price" className="block text-sm font-medium text-gray-700">Giá thêm</label>
-                                    <input type="number" name="form__add-size-price" id="form__add-size-price" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập giá thêm của size" />
+                                    <input
+                                        type="number"
+                                        {...register("priceIncrease")}
+                                        id="form__add-size-price"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập giá thêm của size"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.priceIncrease?.message}</div>
                                 </div>
                             </div>
                         </div>

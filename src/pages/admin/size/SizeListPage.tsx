@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SizeList from "../../../components/admin/SizeList";
 
 const SizeListPage = () => {
     return (
@@ -22,27 +23,7 @@ const SizeListPage = () => {
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                <table className="min-w-full divide-y divide-gray-200" id="cate__list-table">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> ID </th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Name </th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Giá thêm </th>
-                                            <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"> Actions </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        <tr className="item__list-item-${item.id}">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"> 1 </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> M </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> +7.000 VNĐ </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <a href="/#/admin/size/${item.id}/edit" className="h-8 inline-flex items-center px-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Edit</a>
-                                                <button data-id="${item.id}" className="size__list-btn-delete h-8 inline-flex items-center px-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-3">Delete</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <SizeList />
                             </div>
                         </div>
                     </div>
