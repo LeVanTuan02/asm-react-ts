@@ -114,7 +114,7 @@ const App = () => {
                 <Route path="product">
                     <Route index element={<ProductListPage />} />
                     <Route path="add" element={<AddProductPage />} />
-                    <Route path=":id/edit" element={<EditProductPage />} />
+                    <Route path=":slug/edit" element={<EditProductPage />} />
                 </Route>
 
                 <Route path="size">

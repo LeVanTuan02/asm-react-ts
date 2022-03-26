@@ -1,6 +1,80 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import toastr from "toastr";
+import * as yup from "yup";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { CategoryType } from "../../../types/category";
+import { getAll } from "../../../api/category";
+import { uploadFile } from "../../../utils";
+import { add } from "../../../api/product";
+
+type InputsType = {
+    name: string,
+    price: number,
+    description: string,
+    categoryId: string,
+    image: string,
+    status: number
+}
+
+const schema = yup.object().shape({
+    name: yup
+        .string()
+        .required("Vui lòng nhập tên sản phẩm"),
+    price: yup
+        .number()
+        .required("Vui lòng nhập giá sản phẩm")
+        .min(0, "Vui lòng nhập lại giá SP"),
+    description: yup
+        .string()
+        .required("Vui lòng nhập mô tả SP"),
+    categoryId: yup
+        .string()
+        .required("Vui lòng chọn danh mục SP"),
+    image: yup
+        .mixed()
+        .test("require", "Vui lòng chọn ảnh SP", value => value.length),
+    status: yup
+        .number()
+        .required("Vui lòng chọn trạng thái SP")
+})
 
 const AddProductPage = () => {
+    const [categories, setCategories] = useState<CategoryType[]>();
+    const [preview, setPreview] = useState<string>();
+
+    useEffect(() => {
+        // get categories
+        (async () => {
+            const { data } = await getAll();
+            setCategories(data);
+        })();
+    }, []);
+
+    const handlePreview = (e: any) => {
+        setPreview(URL.createObjectURL(e.target.files[0]));
+    }
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm<InputsType>({ resolver: yupResolver(schema) });
+
+    const onSubmit: SubmitHandler<InputsType> = async data => {
+        try {
+            const url = await uploadFile(data.image[0]);
+            await add({ ...data, image: url, price: +data.price, status: +data.status });
+            toastr.success("Thêm sản phẩm thành công")
+            setPreview("");
+            reset();
+        } catch (error: any) {
+            toastr.error(error.response.data.error.message || error.response.data.message);
+        }
+    }
+
     return (
         <>
             <header className="z-10 fixed top-14 left-0 md:left-60 right-0 px-4 py-1.5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center justify-between">
@@ -18,43 +92,72 @@ const AddProductPage = () => {
             </header>
 
             <div className="p-6 mt-24 overflow-hidden">
-                <form action="" id="form__add-product" method="POST">
+                <form action="" id="form__add-product" method="POST" onSubmit={handleSubmit(onSubmit)}>
                     <div className="shadow overflow-hidden sm:rounded-md">
                         <div className="px-4 py-5 bg-white sm:p-6">
                             <span className="font-semibold mb-4 block text-xl">Thông tin chi tiết sản phẩm:</span>
                             <div className="grid grid-cols-6 gap-6">
                                 <div className="col-span-6">
                                     <label htmlFor="form__add-product-name" className="block text-sm font-medium text-gray-700">Tên sản phẩm</label>
-                                    <input type="text" name="form__add-product-name" id="form__add-product-name" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập tên sản phẩm" />
+                                    <input
+                                        type="text"
+                                        {...register("name")}
+                                        id="form__add-product-name"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập tên sản phẩm"
+                                    />
+                                    <div className="error-desc text-sm mt-0.5 text-red-500">{errors.name?.message}</div>
                                 </div>
+
                                 <div className="col-span-6">
                                     <label htmlFor="form__add-product-price" className="block text-sm font-medium text-gray-700">Giá sản phẩm</label>
-                                    <input type="number" name="form__add-product-price" id="form__add-product-price" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập giá sản phẩm" />
+                                    <input
+                                        type="number"
+                                        {...register("price")}
+                                        id="form__add-product-price"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập giá sản phẩm"
+                                    />
+                                    <div className="error-desc text-sm mt-0.5 text-red-500">{errors.price?.message}</div>
                                 </div>
                                 <div className="col-span-6">
                                     <label htmlFor="form__add-product-description" className="mb-1 block text-sm font-medium text-gray-700">Mô tả</label>
-                                    <textarea id="form__add-product-description" data-error=".error-desc" name="form__add-product-description" rows={3} className="py-2 px-3 focus:outline-none shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md" placeholder="Nhập mô tả sản phẩm" defaultValue={""} />
-                                    <div className="error-desc text-sm mt-0.5 text-red-500" />
+                                    <textarea
+                                        id="form__add-product-description" 
+                                        rows={3} className="py-2 px-3 focus:outline-none shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+                                        placeholder="Nhập mô tả sản phẩm"
+                                        defaultValue={""}
+                                        {...register("description")}
+                                    />
+                                    <div className="error-desc text-sm mt-0.5 text-red-500">{errors.description?.message}</div>
                                 </div>
                                 <div className="col-span-6 md:col-span-3">
                                     <label htmlFor="form__add-product-cate" className="block text-sm font-medium text-gray-700">Danh mục sản phẩm</label>
-                                    <select id="form__add-product-cate" name="form__add-product-cate" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select id="form__add-product-cate" {...register("categoryId")} defaultValue="" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option value="">-- Chọn danh mục sản phẩm --</option>
-                                        <option value="${cate.id}">Trà sữa</option>
+                                        {categories?.map((cate, index) => (
+                                            <option key={index} value={cate._id}>{cate.name}</option>
+                                        ))}
                                     </select>
+                                    <div className="error-desc text-sm mt-0.5 text-red-500">{errors.categoryId?.message}</div>
                                 </div>
                                 <div className="col-span-6 md:col-span-3">
                                     <label htmlFor="form__add-product-stt" className="block text-sm font-medium text-gray-700">Trạng thái</label>
-                                    <select id="form__add-product-stt" name="form__add-product-stt" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select id="form__add-product-stt" {...register("status")} defaultValue={0} className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option value="">-- Chọn trạng thái sản phẩm --</option>
-                                        <option value={0} selected>Ẩn</option>
+                                        <option value={0}>Ẩn</option>
                                         <option value={1}>Hiển thị</option>
                                     </select>
+                                    <div className="error-desc text-sm mt-0.5 text-red-500">{errors.status?.message}</div>
                                 </div>
                                 <div className="col-span-3">
                                     <label className="block text-sm font-medium text-gray-700">Xem trước ảnh</label>
                                     <div className="mt-1">
-                                        <img src="https://res.cloudinary.com/levantuan/image/upload/v1644302455/assignment-js/thumbnail-image-vector-graphic-vector-id1147544807_ochvyr.jpg" alt="Preview Image" id="form__add-product-preview" className="h-60 w-full object-cover rounded-md" />
+                                        <img
+                                            src={ preview || "https://res.cloudinary.com/levantuan/image/upload/v1644302455/assignment-js/thumbnail-image-vector-graphic-vector-id1147544807_ochvyr.jpg"}
+                                            alt="Preview Image"
+                                            className="h-60 w-full object-cover rounded-md"
+                                        />
                                     </div>
                                 </div>
                                 <div className="col-span-6">
@@ -67,14 +170,19 @@ const AddProductPage = () => {
                                             <div className="flex text-sm text-gray-600">
                                                 <label htmlFor="form__add-product-image" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                                     <span>Upload a file</span>
-                                                    <input id="form__add-product-image" data-error=".error-image" name="form__add-product-image" type="file" className="sr-only" />
+                                                    <input
+                                                        id="form__add-product-image"
+                                                        {...register("image")}
+                                                        onChange={e => handlePreview(e)}
+                                                        type="file" className="sr-only"
+                                                    />
                                                 </label>
                                                 <p className="pl-1">or drag and drop</p>
                                             </div>
                                             <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                                         </div>
                                     </div>
-                                    <div className="error-image text-sm mt-0.5 text-red-500" />
+                                    <div className="error-desc text-sm mt-0.5 text-red-500">{errors.image?.message}</div>
                                 </div>
                             </div>
                         </div>
