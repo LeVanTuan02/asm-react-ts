@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import StoreList from "../../../components/admin/StoreList";
 
 const StoreListPage = () => {
     return (
@@ -22,37 +23,8 @@ const StoreListPage = () => {
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                <table className="min-w-full divide-y divide-gray-200" id="cate__list-table">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> ID </th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Chi nhánh </th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Thời gian hoạt động </th>
-                                            <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"> Actions </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        <tr className="item__list-item-${item.id}">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"> 1 </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div className="flex-shrink-0 h-10 w-10">
-                                                        <img className="h-10 w-10 rounded-full object-cover" src="https://res.cloudinary.com/levantuan/image/upload/v1644632614/assignment-js/z5qrp7yxl8bav29bfstt.jpg" alt="" />
-                                                    </div>
-                                                    <div className="ml-4">
-                                                        <div className="text-sm font-medium text-gray-900">Yotea Hà Giang</div>
-                                                        <div className="text-sm text-gray-500">0347888888</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500"> 08:00 - 22:00 </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <a href="/#/admin/store/${item.id}/edit" className="h-8 inline-flex items-center px-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Edit</a>
-                                                <button data-id="${item.id}" className="store__list-btn-delete h-8 inline-flex items-center px-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-3">Delete</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <StoreList />
+
                                 <div className="border-t px-5 bg-white py-3 flex flex-col xs:flex-row items-center xs:justify-between" id="pagination">
                                     <div className="flex items-center">
                                         <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
