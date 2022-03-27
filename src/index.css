@@ -5,3 +5,7 @@
 .store__list-map iframe {
     @apply w-full h-full rounded-lg
 }
+
+select.disabled {
+    @apply bg-gray-50
+}
