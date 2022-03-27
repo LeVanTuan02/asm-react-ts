@@ -1,9 +1,18 @@
 import { faProductHunt } from "@fortawesome/free-brands-svg-icons";
-import { faCode, faComment, faEllipsisV, faNewspaper, faSearch, faShoppingCart, faSlidersH, faStore, faThList } from "@fortawesome/free-solid-svg-icons";
+import { faCode, faComment, faNewspaper, faSearch, faShoppingCart, faSlidersH, faStore, faThList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { isAuthenticate } from "../../utils/localStorage";
 
 const AdminLayout = () => {
+    const { user } = isAuthenticate();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem("auth");
+        navigate("/login");
+    }
+
     return (
         <>
             <section className="min-h-[calc(100vh-98px)] bg-gray-50 dashboard">
@@ -275,12 +284,16 @@ const AdminLayout = () => {
                                 <div>
                                     <button type="button" className="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu-button" aria-haspopup="true" >
                                         <span className="sr-only">Open user menu</span>
-                                        <img className="h-8 w-8 rounded-full object-cover" src="https://res.cloudinary.com/levantuan/image/upload/v1645455652/assignment-js/rx7cgkojxqz9tqeidv7l.png" alt="" />
+                                        <img
+                                            className="h-8 w-8 rounded-full object-cover"
+                                            src={user.avatar}
+                                            alt=""
+                                        />
                                     </button>
                                 </div>
                                 <div className="hidden group-hover:block absolute right-0 top-[calc(100%+10px)] w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none before:content-[''] before:absolute before:top-[-10px] before:right-0 before:left-0 before:h-4">
                                     <Link to="/admin/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</Link>
-                                    <p id="btn-logout" className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Đăng xuất</p>
+                                    <button onClick={handleLogout} className="cursor-pointer w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Đăng xuất</button>
                                 </div>
                             </div>
                         </div>

@@ -2,8 +2,11 @@ import { faFacebookF, faInstagram, faTiktok, faYoutube } from "@fortawesome/free
 import { faBars, faChevronUp, faClock, faEnvelope, faHeart, faHome, faPhoneAlt, faSearch, faShoppingCart, faSortDown, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, Outlet } from "react-router-dom";
+import { isAuthenticate } from "../../utils/localStorage";
 
 const WebsiteLayout = () => {
+    const auth = isAuthenticate();
+
     return (
         <>
             <header>
@@ -42,12 +45,23 @@ const WebsiteLayout = () => {
                                     <ul className="mt-3 grid grid-cols-1 divide-y max-h-[70vh] overflow-y-auto" id="search-product-result" />
                                 </div>
                             </li>
-                            <li className="relative after:content-[''] after:absolute after:w-[1px] after:h-3.5 after:bg-gray-50 after:left-3 after:top-1/2 after:-translate-y-1/2 uppercase text-sm pl-6 text-gray-50 font-light opacity-80 transition ease-linear duration-200 hover:text-white hover:opacity-100">
-                                <Link to="/login">Đăng nhập</Link>
-                            </li>
-                            <li className="relative after:content-[''] after:absolute after:w-[1px] after:h-3.5 after:bg-gray-50 after:left-3 after:top-1/2 after:-translate-y-1/2 uppercase text-sm pl-6 text-gray-50 font-light opacity-80 transition ease-linear duration-200 hover:text-white hover:opacity-100">
-                                <Link to="/register">Đăng ký</Link>
-                            </li>
+
+                            {auth && (
+                                <li className="relative after:content-[''] after:absolute after:w-[1px] after:h-3.5 after:bg-gray-50 after:left-3 after:top-1/2 after:-translate-y-1/2 uppercase text-sm pl-6 text-gray-50 font-light opacity-80 transition ease-linear duration-200 hover:text-white hover:opacity-100">
+                                    <Link to={auth.user.role ? '/admin' : '/my-account'}>Hello, {auth.user.fullName}</Link>
+                                </li>
+                            )}
+
+                            {!auth && (
+                                <>
+                                    <li className="relative after:content-[''] after:absolute after:w-[1px] after:h-3.5 after:bg-gray-50 after:left-3 after:top-1/2 after:-translate-y-1/2 uppercase text-sm pl-6 text-gray-50 font-light opacity-80 transition ease-linear duration-200 hover:text-white hover:opacity-100">
+                                        <Link to="/login">Đăng nhập</Link>
+                                    </li>
+                                    <li className="relative after:content-[''] after:absolute after:w-[1px] after:h-3.5 after:bg-gray-50 after:left-3 after:top-1/2 after:-translate-y-1/2 uppercase text-sm pl-6 text-gray-50 font-light opacity-80 transition ease-linear duration-200 hover:text-white hover:opacity-100">
+                                        <Link to="/register">Đăng ký</Link>
+                                    </li>
+                                </>
+                            )}
                             <li className="header-icon-heart relative after:content-[''] after:absolute after:w-[1px] after:h-3.5 after:bg-gray-50 after:left-3 after:top-1/2 after:-translate-y-1/2 uppercase text-base cursor-pointer pl-6 text-gray-50 font-light opacity-80 transition ease-linear duration-200 hover:text-white hover:opacity-100">
                                 <div className="relative">
                                     <label htmlFor="" id="header-wishlist-label" className="absolute w-4 h-4 bg-green-700 text-xs text-center rounded-full -right-3 -top-1">10</label>

@@ -63,8 +63,14 @@ import NewsPage from "./pages/user/NewsPage";
 import ProductDetailPage from "./pages/user/ProductDetailPage";
 import ProductPage from "./pages/user/ProductPage";
 import StorePage from "./pages/user/StorePage";
+import PrivateRouter from "./components/admin/PrivateRouter";
+import { useState } from "react";
 
 const App = () => {
+    const [logged, setLogged] = useState(false);
+
+    const handleLogin = () => setLogged(!logged);
+
     return (
         <Routes>
             <Route path="/" element={<WebsiteLayout />}>
@@ -75,13 +81,13 @@ const App = () => {
                 <Route path="tin-tuc" element={<NewsPage />} />
                 <Route path="lien-he" element={<ContactPage />} />
                 <Route path="cua-hang" element={<StorePage />} />
-                <Route path="login" element={<LoginPage />} />
+                <Route path="login" element={<LoginPage onLogin={handleLogin} />} />
                 <Route path="register" element={<RegisterPage />} />
                 <Route path="forgot" element={<ForgotPage />} />
                 <Route path="cart" element={<CartPage />} />
                 <Route path="checkout" element={<CheckoutPage />} />
                 <Route path="thank-you" element={<ThankPage />} />
-                <Route path="my-account" element={<MyAccountLayout />}>
+                <Route path="my-account" element={<PrivateRouter page="user"><MyAccountLayout onLogout={handleLogin} /></PrivateRouter>}>
                     <Route index element={<UpdateInfoPage />} />
                     <Route path="update-password" element={<UpdatePasswordPage />} />
                     <Route path="cart" element={<MyCartPage />} />
@@ -91,7 +97,7 @@ const App = () => {
                 </Route>
             </Route>
 
-            <Route path="/admin" element={<AdminLayout />}>
+            <Route path="/admin" element={<PrivateRouter page="admin"><AdminLayout /></PrivateRouter>}>
                 <Route index element={<Dashboard />} />
                 <Route path="user">
                     <Route index element={<AdminUserList />} />
