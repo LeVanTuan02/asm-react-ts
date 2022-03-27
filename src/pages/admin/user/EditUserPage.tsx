@@ -117,16 +117,25 @@ const EditUserPage = () => {
             const { data } = await get(id);
 
             // get district
-            const { data: { districts } } = await getDistrictByProvince(data.provinceCode);
-            setDistricts(districts);
+            if (data.provinceCode) {
+                const { data: { districts } } = await getDistrictByProvince(data.provinceCode);
+                setDistricts(districts);
+            }
 
             // get ward
-            const { data: { wards } } = await getWardByDistrict(data.districtCode);
-            setWards(wards);
+            if (data.wardsCode) {
+                const { data: { wards } } = await getWardByDistrict(data.districtCode);
+                setWards(wards);
+            }
 
             setPreview(data.avatar);
             setPassword(data.password);
-            reset(data);
+            reset({
+                ...data,
+                provinceCode: data.provinceCode || "",
+                districtCode: data.districtCode || "",
+                wardsCode: data.wardsCode || "",
+            });
         };
 
         (async () => {
@@ -137,17 +146,11 @@ const EditUserPage = () => {
 
     const handleChangeProvince = async (e: any) => {
         const { data: { districts } } = await getDistrictByProvince(e.target.value);
-        const district = document.querySelector("#form__add-user-district");
-        district?.classList.remove("disabled");
-        district?.removeAttribute("disabled");
         setDistricts(districts);
     }
 
     const handleChangeDistrict = async (e: any) => {
         const { data: { wards } } = await getWardByDistrict(e.target.value);
-        const wardElement = document.querySelector("#form__add-user-ward");
-        wardElement?.classList.remove("disabled");
-        wardElement?.removeAttribute("disabled");
         setWards(wards);
     }
 

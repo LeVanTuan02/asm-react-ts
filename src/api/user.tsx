@@ -34,9 +34,9 @@ export const remove = (id: string) => {
     });
 }
 
-export const update = (user: UserType) => {
-    const url = `/${DB_NAME}/${user._id}/${user._id}`;
-    return instance.put(url, user, {
+export const update = (userData: UserType) => {
+    const url = `/${DB_NAME}/${userData._id}/${user._id}`;
+    return instance.put(url, userData, {
         headers: {
             Authorization: `Bearer ${token}`
         }
