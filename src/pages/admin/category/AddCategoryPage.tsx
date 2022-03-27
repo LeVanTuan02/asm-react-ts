@@ -1,5 +1,4 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import slugify from "slugify";
 import toastr from "toastr";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
@@ -24,11 +23,6 @@ const schema = yup.object().shape({
 
 const AddCategoryPage = () => {
     const [preview, setPreview] = useState<string>();
-    const [slug, setSlug] = useState<string>();
-
-    const handleSlug = (e: any) => {
-        setSlug(slugify(e.target.value, { lower: true }));
-    }
 
     const {
         register,
@@ -94,23 +88,12 @@ const AddCategoryPage = () => {
                                     <label htmlFor="form__add-cate-title" className="block text-sm font-medium text-gray-700">Tên danh mục</label>
                                     <input
                                         {...register("name")}
-                                        onChange={e => handleSlug(e)}
                                         type="text"
                                         id="form__add-cate-title"
                                         className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                         placeholder="Nhập tiêu đề bài viết"
                                     />
                                     <div className="error-image text-sm mt-0.5 text-red-500">{errors.name?.message}</div>
-                                </div>
-
-                                <div className="col-span-6">
-                                    <label htmlFor="customer-name" className="block text-sm font-medium text-gray-700">Slug</label>
-                                    <input type="text"
-                                        disabled
-                                        name="customer-name"
-                                        className="py-2 px-3 mt-1 border block w-full outline-none shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm"
-                                        defaultValue={slug}
-                                    />
                                 </div>
 
                                 <div className="col-span-3">

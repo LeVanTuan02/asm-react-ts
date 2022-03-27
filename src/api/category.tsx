@@ -7,7 +7,7 @@ const { token, user } = isAuthenticate();
 const DB_NAME = "category";
 
 export const getAll = () => {
-    const url = `/${DB_NAME}`;
+    const url = `/${DB_NAME}/?_sort=createdAt&_order=desc`;
     return instance.get(url);
 };
 
