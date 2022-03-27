@@ -20,7 +20,11 @@ const schema = yup.object().shape({
         .required("Vui lòng nhập mật khẩu")
 });
 
-const LoginPage = () => {
+type LoginPageProps = {
+    onLogin: () => void
+}
+
+const LoginPage = ({ onLogin }: LoginPageProps) => {
     const {
         register,
         handleSubmit,
@@ -33,13 +37,19 @@ const LoginPage = () => {
             const { data } = await signin(dataInput);
             if (!data.user.active) {
                 toastr.info("Tài khoản của bạn đã bị khóa, vui lòng liên hệ QTV");
-            } else if (data.user.role) {
+            } else {
                 localStorage.setItem("auth", JSON.stringify(data));
                 toastr.success("Đăng nhập thành công");
-                navigate("/admin");
-            } else {
-                navigate("/");
+
+                if (data.user.role) {
+                    navigate("/admin");
+                } else {
+                    navigate("/");
+                }
+                
+                onLogin();
             }
+            
         } catch (error: any) {
             toastr.error(error.response.data.message);
         }
