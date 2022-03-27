@@ -63,7 +63,7 @@ const VoucherList = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item._id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.code}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.quantity}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">-{item.conditionNumber ? formatCurrency(item.conditionNumber) : item.conditionNumber}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">-{item.condition ? formatCurrency(item.conditionNumber) : item.conditionNumber + "%"}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">{formatDate(item.timeStart)}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">{formatDate(item.timeEnd)}</td>
                         <td className="px-6 py-4 whitespace-nowrap">

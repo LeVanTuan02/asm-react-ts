@@ -20,16 +20,21 @@ const schema = yup.object().shape({
         .string()
         .required("Vui lòng nhập mã Voucher"),
     quantity: yup
-        .number()
-        .min(0, "Vui lòng nhập số lượng lớn hơn 0")
+        .string()
+        .test("min", "Vui lòng nhập số lượng lớn hơn 0", value => Number(value) >= 0)
         .required("Vui lòng nhập số lượng voucher"),
     condition: yup
         .string()
         .required("Vui lòng chọn loại giảm"),
     conditionNumber: yup
-        .number()
-        .min(0, "Vui lòng nhập số lượng lớn hơn 0")
-        .required("Vui lòng nhập số lượng giảm"),
+        .string()
+        .required("Vui lòng nhập số lượng giảm")
+        .test("min", "Vui lòng nhập số lượng lớn hơn 0", value => Number(value) > 0)
+        .test("test_condition", "Phần trăm giảm giá không hợp lệ", function (value) {
+            const { condition } = this.parent;
+            if (!+condition && Number(value) > 100) return false
+            return true;
+        }),
     status: yup
         .string()
         .required("Vui lòng chọn trạng thái Voucher"),
@@ -39,7 +44,10 @@ const schema = yup.object().shape({
     timeEnd: yup
         .string()
         .required("Vui lòng nhập thời gian hết hiệu lực Voucher")
-
+        .test("end_time_test", "Thời gian không hợp lệ", function (value: any) {
+            const { timeStart } = this.parent;
+            return timeStart < value;
+        })
 })
 
 const AddVoucherPage = () => {
