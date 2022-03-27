@@ -1,21 +1,77 @@
-import { Link } from "react-router-dom";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import toastr from "toastr";
+import { Link, useNavigate } from "react-router-dom";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { signin } from "../../api/auth";
+
+type InputsType = {
+    email: string
+    password: string
+}
+
+const schema = yup.object().shape({
+    email: yup
+        .string()
+        .required("Vui lòng nhập địa chỉ email")
+        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Email không đúng định dạng"),
+    password: yup
+        .string()
+        .required("Vui lòng nhập mật khẩu")
+});
 
 const LoginPage = () => {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors }
+    } = useForm<InputsType>({ resolver: yupResolver(schema) });
+
+    const navigate = useNavigate();
+    const onSubmit: SubmitHandler<InputsType> = async dataInput => {
+        try {
+            const { data } = await signin(dataInput);
+            if (!data.user.active) {
+                toastr.info("Tài khoản của bạn đã bị khóa, vui lòng liên hệ QTV");
+            } else if (data.user.role) {
+                localStorage.setItem("auth", JSON.stringify(data));
+                toastr.success("Đăng nhập thành công");
+                navigate("/admin");
+            } else {
+                navigate("/");
+            }
+        } catch (error: any) {
+            toastr.error(error.response.data.message);
+        }
+    };
+
     return (
         <section className="container max-w-6xl mx-auto px-3">
             <h1 className="uppercase mt-8 font-semibold text-2xl text-gray-600">Đăng nhập</h1>
 
-            <form action="" className="mb-14" method="POST" id="form__login">
+            <form action="" className="mb-14" method="POST" onSubmit={handleSubmit(onSubmit)}>
                 <div className="mt-3">
                     <label htmlFor="form__login-user" className="font-semibold block mb-1">Địa chỉ email *</label>
-                    <input type="text" id="form__login-user" name="form__login-user" className="shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] w-full border px-2 h-10 text-sm outline-none" placeholder="Nhập địa chỉ email" />
-                    <div className="form__reg-message text-sm text-red-500 mt-0.5"></div>
+                    <input
+                        type="text"
+                        {...register("email")}
+                        id="form__login-user"
+                        className="shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] w-full border px-2 h-10 text-sm outline-none"
+                        placeholder="Nhập địa chỉ email"
+                    />
+                    <div className="text-sm text-red-500 mt-0.5">{errors.email?.message}</div>
                 </div>
 
                 <div className="mt-3">
                     <label htmlFor="form__login-password" className="font-semibold block mb-1">Mật khẩu *</label>
-                    <input type="password" id="form__login-password" name="form__login-password" className="shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] w-full border px-2 h-10 text-sm outline-none" placeholder="Mật khẩu" />
-                    <div className="form__reg-message text-sm text-red-500 mt-0.5"></div>
+                    <input
+                        type="password"
+                        {...register("password")}
+                        id="form__login-password"
+                        className="shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] w-full border px-2 h-10 text-sm outline-none"
+                        placeholder="Mật khẩu"
+                    />
+                    <div className="text-sm text-red-500 mt-0.5">{errors.password?.message}</div>
                 </div>
 
                 <div className="flex mt-3 items-center">
