@@ -102,7 +102,7 @@ const App = () => {
                 <Route path="news">
                     <Route index element={<NewsListPage />} />
                     <Route path="add" element={<AddNewsPage />} />
-                    <Route path=":id/edit" element={<EditNewsPage />} />
+                    <Route path=":slug/edit" element={<EditNewsPage />} />
                 </Route>
 
                 <Route path="category-news">

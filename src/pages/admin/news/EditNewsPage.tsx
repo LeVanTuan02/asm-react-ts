@@ -1,6 +1,90 @@
-import { Link } from "react-router-dom";
+import * as yup from "yup";
+import toastr from "toastr";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { CategoryNewsType } from "../../../types/categoryNews";
+import { uploadFile } from "../../../utils";
+import { get, update } from "../../../api/news";
+import { getAll } from "../../../api/categoryNews";
+
+type InputsType = {
+    title: string,
+    thumbnail: string,
+    description: string,
+    content: string,
+    category: string,
+    status: number,
+};
+
+const schema = yup.object().shape({
+    title: yup
+        .string()
+        .required("Vui lòng nhập tiêu đề bài viết"),
+    description: yup
+        .string()
+        .required("Vui lòng nhập mô tả bài viết"),
+    content: yup
+        .string()
+        .required("Vui lòng nhập nội dung bài viết"),
+    category: yup
+        .string()
+        .required("Vui lòng chọn danh mục bài viết"),
+    status: yup
+        .string()
+        .required("Vui lòng chọn trạng thái bài viết")
+});
 
 const EditNewsPage = () => {
+    const [preview, setPreview] = useState<string>();
+    const [categories, setCategories] = useState<CategoryNewsType[]>();
+
+    const { slug } = useParams();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm<InputsType>({ resolver: yupResolver(schema) });
+
+    const navigate = useNavigate();
+
+    const onSubmit: SubmitHandler<InputsType> = async data => {
+        try {
+            if (typeof data.thumbnail === "object" && data.thumbnail.length) {
+                data.thumbnail = await uploadFile(data.thumbnail[0]);
+            }
+
+            await update(data);
+            toastr.success("Cập nhật bài viết thành công");
+            navigate("/admin/news");
+        } catch (error: any) {
+            toastr.error(error.response.data.error.message || error.response.data.message);
+        }
+    }
+
+    const handlePreview = (e: any) => {
+        setPreview(URL.createObjectURL(e.target.files[0]));
+    }
+
+    useEffect(() => {
+        // get categories
+        const getCates = async () => {
+            const { data } = await getAll();
+            setCategories(data);
+        };
+        getCates();
+
+        const getNews = async () => {
+            const { data } = await get(slug);
+            setPreview(data.thumbnail);
+            reset(data);
+        };
+        getNews();
+    }, []);
+
     return (
         <>
             <header className="z-10 fixed top-14 left-0 md:left-60 right-0 px-4 py-1.5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center justify-between">
@@ -18,44 +102,72 @@ const EditNewsPage = () => {
             </header>
 
             <div className="p-6 mt-24 overflow-hidden">
-                <form action="" method="POST" id="form__add-news">
+                <form action="" method="POST" onSubmit={handleSubmit(onSubmit)}>
                     <div className="shadow overflow-hidden sm:rounded-md">
                         <div className="px-4 py-5 bg-white sm:p-6">
                             <span className="font-semibold mb-4 block text-xl">Thông tin chi tiết bài viết:</span>
                             <div className="grid grid-cols-6 gap-6">
                                 <div className="col-span-6">
                                     <label htmlFor="form__add-news-title" className="block text-sm font-medium text-gray-700">Tiêu đề bài viết</label>
-                                    <input type="text" name="form__add-news-title" id="form__add-news-title" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập tiêu đề bài viết" />
+                                    <input
+                                        {...register("title")}
+                                        type="text"
+                                        id="form__add-news-title"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập tiêu đề bài viết"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.title?.message}</div>
                                 </div>
                                 <div className="col-span-6">
                                     <label htmlFor="form__add-news-desc" className="mb-1 block text-sm font-medium text-gray-700">Mô tả ngắn</label>
-                                    <textarea id="form__add-news-desc" data-error=".error-desc" name="form__add-news-desc" rows={3} className="py-2 px-3 focus:outline-none shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md" placeholder="Nhập mô tả bài viết" defaultValue={""} />
-                                    <div className="error-desc text-sm mt-0.5 text-red-500" />
+                                    <textarea
+                                        {...register("description")}
+                                        id="form__add-news-desc"
+                                        rows={3}
+                                        className="py-2 px-3 focus:outline-none shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+                                        placeholder="Nhập mô tả bài viết"
+                                        defaultValue={""}
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.description?.message}</div>
                                 </div>
                                 <div className="col-span-6">
                                     <label htmlFor="form__add-news-content" className="mb-1 block text-sm font-medium text-gray-700">Nội dung</label>
-                                    <textarea id="form__add-news-content" data-error=".error-content" name="form__add-news-content" rows={10} className="py-2 px-3 focus:outline-none shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md" placeholder="Nhập mô tả bài viết" defaultValue={""} />
-                                    <div className="error-content text-sm mt-0.5 text-red-500" />
+                                    <textarea
+                                        {...register("content")}
+                                        id="form__add-news-content"
+                                        rows={10}
+                                        className="py-2 px-3 focus:outline-none shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+                                        placeholder="Nhập nội dung bài viết"
+                                        defaultValue={""}
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.content?.message}</div>
                                 </div>
                                 <div className="col-span-6 md:col-span-3">
                                     <label htmlFor="form__add-news-cate" className="block text-sm font-medium text-gray-700">Danh mục bài viết</label>
-                                    <select id="form__add-news-cate" name="form__add-news-cate" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select id="form__add-news-cate" {...register("category")} className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option value="">-- Chọn danh mục bài viết --</option>
-                                        <option value="${cate.id}">Danh mục 1</option>
+                                        {categories?.map((item, index) => <option key={index} value={item._id}>{item.name}</option>)}
                                     </select>
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.category?.message}</div>
                                 </div>
                                 <div className="col-span-6 md:col-span-3">
                                     <label htmlFor="form__add-news-stt" className="block text-sm font-medium text-gray-700">Trạng thái</label>
-                                    <select id="form__add-news-stt" name="form__add-news-stt" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select id="form__add-news-stt" defaultValue={0} {...register("status")} className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option value="">-- Chọn trạng thái bài viết --</option>
-                                        <option value={0} selected>Ẩn</option>
+                                        <option value={0}>Ẩn</option>
                                         <option value={1}>Hiển thị</option>
                                     </select>
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.status?.message}</div>
                                 </div>
                                 <div className="col-span-3">
                                     <label className="block text-sm font-medium text-gray-700">Xem trước ảnh bìa</label>
                                     <div className="mt-1">
-                                        <img src="https://res.cloudinary.com/levantuan/image/upload/v1644302455/assignment-js/thumbnail-image-vector-graphic-vector-id1147544807_ochvyr.jpg" alt="" id="form__add-news-preview" className="h-60 w-full object-cover rounded-md" />
+                                        <img
+                                            src={ preview || "https://res.cloudinary.com/levantuan/image/upload/v1644302455/assignment-js/thumbnail-image-vector-graphic-vector-id1147544807_ochvyr.jpg" }
+                                            alt=""
+                                            id="form__add-news-preview"
+                                            className="h-60 w-full object-cover rounded-md"
+                                        />
                                     </div>
                                 </div>
                                 <div className="col-span-6">
@@ -68,14 +180,20 @@ const EditNewsPage = () => {
                                             <div className="flex text-sm text-gray-600">
                                                 <label htmlFor="form__add-news-image" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                                     <span>Upload a file</span>
-                                                    <input id="form__add-news-image" data-error=".error-image" name="form__add-news-image" type="file" className="sr-only" />
+                                                    <input
+                                                        {...register("thumbnail")}
+                                                        onChange={e => handlePreview(e)}
+                                                        id="form__add-news-image"
+                                                        type="file"
+                                                        className="sr-only"
+                                                    />
                                                 </label>
                                                 <p className="pl-1">or drag and drop</p>
                                             </div>
                                             <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
                                         </div>
                                     </div>
-                                    <div className="error-image text-sm mt-0.5 text-red-500" />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.thumbnail?.message}</div>
                                 </div>
                             </div>
                         </div>
