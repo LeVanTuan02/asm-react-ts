@@ -1,6 +1,22 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { get } from "../../../api/contact";
+import { ContactType } from "../../../types/contact";
+import { formatDate } from "../../../utils";
 
 const ContactDetailPage = () => {
+    const [contact, setContact] = useState<ContactType>();
+
+    const { id } = useParams();
+
+    useEffect(() => {
+        const getContact = async () => {
+            const { data } = await get(id);
+            setContact({ ...data, createdAt: formatDate(data.createdAt) });
+        };
+        getContact();
+    }, []);
+
     return (
         <>
             <header className="z-10 fixed top-14 left-0 md:left-60 right-0 px-4 py-1.5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center justify-between">
@@ -26,27 +42,27 @@ const ContactDetailPage = () => {
                             <div className="grid grid-cols-6 gap-3">
                                 <div className="col-span-6 md:col-span-3">
                                     <label htmlFor="customer-name" className="block text-sm font-medium text-gray-700">Tên khách hàng</label>
-                                    <input type="text" disabled name="customer-name" className="py-2 px-3 mt-1 border block w-full outline-none shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm" defaultValue="${contactDetail.name}" />
+                                    <input type="text" disabled className="py-2 px-3 mt-1 border block w-full outline-none shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm" defaultValue={contact?.name} />
                                 </div>
                                 <div className="col-span-6 md:col-span-3">
                                     <label htmlFor="customer-phone" className="block text-sm font-medium text-gray-700">Sdt khách hàng</label>
-                                    <input type="text" disabled name="customer-phone" className="py-2 px-3 mt-1 border block w-full outline-none shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm" defaultValue="${contactDetail.phone}" />
+                                    <input type="text" disabled className="py-2 px-3 mt-1 border block w-full outline-none shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm" defaultValue={contact?.phone} />
                                 </div>
                                 <div className="col-span-6">
                                     <label htmlFor="customer-phone" className="block text-sm font-medium text-gray-700">Email khách hàng</label>
-                                    <input type="text" disabled name="customer-phone" className="py-2 px-3 mt-1 border block w-full outline-none shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm" defaultValue="${contactDetail.email}" />
+                                    <input type="text" disabled className="py-2 px-3 mt-1 border block w-full outline-none shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm" defaultValue={contact?.email} />
                                 </div>
                                 <div className="col-span-6 md:col-span-3">
                                     <label htmlFor="customer-name" className="block text-sm font-medium text-gray-700">Chi nhánh feedback</label>
-                                    <input type="text" disabled name="customer-name" className="py-2 px-3 mt-1 border block w-full outline-none shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm" defaultValue="${contactDetail.store.name}" />
+                                    <input type="text" disabled className="py-2 px-3 mt-1 border block w-full outline-none shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm" defaultValue={contact?.store.name} />
                                 </div>
                                 <div className="col-span-6 md:col-span-3">
                                     <label htmlFor="customer-phone" className="block text-sm font-medium text-gray-700">Ngày gửi</label>
-                                    <input type="text" disabled name="customer-phone" className="py-2 px-3 mt-1 border block w-full outline-none shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm" defaultValue="${formatDate(contactDetail.createdAt)}" />
+                                    <input id="a" className="py-2 px-3 mt-1 border block w-full outline-none shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm" defaultValue={contact?.createdAt} />
                                 </div>
                                 <div className="col-span-6">
                                     <label htmlFor="feedback-content" className="block text-sm font-medium text-gray-700">Nội dung</label>
-                                    <textarea id="feedback-content" disabled name="feedback-content" rows={10} className="py-2 px-3 outline-none shadow-sm mt-1 block w-full sm:text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm" defaultValue={"${contactDetail.content}"} />
+                                    <textarea id="feedback-content" disabled rows={10} className="py-2 px-3 outline-none shadow-sm mt-1 block w-full sm:text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm" defaultValue={contact?.content} />
                                 </div>
                             </div>
                         </div>
