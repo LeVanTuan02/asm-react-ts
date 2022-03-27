@@ -16,9 +16,9 @@ export const get = (id: string) => {
     return instance.get(url);
 }
 
-export const add = (user: UserType) => {
+export const add = (userData: UserType) => {
     const url = `/${DB_NAME}/${user._id}`;
-    return instance.post(url, user, {
+    return instance.post(url, userData, {
         headers: {
             Authorization: `Bearer ${token}`
         }

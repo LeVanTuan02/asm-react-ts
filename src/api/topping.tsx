@@ -27,10 +27,18 @@ export const add = (topping: ToppingType) => {
 
 export const remove = (id: string) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
-    return instance.delete(url);
+    return instance.delete(url, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
 }
 
 export const update = (topping: ToppingType) => {
     const url = `/${DB_NAME}/${topping._id}/${user._id}`;
-    return instance.put(url, topping);
+    return instance.put(url, topping, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
 }
