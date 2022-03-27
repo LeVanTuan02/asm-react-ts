@@ -1,5 +1,8 @@
 import { CategoryNewsType } from "../types/categoryNews";
+import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
+
+const { token, user } = isAuthenticate();
 
 const DB_NAME = "catenews";
 
@@ -14,16 +17,28 @@ export const get = (slug: string) => {
 }
 
 export const add = (category: CategoryNewsType) => {
-    const url = `/${DB_NAME}`;
-    return instance.post(url, category);
+    const url = `/${DB_NAME}/${user._id}`;
+    return instance.post(url, category, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
 };
 
 export const remove = (id: string) => {
-    const url = `/${DB_NAME}/${id}`;
-    return instance.delete(url);
+    const url = `/${DB_NAME}/${id}/${user._id}`;
+    return instance.delete(url, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
 }
 
 export const update = (category: CategoryNewsType) => {
-    const url = `/${DB_NAME}/${category._id}`;
-    return instance.put(url, category);
+    const url = `/${DB_NAME}/${category._id}/${user._id}`;
+    return instance.put(url, category, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
 }
