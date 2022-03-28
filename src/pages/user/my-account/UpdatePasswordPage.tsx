@@ -1,24 +1,104 @@
+import { SubmitHandler, useForm } from "react-hook-form";
+import toastr from "toastr";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { checkPassword } from "../../../api/auth";
+import { isAuthenticate } from "../../../utils/localStorage";
+import { updateMyInfo } from "../../../api/user";
+
+type InputsType = {
+    oldPassword: string,
+    newPassword: string,
+    confirmPassword: string,
+}
+
+const schema = yup.object().shape({
+    oldPassword: yup
+        .string()
+        .required("Vui lòng nhập mật khẩu hiện tại")
+        .test("is_confirm", "Mật khẩu hiện tại không chính xác", async function (value: string) {
+            const { user } = isAuthenticate();
+            try {
+                const { data } = await checkPassword({ _id: user._id, password: value });
+                if (data.success) return 1;
+            } catch (error: any) {
+                console.log({ error });
+            }
+
+            return 0;
+        }),
+    newPassword: yup
+        .string()
+        .required("Vui lòng nhập mật khẩu mới")
+        .min(4, "Vui lòng nhập mật khẩu tối thiểu 4 ký tự"),
+    confirmPassword: yup
+        .string()
+        .required("Vui lòng xác nhận mật khẩu")
+        .test("is_confirm", "Mật khẩu xác nhận không chính xác", function (value) {
+            const { newPassword } = this.parent;
+
+            return newPassword === value;
+        })
+});
+
 const UpdatePasswordPage = () => {
+    const { user } = isAuthenticate();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm<InputsType>({ resolver: yupResolver(schema) });
+
+    const onSubmit: SubmitHandler<InputsType> = async dataInput => {
+        try {
+            await updateMyInfo({ _id: user._id ,password: dataInput.newPassword });
+            toastr.success("Cập nhật mật khẩu thành công");
+            reset();
+        } catch (error) {
+            toastr.error("Đã có lỗi xảy ra, vui lòng thử lại");
+        }
+    }
+
     return (
         <>
             <h2 className="uppercase text-lg font-semibold text-gray-600 pb-1 border-b">Đổi mật khẩu</h2>
 
-            <form action="" className="mt-4" id="form__change-pass">
+            <form action="" className="mt-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-12 gap-3">
                     <div className="col-span-12">
                         <label htmlFor="form__change-pass-current-pass" className="mb-1 block font-semibold">Mật khẩu cũ *</label>
-                        <input type="password" id="form__change-pass-current-pass" className="shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] w-full border px-2 h-10 text-sm outline-none" placeholder="Nhập họ mật khẩu hiện tại" />
-                        <div className="text-sm mt-0.5 text-red-500"></div>
+                        <input
+                            type="password"
+                            {...register("oldPassword")}
+                            id="form__change-pass-current-pass"
+                            className="shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] w-full border px-2 h-10 text-sm outline-none"
+                            placeholder="Nhập mật khẩu hiện tại"
+                        />
+                        <div className="text-sm mt-0.5 text-red-500">{errors.oldPassword?.message}</div>
                     </div>
                     <div className="col-span-12">
                         <label htmlFor="form__change-pass-new-pass" className="mb-1 block font-semibold">Mật khẩu mới *</label>
-                        <input type="password" id="form__change-pass-new-pass" className="shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] w-full border px-2 h-10 text-sm outline-none" placeholder="Nhập mật khẩu mới" />
-                        <div className="text-sm mt-0.5 text-red-500"></div>
+                        <input
+                            type="password"
+                            {...register("newPassword")}
+                            id="form__change-pass-new-pass"
+                            className="shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] w-full border px-2 h-10 text-sm outline-none"
+                            placeholder="Nhập mật khẩu mới"
+                        />
+                        <div className="text-sm mt-0.5 text-red-500">{errors.newPassword?.message}</div>
                     </div>
                     <div className="col-span-12">
                         <label htmlFor="form__change-pass-confirm" className="mb-1 block font-semibold">Xác nhận mật khẩu mới *</label>
-                        <input type="password" id="form__change-pass-confirm" className="shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] w-full border px-2 h-10 text-sm outline-none" placeholder="Xác nhận mật khẩu mới" />
-                        <div className="text-sm mt-0.5 text-red-500"></div>
+                        <input
+                            type="password"
+                            {...register("confirmPassword")}
+                            id="form__change-pass-confirm"
+                            className="shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] w-full border px-2 h-10 text-sm outline-none"
+                            placeholder="Xác nhận mật khẩu mới"
+                        />
+                        <div className="text-sm mt-0.5 text-red-500">{errors.confirmPassword?.message}</div>
                     </div>
                 </div>
 

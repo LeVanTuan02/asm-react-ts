@@ -2,7 +2,6 @@ import { UserType } from "../types/user";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
 
-const { token, user } = isAuthenticate();
 
 const DB_NAME = "users";
 
@@ -16,7 +15,7 @@ export const get = (id: string) => {
     return instance.get(url);
 }
 
-export const add = (userData: UserType) => {
+export const add = (userData: UserType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${user._id}`;
     return instance.post(url, userData, {
         headers: {
@@ -25,7 +24,7 @@ export const add = (userData: UserType) => {
     });
 };
 
-export const remove = (id: string) => {
+export const remove = (id: string, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
     return instance.delete(url, {
         headers: {
@@ -34,8 +33,17 @@ export const remove = (id: string) => {
     });
 }
 
-export const update = (userData: UserType) => {
+export const update = (userData: UserType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${userData._id}/${user._id}`;
+    return instance.put(url, userData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+}
+
+export const updateMyInfo = (userData: UserType, { token, user } = isAuthenticate()) => {
+    const url = `/${DB_NAME}/updateInfo/${userData._id}/${user._id}`;
     return instance.put(url, userData, {
         headers: {
             Authorization: `Bearer ${token}`
