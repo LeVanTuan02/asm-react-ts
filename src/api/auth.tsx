@@ -10,3 +10,8 @@ export const signup = (user: UserType) => {
     const url = `/signup`;
     return instance.post(url, user);
 }
+
+export const checkPassword = (data: { _id: string, password: string} ) => {
+    const url = `/checkPassword`;
+    return instance.post(url, data);
+}

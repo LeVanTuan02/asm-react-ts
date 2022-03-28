@@ -1,6 +1,130 @@
+import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import toastr from "toastr";
+import { isAuthenticate } from "../../../utils/localStorage";
+import { LocationType } from "../../../types/location";
+import { getAllProvince, getDistrictByProvince, getWardByDistrict } from "../../../api/location";
+import { uploadFile } from "../../../utils";
+import { get, update } from "../../../api/user";
+
+type InputsType = {
+    fullName: string,
+    username: string,
+    phone: string,
+    email: string,
+    provinceCode: number,
+    districtCode: number,
+    wardsCode: number,
+    address: string,
+    avatar: string,
+}
+
+const schema = yup.object().shape({
+    fullName: yup
+        .string()
+        .required("Vui lòng nhập họ tên"),
+    username: yup
+        .string()
+        .required("Vui lòng nhập username"),
+    email: yup
+        .string()
+        .required("Vui lòng nhập email")
+        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Email không đúng định dạng"),
+    provinceCode: yup
+        .string()
+        .required("Vui lòng chọn Tỉnh/Tp"),
+    districtCode: yup
+        .string()
+        .required("Vui lòng chọn Quận/Huyện"),
+    wardsCode: yup
+        .string()
+        .required("Vui lòng chọn Xã/Phường"),
+    address: yup
+        .string()
+        .required("Vui lòng nhập địa chỉ chi tiết"),
+    phone: yup
+        .string()
+        .required("Vui lòng nhập sdt")
+        .matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/, "Số điện thoại không đúng định dạng"),
+});
 
 const AdminUpdateInfoPage = () => {
+    const [preview, setPreview] = useState<string>();
+    const [provinces, setProvinces] = useState<LocationType[]>();
+    const [districts, setDistricts] = useState<LocationType[]>();
+    const [wards, setWards] = useState<LocationType[]>();
+
+    const { token, user } = isAuthenticate();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm<InputsType>({ resolver: yupResolver(schema) });
+
+    const onSubmit: SubmitHandler<InputsType> = async dataInput => {
+        try {
+            if (typeof dataInput.avatar === "object" && dataInput.avatar.length) {
+                dataInput.avatar = await uploadFile(dataInput.avatar[0]);
+            }
+
+            update(dataInput)
+                .then(async () => {
+                    const { data: { password, ...rest } } = await get(user._id);
+                    localStorage.setItem("auth", JSON.stringify({ token, user: rest }));
+                })
+                .then(() => toastr.success("Cập nhật tài khoản thành công"));
+        } catch (error) {
+            toastr.error("Cập nhật tài khoản không thành công");
+        }
+    }
+
+    useEffect(() => {
+        setPreview(user.avatar);
+
+        const startCallApi = async () => {
+            const { data } = await getAllProvince();
+            setProvinces(data);
+
+            if (user.provinceCode) {
+                const { data: { districts } } = await getDistrictByProvince(user.provinceCode);
+                setDistricts(districts);
+            }
+
+            if (user.districtCode) {
+                const { data: { wards } } = await getWardByDistrict(user.districtCode);
+                setWards(wards);
+            }
+
+            reset({
+                ...user,
+                provinceCode: user.provinceCode || "",
+                districtCode: user.districtCode || "",
+                wardsCode: user.wardsCode || "",
+            });
+        };
+        startCallApi();
+
+    }, []);
+
+    const handleChangeProvince = async (e: any) => {
+        const { data: { districts } } = await getDistrictByProvince(e.target.value);
+        setDistricts(districts);
+    }
+
+    const handleChangeDistrict = async (e: any) => {
+        const { data: { wards } } = await getWardByDistrict(e.target.value);
+        setWards(wards);
+    }
+
+    const handlePreview = (e: any) => {
+        setPreview(URL.createObjectURL(e.target.files[0]));
+    }
+
     return (
         <>
             <header className="z-10 fixed top-14 left-0 md:left-60 right-0 px-4 py-1.5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center justify-between">
@@ -18,72 +142,113 @@ const AdminUpdateInfoPage = () => {
             </header>
 
             <div className="p-6 mt-24 overflow-hidden">
-                <form action="" method="POST" id="form__update-account">
+                <form action="" method="POST" onSubmit={handleSubmit(onSubmit)}>
                     <div className="shadow overflow-hidden sm:rounded-md">
                         <div className="px-4 py-5 bg-white sm:p-6">
                             <span className="font-semibold mb-4 block text-xl">Thông tin tài khoản:</span>
                             <div className="grid grid-cols-6 gap-3">
                                 <div className="col-span-6">
                                     <label htmlFor="form__update-account-fullname" className="block text-sm font-medium text-gray-700">Họ và tên</label>
-                                    <input type="text" name="form__update-account-fullname" id="form__update-account-fullname" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập tên đầy đủ" defaultValue="${userInfo.fullName}" />
+                                    <input
+                                        type="text"
+                                        {...register("fullName")}
+                                        id="form__update-account-fullname"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập tên đầy đủ"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.fullName?.message}</div>
                                 </div>
                                 <div className="col-span-6 md:col-span-3">
                                     <label htmlFor="form__update-account-username" className="block text-sm font-medium text-gray-700">Username</label>
-                                    <input type="text" name="form__update-account-username" id="form__update-account-username" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập username" defaultValue="${userInfo.username}" />
+                                    <input
+                                        {...register("username")}
+                                        type="text"
+                                        id="form__update-account-username"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập username"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.username?.message}</div>
                                 </div>
                                 <div className="col-span-6 md:col-span-3">
                                     <label htmlFor="form__update-account-phone" className="block text-sm font-medium text-gray-700">Số điện thoại</label>
-                                    <input type="text" name="form__update-account-phone" id="form__update-account-phone" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập sdt" defaultValue="${userInfo.phone}" />
-                                </div>
-                                <div className="col-span-6 md:col-span-3">
-                                    <label htmlFor="form__update-account-role" className="block text-sm font-medium text-gray-700">Vai trò</label>
-                                    <select id="form__update-account-role" name="form__update-account-role" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                        <option value="">-- Chọn vai trò --</option>
-                                        <option value={0}>Khách hàng</option>
-                                        <option value={1}>Admin</option>
-                                    </select>
-                                </div>
-                                <div className="col-span-6 md:col-span-3">
-                                    <label htmlFor="form__update-account-stt" className="block text-sm font-medium text-gray-700">Trạng thái</label>
-                                    <select id="form__update-account-stt" name="form__update-account-stt" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                        <option value="">-- Chọn trạng thái tài khoản --</option>
-                                        <option value={0}>Khóa</option>
-                                        <option value={1}>Kích hoạt</option>
-                                    </select>
+                                    <input
+                                        type="text"
+                                        {...register("phone")}
+                                        id="form__update-account-phone"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập sdt"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.phone?.message}</div>
                                 </div>
                                 <div className="col-span-6">
                                     <label htmlFor="form__update-account-email" className="block text-sm font-medium text-gray-700">Email</label>
-                                    <input type="text" name="form__update-account-email" id="form__update-account-email" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập email" defaultValue="${userInfo.email}" />
+                                    <input
+                                        type="text"
+                                        {...register("email")}
+                                        id="form__update-account-email"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập email"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.email?.message}</div>
                                 </div>
                                 <div className="col-span-6 md:col-span-2">
                                     <label htmlFor="form__update-account-province" className="block text-sm font-medium text-gray-700">Tỉnh/TP</label>
-                                    <select id="form__update-account-province" name="form__update-account-province" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select
+                                        {...register("provinceCode")}
+                                        onChange={e => handleChangeProvince(e)}
+                                        id="form__update-account-province"
+                                        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    >
                                         <option value="">-- Chọn Tỉnh/TP --</option>
-                                        <option value="${item.code}">${'{'}item.name{'}'}</option>
+                                        {provinces?.map((item, index) => <option key={index} value={item.code}>{item.name}</option>)}
                                     </select>
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.provinceCode?.message}</div>
                                 </div>
                                 <div className="col-span-6 md:col-span-2">
                                     <label htmlFor="form__update-account-district" className="block text-sm font-medium text-gray-700">Quận/Huyện</label>
-                                    <select id="form__update-account-district" name="form__update-account-district" className="form-control mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select
+                                        {...register("districtCode")}
+                                        onChange={e => handleChangeDistrict(e)}
+                                        id="form__update-account-district"
+                                        className="form-control mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    >
                                         <option value="">-- Chọn Quận/Huyện --</option>
-                                        <option value="${item.code}">${'{'}item.name{'}'}</option>
+                                        {districts?.map((item, index) => <option key={index} value={item.code}>{item.name}</option>)}
                                     </select>
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.districtCode?.message}</div>
                                 </div>
                                 <div className="col-span-6 md:col-span-2">
                                     <label htmlFor="form__update-account-ward" className="block text-sm font-medium text-gray-700">Xã/Phường</label>
-                                    <select id="form__update-account-ward" name="form__update-account-ward" className="form-control mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select
+                                        {...register("wardsCode")}
+                                        id="form__update-account-ward"
+                                        className="form-control mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    >
                                         <option value="">-- Chọn Xã/Phường --</option>
-                                        <option value="${item.code}">${'{'}item.name{'}'}</option>
+                                        {wards?.map((item, index) => <option key={index} value={item.code}>{item.name}</option>)}
                                     </select>
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.wardsCode?.message}</div>
                                 </div>
                                 <div className="col-span-6">
                                     <label htmlFor="form__update-account-address" className="block text-sm font-medium text-gray-700">Địa chỉ hiện tại</label>
-                                    <input type="text" name="form__update-account-address" id="form__update-account-address" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập thôn/xóm/TDP" defaultValue="${userInfo.address}" />
+                                    <input 
+                                        type="text"
+                                        {...register("address")}
+                                        id="form__update-account-address"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập thôn/xóm/TDP"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.address?.message}</div>
                                 </div>
                                 <div className="col-span-3">
                                     <label className="block text-sm font-medium text-gray-700">Xem trước ảnh</label>
                                     <div className="mt-1">
-                                        <img src="https://res.cloudinary.com/levantuan/image/upload/v1645339820/assignment-js/edtav74kaqptfmzppp2i.jpg" alt="Preview Image" id="form__update-account-preview" className="h-40 w-40 rounded-full object-cover" />
+                                        <img
+                                            src={ preview }
+                                            alt="Preview Image"
+                                            id="form__update-account-preview"
+                                            className="h-40 w-40 rounded-full object-cover"
+                                        />
                                     </div>
                                 </div>
                                 <div className="col-span-6">
@@ -96,7 +261,13 @@ const AdminUpdateInfoPage = () => {
                                             <div className="flex text-sm text-gray-600">
                                                 <label htmlFor="form__update-account-avatar" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                                     <span>Upload a file</span>
-                                                    <input id="form__update-account-avatar" name="form__update-account-avatar" type="file" className="sr-only" />
+                                                    <input
+                                                        {...register("avatar")}
+                                                        onChange={e => handlePreview(e)}
+                                                        id="form__update-account-avatar"
+                                                        type="file"
+                                                        className="sr-only"
+                                                    />
                                                 </label>
                                                 <p className="pl-1">or drag and drop</p>
                                             </div>
@@ -117,3 +288,7 @@ const AdminUpdateInfoPage = () => {
 }
 
 export default AdminUpdateInfoPage;
+
+function getWardsByProvinceCode(provinceCode: any): { data: { wards: any; }; } | PromiseLike<{ data: { wards: any; }; }> {
+    throw new Error("Function not implemented.");
+}

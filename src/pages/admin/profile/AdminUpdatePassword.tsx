@@ -1,6 +1,67 @@
+import { SubmitHandler, useForm } from "react-hook-form";
+import toastr from "toastr";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
+import { checkPassword } from "../../../api/auth";
+import { isAuthenticate } from "../../../utils/localStorage";
+import { update } from "../../../api/user";
+
+type InputsType = {
+    oldPassword: string,
+    newPassword: string,
+    confirmPassword: string,
+}
+
+const schema = yup.object().shape({
+    oldPassword: yup
+        .string()
+        .required("Vui lòng nhập mật khẩu hiện tại")
+        .test("is_confirm", "Mật khẩu hiện tại không chính xác", async function (value: string) {
+            const { user } = isAuthenticate();
+            try {
+                const { data } = await checkPassword({ _id: user._id, password: value });
+                if (data.success) return 1;
+            } catch (error: any) {
+                console.log({ error });
+            }
+
+            return 0;
+        }),
+    newPassword: yup
+        .string()
+        .required("Vui lòng nhập mật khẩu mới")
+        .min(4, "Vui lòng nhập mật khẩu tối thiểu 4 ký tự"),
+    confirmPassword: yup
+        .string()
+        .required("Vui lòng xác nhận mật khẩu")
+        .test("is_confirm", "Mật khẩu xác nhận không chính xác", function (value) {
+            const { newPassword } = this.parent;
+
+            return newPassword === value;
+        })
+});
 
 const AdminUpdatePassword = () => {
+    const { user } = isAuthenticate();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm<InputsType>({ resolver: yupResolver(schema) });
+
+    const onSubmit: SubmitHandler<InputsType> = async dataInput => {
+        try {
+            await update({ _id: user._id ,password: dataInput.newPassword });
+            toastr.success("Cập nhật mật khẩu thành công");
+            reset();
+        } catch (error) {
+            toastr.error("Đã có lỗi xảy ra, vui lòng thử lại");
+        }
+    }
+
     return (
         <>
             <header className="z-10 fixed top-14 left-0 md:left-60 right-0 px-4 py-1.5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center justify-between">
@@ -18,25 +79,43 @@ const AdminUpdatePassword = () => {
             </header>
 
             <div className="p-6 mt-24 overflow-hidden">
-                <form action="" method="POST" id="form__change-pass">
+                <form action="" method="POST" onSubmit={handleSubmit(onSubmit)}>
                     <div className="shadow overflow-hidden sm:rounded-md">
                         <div className="px-4 py-5 bg-white sm:p-6">
                             <span className="font-semibold mb-4 block text-xl">Thông tin chi tiết tài khoản:</span>
                             <div className="grid grid-cols-6 gap-3">
                                 <div className="col-span-6">
                                     <label htmlFor="form__change-pass-current-pass" className="block text-sm font-medium text-gray-700">Mật khẩu hiện tại</label>
-                                    <input type="password" name="form__change-pass-current-pass" id="form__change-pass-current-pass" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập mật khẩu hiện tại" />
-                                    <div className="text-sm mt-0.5 text-red-500" />
+                                    <input
+                                        type="password"
+                                        {...register("oldPassword")}
+                                        id="form__change-pass-current-pass"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập mật khẩu hiện tại"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.oldPassword?.message}</div>
                                 </div>
                                 <div className="col-span-6">
                                     <label htmlFor="form__change-pass-new-pass" className="block text-sm font-medium text-gray-700">Mật khẩu mới</label>
-                                    <input type="password" name="form__change-pass-new-pass" id="form__change-pass-new-pass" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Nhập mật khẩu mới" />
-                                    <div className="text-sm mt-0.5 text-red-500" />
+                                    <input
+                                        type="password"
+                                        {...register("newPassword")}
+                                        id="form__change-pass-new-pass"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Nhập mật khẩu mới"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.newPassword?.message}</div>
                                 </div>
                                 <div className="col-span-6">
                                     <label htmlFor="form__change-pass-confirm" className="block text-sm font-medium text-gray-700">Xác nhận mật khẩu mới</label>
-                                    <input type="password" name="form__change-pass-confirm" id="form__change-pass-confirm" className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Xác nhận mật khẩu mới" />
-                                    <div className="text-sm mt-0.5 text-red-500" />
+                                    <input
+                                        type="password"
+                                        {...register("confirmPassword")}
+                                        id="form__change-pass-confirm"
+                                        className="py-2 px-3 mt-1 border focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Xác nhận mật khẩu mới"
+                                    />
+                                    <div className="text-sm mt-0.5 text-red-500">{errors.confirmPassword?.message}</div>
                                 </div>
                             </div>
                         </div>
