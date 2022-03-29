@@ -1,5 +1,9 @@
 import "toastr/build/toastr.css";
 import 'sweetalert2/dist/sweetalert2.css';
+// Import css files
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 import { Route, Routes } from "react-router-dom"
 import NotFound from "./components/NotFound";
 import CartDetailPage from "./pages/admin/cart/CartDetailPage";
