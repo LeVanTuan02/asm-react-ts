@@ -12,7 +12,7 @@ export const getAll = () => {
 };
 
 export const get = (slug: string) => {
-    const url = `/${DB_NAME}/${slug}`;
+    const url = `/${DB_NAME}/${slug}/?_expand=categoryId`;
     return instance.get(url);
 }
 
@@ -41,4 +41,9 @@ export const update = (product: ProductType) => {
             Authorization: `Bearer ${token}`
         }
     });
+}
+
+export const getFavorites = () => {
+    const url = `/${DB_NAME}/?_sort=favorites&_order=desc&_limit=10`
+    return instance.get(url);
 }

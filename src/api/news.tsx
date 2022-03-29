@@ -11,8 +11,8 @@ export const getAll = () => {
     return instance.get(url);
 };
 
-export const get = (slug: string) => {
-    const url = `/${DB_NAME}/${slug}`;
+export const get = (slug: string | undefined) => {
+    const url = `/${DB_NAME}/${slug}/?_expand=category`;
     return instance.get(url);
 }
 
@@ -41,4 +41,9 @@ export const update = (news: NewsType) => {
             Authorization: `Bearer ${token}`
         }
     });
+}
+
+export const relatedPost = (id: string | undefined, cateId: string | undefined) => {
+    const url = `/${DB_NAME}/?category=${cateId}&_id_ne=${id}`;
+    return instance.get(url);
 }
