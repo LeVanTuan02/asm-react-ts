@@ -1,8 +1,23 @@
 import { faAngleLeft, faAngleRight, faHeart, faStar, faTh, faThList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getAll } from "../../api/product";
+import NavProduct from "../../components/user/NavProduct";
+import { ProductType } from "../../types/product";
+import { formatCurrency } from "../../utils";
 
 const ProductPage = () => {
+    const [products, setProducts] = useState<ProductType[]>();
+
+    useEffect(() => {
+        const getProducts = async () => {
+            const { data } = await getAll();
+            setProducts(data);
+        };
+        getProducts();
+    }, []);
+
     return (
         <>
             <section className="container max-w-6xl mx-auto px-3 pt-8 mb-5 text-center">
@@ -14,66 +29,8 @@ const ProductPage = () => {
             </section>
 
             <section className="container max-w-6xl mx-auto px-3 grid grid-cols-12 gap-6 mb-8">
-                <aside className="hidden lg:block lg:col-span-3 pt-3">
-                    <div>
-                        <h2 className="uppercase font-bold pb-2 relative after:content-[''] after:absolute after:top-[100%] after:left-0 after:w-8 after:h-1 after:bg-gray-300">Danh mục sản phẩm</h2>
-                        <ul className="grid grid-cols-1 divide-y mt-3">
-                            <li>
-                                <a href="" className="text-[#D9A953] block uppercase py-2 transition duration-300 ease-linear hover:text-black">Trà sữa</a>
-                            </li>
-                            <li>
-                                <a href="" className="text-[#D9A953] block uppercase py-2 transition duration-300 ease-linear hover:text-black">Trà sữa</a>
-                            </li>
-                            <li>
-                                <a href="" className="text-[#D9A953] block uppercase py-2 transition duration-300 ease-linear hover:text-black">Trà sữa</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div className="mt-3">
-                        <h2 className="uppercase font-bold pb-2 relative after:content-[''] after:absolute after:top-[100%] after:left-0 after:w-8 after:h-1 after:bg-gray-300">Lọc theo giá</h2>
-                    </div>
-                    <div className="mt-5">
-                        <h2 className="uppercase font-bold pb-2 relative after:content-[''] after:absolute after:top-[100%] after:left-0 after:w-8 after:h-1 after:bg-gray-300">Sản phẩm yêu thích</h2>
-                        <ul className="grid grid-cols-1 divide-y mt-2">
-                            <li className="py-3 flex">
-                                <a href="" className="block bg-[#f7f7f7]">
-                                    <img className="w-16 h-16 object-cover block" src="https://res.cloudinary.com/levantuan/image/upload/v1645173898/assignment-js/zszteiclgqgnvcwtcgr7.png" alt="" />
-                                </a>
-                                <div className="ml-3 flex-1">
-                                    <a href="" className="uppercase transition duration-300 ease-linear hover:text-black block text-[#D9A953] text-sm">Trà sữa trân châu đường đen</a>
-                                    <span className="font-semibold">25.000 VND</span>
-                                </div>
-                            </li>
-                            <li className="py-3 flex">
-                                <a href="" className="block bg-[#f7f7f7]">
-                                    <img className="w-16 h-16 object-cover block" src="https://res.cloudinary.com/levantuan/image/upload/v1645173898/assignment-js/zszteiclgqgnvcwtcgr7.png" alt="" />
-                                </a>
-                                <div className="ml-3 flex-1">
-                                    <a href="" className="uppercase transition duration-300 ease-linear hover:text-black block text-[#D9A953] text-sm">Trà sữa trân châu đường đen</a>
-                                    <span className="font-semibold">25.000 VND</span>
-                                </div>
-                            </li>
-                            <li className="py-3 flex">
-                                <a href="" className="block bg-[#f7f7f7]">
-                                    <img className="w-16 h-16 object-cover block" src="https://res.cloudinary.com/levantuan/image/upload/v1645173898/assignment-js/zszteiclgqgnvcwtcgr7.png" alt="" />
-                                </a>
-                                <div className="ml-3 flex-1">
-                                    <a href="" className="uppercase transition duration-300 ease-linear hover:text-black block text-[#D9A953] text-sm">Trà sữa trân châu đường đen</a>
-                                    <span className="font-semibold">25.000 VND</span>
-                                </div>
-                            </li>
-                            <li className="py-3 flex">
-                                <a href="" className="block bg-[#f7f7f7]">
-                                    <img className="w-16 h-16 object-cover block" src="https://res.cloudinary.com/levantuan/image/upload/v1645173898/assignment-js/zszteiclgqgnvcwtcgr7.png" alt="" />
-                                </a>
-                                <div className="ml-3 flex-1">
-                                    <a href="" className="uppercase transition duration-300 ease-linear hover:text-black block text-[#D9A953] text-sm">Trà sữa trân châu đường đen</a>
-                                    <span className="font-semibold">25.000 VND</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </aside>
+                <NavProduct />
+
                 <div className="col-span-12 lg:col-span-9">
                     <div className="border-b pb-2 flex justify-between items-center">
                         <div className="flex items-center">
@@ -104,68 +61,42 @@ const ProductPage = () => {
                     </div>
                     <div id="product-list">
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
-                            <div className="group product-item" data-id="${item.id}">
-                                <div className="relative bg-[#f7f7f7] overflow-hidden">
-                                    <Link to="/san-pham/ten-san-pham" style={{backgroundImage: 'url(https://res.cloudinary.com/levantuan/image/upload/v1645173898/assignment-js/zszteiclgqgnvcwtcgr7.png)'}} className="bg-cover pt-[100%] bg-center block" />
-                                    <button className="absolute w-full bottom-0 h-9 bg-[#D9A953] text-center text-gray-50 opacity-95 uppercase font-semibold text-sm transition ease-linear duration-300 hover:opacity-100 hover:text-white translate-y-full group-hover:translate-y-0">Xem nhanh</button>
-                                    <button data-id="${item.id}" className="btn-heart absolute top-3 right-3 w-8 h-8 rounded-full border-2 text-[#c0c0c0] text-lg border-[#c0c0c0] transition duration-300 hover:text-white hover:bg-red-700 hover:border-red-700 opacity-0 group-hover:opacity-100">
-                                        <FontAwesomeIcon icon={faHeart} />
-                                    </button>
+                            {products?.map((item, index) => (
+                                <div className="group" key={index}>
+                                    <div className="relative bg-[#f7f7f7] overflow-hidden">
+                                        <Link to={`/san-pham/${item.slug}`}
+                                            style={{backgroundImage: `url(${item.image})`}}
+                                            className="bg-cover pt-[100%] bg-center block"
+                                        />
+                                        <button className="absolute w-full bottom-0 h-9 bg-[#D9A953] text-center text-gray-50 opacity-95 uppercase font-semibold text-sm transition ease-linear duration-300 hover:opacity-100 hover:text-white translate-y-full group-hover:translate-y-0">Xem nhanh</button>
+                                        <button className="btn-heart absolute top-3 right-3 w-8 h-8 rounded-full border-2 text-[#c0c0c0] text-lg border-[#c0c0c0] transition duration-300 hover:text-white hover:bg-red-700 hover:border-red-700 opacity-0 group-hover:opacity-100">
+                                            <FontAwesomeIcon icon={faHeart} />
+                                        </button>
+                                    </div>
+                                    <div className="text-center py-3">
+                                        <p className="uppercase text-xs text-gray-400">{item.categoryId.name}</p>
+                                        <Link to={`/san-pham/${item.slug}`} className="block font-semibold text-lg">{item.name}</Link>
+                                        <ul className="flex text-yellow-500 text-xs justify-center pt-1">
+                                            <div className="text-gray-300">
+                                                <FontAwesomeIcon icon={faStar} />
+                                            </div>
+                                            <div className="text-gray-300">
+                                                <FontAwesomeIcon icon={faStar} />
+                                            </div>
+                                            <div className="text-gray-300">
+                                                <FontAwesomeIcon icon={faStar} />
+                                            </div>
+                                            <div className="text-gray-300">
+                                                <FontAwesomeIcon icon={faStar} />
+                                            </div>
+                                            <div className="text-gray-300">
+                                                <FontAwesomeIcon icon={faStar} />
+                                            </div>
+                                        </ul>
+                                        <div className="text-sm pt-1">{formatCurrency(item.price)}</div>
+                                    </div>
                                 </div>
-                                <div className="text-center py-3">
-                                    <p className="uppercase text-xs text-gray-400">Milk Tea</p>
-                                    <Link to="/san-pham/ten-san-pham" className="block font-semibold text-lg">Trà sữa dâu nữ hoàng</Link>
-                                    <ul className="flex text-yellow-500 text-xs justify-center pt-1">
-                                        <div className="text-gray-300">
-                                            <FontAwesomeIcon icon={faStar} />
-                                        </div>
-                                        <div className="text-gray-300">
-                                            <FontAwesomeIcon icon={faStar} />
-                                        </div>
-                                        <div className="text-gray-300">
-                                            <FontAwesomeIcon icon={faStar} />
-                                        </div>
-                                        <div className="text-gray-300">
-                                            <FontAwesomeIcon icon={faStar} />
-                                        </div>
-                                        <div className="text-gray-300">
-                                            <FontAwesomeIcon icon={faStar} />
-                                        </div>
-                                    </ul>
-                                    <div className="text-sm pt-1"> 25.000 VND </div>
-                                </div>
-                            </div>
-                            <div className="group product-item" data-id="${item.id}">
-                                <div className="relative bg-[#f7f7f7] overflow-hidden">
-                                    <Link to="/san-pham/ten-san-pham" style={{backgroundImage: 'url(https://res.cloudinary.com/levantuan/image/upload/v1645173898/assignment-js/zszteiclgqgnvcwtcgr7.png)'}} className="bg-cover pt-[100%] bg-center block" />
-                                    <button className="absolute w-full bottom-0 h-9 bg-[#D9A953] text-center text-gray-50 opacity-95 uppercase font-semibold text-sm transition ease-linear duration-300 hover:opacity-100 hover:text-white translate-y-full group-hover:translate-y-0">Xem nhanh</button>
-                                    <button data-id="${item.id}" className="btn-heart absolute top-3 right-3 w-8 h-8 rounded-full border-2 text-[#c0c0c0] text-lg border-[#c0c0c0] transition duration-300 hover:text-white hover:bg-red-700 hover:border-red-700 opacity-0 group-hover:opacity-100">
-                                        <FontAwesomeIcon icon={faHeart} />
-                                    </button>
-                                </div>
-                                <div className="text-center py-3">
-                                    <p className="uppercase text-xs text-gray-400">Milk Tea</p>
-                                    <Link to="/san-pham/ten-san-pham" className="block font-semibold text-lg">Trà sữa dâu nữ hoàng</Link>
-                                    <ul className="flex text-yellow-500 text-xs justify-center pt-1">
-                                        <div className="text-gray-300">
-                                            <FontAwesomeIcon icon={faStar} />
-                                        </div>
-                                        <div className="text-gray-300">
-                                            <FontAwesomeIcon icon={faStar} />
-                                        </div>
-                                        <div className="text-gray-300">
-                                            <FontAwesomeIcon icon={faStar} />
-                                        </div>
-                                        <div className="text-gray-300">
-                                            <FontAwesomeIcon icon={faStar} />
-                                        </div>
-                                        <div className="text-gray-300">
-                                            <FontAwesomeIcon icon={faStar} />
-                                        </div>
-                                    </ul>
-                                    <div className="text-sm pt-1"> 25.000 VND </div>
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                     <ul className="flex justify-center mt-5">

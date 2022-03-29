@@ -69,6 +69,7 @@ import ProductPage from "./pages/user/ProductPage";
 import StorePage from "./pages/user/StorePage";
 import PrivateRouter from "./components/admin/PrivateRouter";
 import { useState } from "react";
+import NewsDetail from "./pages/user/NewsDetail";
 
 const App = () => {
     const [logged, setLogged] = useState(false);
@@ -83,6 +84,7 @@ const App = () => {
                 <Route path="thuc-don" element={<ProductPage />} />
                 <Route path="san-pham/:slug" element={<ProductDetailPage />} />
                 <Route path="tin-tuc" element={<NewsPage />} />
+                <Route path="bai-viet/:slug" element={<NewsDetail />} />
                 <Route path="lien-he" element={<ContactPage />} />
                 <Route path="cua-hang" element={<StorePage />} />
                 <Route path="login" element={<LoginPage onLogin={handleLogin} />} />

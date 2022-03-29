@@ -11,7 +11,7 @@ export const uploadFile = async (fileName: string) => {
 export const formatCurrency = (currency: number) => currency.toLocaleString("it-IT", { style: "currency", currency: "VND" });
 
 // format date
-export const formatDate = (dateString: Date) => {
+export const formatDate = (dateString: Date | string) => {
     const date = new Date(dateString);
 
     const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
@@ -20,3 +20,9 @@ export const formatDate = (dateString: Date) => {
 
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${hours}:${minutes}:${seconds}`;
 };
+
+// định dạng ngày tạo bài viết
+export const formatDateNews = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getDate()} Tháng ${date.getMonth() + 1}, ${date.getFullYear()}`;
+}
