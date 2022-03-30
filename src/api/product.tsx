@@ -11,6 +11,11 @@ export const getAll = () => {
     return instance.get(url);
 };
 
+export const getProductByCate = (cateId: string | undefined) => {
+    const url = `/${DB_NAME}/?categoryId=${cateId}&_sort=createdAt&_order=desc&_expand=categoryId`;
+    return instance.get(url);
+}
+
 export const search = (keyword: string | undefined) => {
     const url = `/${DB_NAME}/?_sort=createdAt&_order=desc&name_like=${keyword}`;
     return instance.get(url);
