@@ -2,10 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-.store__list-map iframe {
+.store__list-map > div > iframe {
     @apply w-full h-full rounded-lg
 }
 
 select.disabled {
     @apply bg-gray-50
+}
+
+.limit-line-3 {
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.limit-line-2 {
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+}
+
+.btn__scroll-top.active {
+    @apply bottom-5 visible;
+}
+
+#header-bottom.active {
+    @apply fixed top-0 left-0 right-0 opacity-95 h-[70px] shadow-md z-20;
+    animation: slideDown 0.6s ease-in-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(0)
+    }
 }

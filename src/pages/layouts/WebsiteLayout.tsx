@@ -1,11 +1,30 @@
 import { faFacebookF, faInstagram, faTiktok, faYoutube } from "@fortawesome/free-brands-svg-icons";
 import { faBars, faChevronUp, faClock, faEnvelope, faHeart, faHome, faPhoneAlt, faSearch, faShoppingCart, faSortDown, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useRef, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { isAuthenticate } from "../../utils/localStorage";
 
 const WebsiteLayout = () => {
+    const [visible, setVisible] = useState(false);
+    const [headerFixed, setHeaderFixed] = useState<boolean>(false);
+
     const auth = isAuthenticate();
+
+    useEffect(() => {
+        window.addEventListener("scroll", () => {
+            const scrollTop = window.scrollY;
+            setVisible(scrollTop > 1000 ? true : false);
+            setHeaderFixed(scrollTop > 1000 ? true : false);
+        });
+    }, []);
+
+    const handleScrollTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
 
     return (
         <>
@@ -77,7 +96,7 @@ const WebsiteLayout = () => {
                         </ul>
                     </div>
                 </div>
-                <div className="md:h-24 h-[70px] bg-white" id="header-bottom">
+                <div className={`md:h-24 h-[70px] bg-white ${headerFixed && "active"}`} id="header-bottom">
                     <div className="container max-w-6xl mx-auto px-3 h-full">
                         <div className="border-b flex items-center h-full">
                             <div className="flex-1 md:hidden">
@@ -248,7 +267,11 @@ const WebsiteLayout = () => {
                         </strong>
                     </div>
                 </div>
-                <button className="btn__scroll-top invisible w-9 h-9 rounded-full border-2 border-gray-400 text-gray-400 fixed right-5 bottom-3 transition-all ease-linear duration-400 hover:text-white hover:bg-[#D9A953] hover:border-[#D9A953]">
+
+                <button
+                    onClick={handleScrollTop}
+                    className={`${visible && "active" } btn__scroll-top invisible w-9 h-9 rounded-full border-2 border-gray-400 text-gray-400 fixed right-5 bottom-3 transition-all ease-linear duration-400 hover:text-white hover:bg-[#D9A953] hover:border-[#D9A953]`}
+                >
                     <FontAwesomeIcon icon={faChevronUp} />
                 </button>
             </footer>
