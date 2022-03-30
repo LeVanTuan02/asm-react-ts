@@ -17,12 +17,8 @@ export const get = (id: string) => {
 }
 
 export const add = (contact: ContactType) => {
-    const url = `/${DB_NAME}/${user._id}`;
-    return instance.post(url, contact, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
+    const url = `/${DB_NAME}`;
+    return instance.post(url, contact);
 };
 
 export const remove = (id: string) => {

@@ -1,4 +1,72 @@
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import toastr from "toastr";
+import { useEffect, useState } from "react";
+import { getAll } from "../../api/store";
+import { StoreType } from "../../types/store";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { add } from "../../api/contact";
+
+type InputsType = {
+    name: string,
+    email: string,
+    phone: string,
+    store: string,
+    content: string,
+    confirm: string,
+}
+
+const schema = yup.object().shape({
+    name: yup
+        .string()
+        .required("Vui lòng nhập họ tên"),
+    store: yup
+        .string()
+        .required("Vui lòng chọn chi nhánh phản hồi"),
+    content: yup
+        .string()
+        .required("Vui lòng nhập nội dung phản hồi"),
+    confirm: yup
+        .bool()
+        .oneOf([true], "Vui lòng đồng ý với điều khoản của chúng tôi"),
+    email: yup
+        .string()
+        .required("Vui lòng nhập email")
+        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Email không đúng định dạng"),
+    phone: yup
+        .string()
+        .required("Vui lòng nhập sdt")
+        .matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/, "Số điện thoại không đúng định dạng"),
+});
+
 const ContactPage = () => {
+    const [stores, setStores] = useState<StoreType[]>();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm<InputsType>({ resolver: yupResolver(schema) });
+
+    const onSubmit: SubmitHandler<InputsType> = async ({ confirm, ...dataInput}) => {
+        try {
+            await add(dataInput);
+            toastr.success("Gửi liên hệ thành công");
+            reset();
+        } catch (error) {
+            toastr.error("Đã có lỗi xảy ra, vui lòng thử lại");
+        }
+    }
+
+    useEffect(() => {
+        const getStores = async () => {
+            const { data } = await getAll();
+            setStores(data);
+        };
+        getStores();
+    }, []);
+
     return (
         <>
             <section className="container max-w-6xl mx-auto px-3 py-8 text-center">
@@ -6,33 +74,72 @@ const ContactPage = () => {
                 <p>Từng ngày Yotea trở nên hoàn thiện hơn về diện mạo, chất lượng sản phẩm dịch vụ là nhờ sự đóng góp ý kiến của quý khách hàng. Để cảm nhận được sự thay đổi ấy, đừng ngần ngại nói với Yotea nhé.</p>
             </section>
             <section className="bg-[#EEE8DF] py-16">
-                <form action="" className="container max-w-6xl mx-auto px-3" id="contact__form">
+                <form action="" className="container max-w-6xl mx-auto px-3" onSubmit={handleSubmit(onSubmit)}>
                     <div className="grid grid-cols-12 gap-4">
                         <div className="col-span-12 md:col-span-6">
-                            <input type="text" placeholder="Họ và tên" name="contact__form-name" id="contact__form-name" className="w-full rounded-full outline-none h-10 px-4 shadow-sm" />
+                            <input
+                                type="text"
+                                {...register("name")}
+                                placeholder="Họ và tên"
+                                id="contact__form-name"
+                                className="w-full rounded-full outline-none h-10 px-4 shadow-sm"
+                            />
+                            <div className="text-sm mt-0.5 text-red-500">{errors.name?.message}</div>
                         </div>
                         <div className="col-span-12 md:col-span-6">
-                            <input type="text" placeholder="Email" id="contact__form-email" name="contact__form-email" className="w-full rounded-full outline-none h-10 px-4 shadow-sm" />
+                            <input
+                                type="text"
+                                {...register("email")}
+                                placeholder="Email"
+                                id="contact__form-email"
+                                className="w-full rounded-full outline-none h-10 px-4 shadow-sm"
+                            />
+                            <div className="text-sm mt-0.5 text-red-500">{errors.email?.message}</div>
                         </div>
                         <div className="col-span-12 md:col-span-6">
-                            <input type="text" placeholder="Số điện thoại" id="contact__form-phone" name="contact__form-phone" className="w-full rounded-full outline-none h-10 px-4 shadow-sm" />
+                            <input
+                                type="text"
+                                {...register("phone")}
+                                placeholder="Số điện thoại"
+                                id="contact__form-phone"
+                                className="w-full rounded-full outline-none h-10 px-4 shadow-sm"
+                            />
+                            <div className="text-sm mt-0.5 text-red-500">{errors.phone?.message}</div>
                         </div>
                         <div className="col-span-12 md:col-span-6">
-                            <select name="contact__form-store" id="contact__form-store" className="outline-none w-full rounded-full h-10 px-4 shadow-sm">
+                            <select
+                                id="contact__form-store"
+                                {...register("store")}
+                                className="outline-none w-full rounded-full h-10 px-4 shadow-sm"
+                            >
                                 <option value="">Cửa hàng phản hồi</option>
-                                <option value="${store.id}">Yotea Bắc Giang</option>
+                                {stores?.map((item, index) => <option key={index} value={item._id}>{item.name}</option>)}
                             </select>
+                            <div className="text-sm mt-0.5 text-red-500">{errors.store?.message}</div>
                         </div>
                         <div className="col-span-12">
                             <label htmlFor="contact__form-content" className="text-[#D9A953] font-semibold mb-1 text-lg block">Nội dung phản hồi</label>
-                            <textarea name="contact__form-content" id="contact__form-content" cols={30} rows={10} placeholder="Nội dung phản hồi" className="w-full rounded-xl outline-none py-2 px-3 shadow-sm" defaultValue={""} />
+                            <textarea
+                                id="contact__form-content"
+                                {...register("content")}
+                                cols={30}
+                                rows={10}
+                                placeholder="Nội dung phản hồi"
+                                className="w-full rounded-xl outline-none py-2 px-3 shadow-sm"
+                                defaultValue={""}
+                            />
+                            <div className="text-sm mt-0.5 text-red-500">{errors.content?.message}</div>
                         </div>
                         <div className="col-span-12">
                             <div className="flex items-center">
-                                <input type="checkbox" data-error=".error-checkbox" name="contact__form-checkbox" id="contact__form-checkbox" />
+                                <input
+                                    type="checkbox"
+                                    {...register("confirm")}
+                                    id="contact__form-checkbox"
+                                />
                                 <label htmlFor="contact__form-checkbox" className="ml-2">Tôi xác nhận các thông tin cá nhân cung cấp ở trên là hoàn toàn chính xác và đồng ý để Yotea sử dụng các thông tin đó cho mục đích giải quyết phản hồi.</label>
                             </div>
-                            <div className="error-checkbox pl-3 text-sm mt-0.5 text-red-500" />
+                            <div className="text-sm mt-0.5 text-red-500">{errors.confirm?.message}</div>
                         </div>
                     </div>
                     <button className="block mx-auto mt-8 h-10 rounded-full bg-[#D9A953] text-white font-semibold px-4 transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Gửi phản hồi</button>
