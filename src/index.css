@@ -6,6 +6,10 @@
     @apply w-full h-full rounded-lg
 }
 
+.store__list-item.active {
+    @apply bg-gray-50;
+}
+
 select.disabled {
     @apply bg-gray-50
 }

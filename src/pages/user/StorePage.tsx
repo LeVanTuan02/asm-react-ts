@@ -1,22 +1,39 @@
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { getAll } from "../../api/store";
+import { get, getAll, search } from "../../api/store";
 import Iframe from "../../components/user/Iframe";
 import { StoreType } from "../../types/store";
 
 const StorePage = () => {
     const [stores, setStores] = useState<StoreType[]>();
-    const [googleMap, setGoogleMap] = useState<string>();
+    const [googleMap, setGoogleMap] = useState<{ id: string, map: string }>();
 
     useEffect(() => {
         const getStores = async () => {
             const { data } = await getAll();
-            setGoogleMap(data[0].map);
+            setGoogleMap({
+                id: data[0]._id,
+                map: data[0].map
+            });
             setStores(data);
         };
         getStores();
     }, []);
+
+    const handleClickStore = async (id: string) => {
+        const { data } = await get(id);
+        setGoogleMap({
+            id: data._id,
+            map: data.map
+        });
+    }
+
+    const handleSearchStore = async (e: any) => {
+        const keyword = e.target.value;
+        const { data } = await search(keyword);
+        setStores(data);
+    }
 
     return (
         <section className="container max-w-6xl mx-auto px-3 mb-8">
@@ -24,15 +41,19 @@ const StorePage = () => {
             <div className="grid grid-cols-12 gap-8">
                 <div className="col-span-12 md:col-span-5">
                     <p>Vui lòng chọn khu vực bạn muốn tìm kiếm, chúng tôi sẽ hiển thị danh sách các cửa hàng phù hợp nhất</p>
-                    <form action="" className="flex mt-3" id="form-search-store">
-                        <input type="text" placeholder="Nhập tên chi nhánh" id="store__form-search-control" className="h-12 rounded-l-full px-5 border flex-1 outline-none" />
+                    <form action="" className="flex mt-3">
+                        <input type="text" placeholder="Nhập tên chi nhánh" onChange={e => handleSearchStore(e)} className="h-12 rounded-l-full px-5 border flex-1 outline-none" />
                         <button type="button" className="bg-[#D9A953] px-5 text-white font-extrabold text-2xl rounded-r-full">
                             <FontAwesomeIcon icon={faChevronDown} />
                         </button>
                     </form>
                     <ul className="mt-3 border-r h-[400px] overflow-y-scroll" id="store__list">
                         {stores?.map((item, index) => (
-                            <li key={index} className="store__list-item flex py-4 transition ease-linear duration-300 hover:bg-gray-50 cursor-pointer px-3 items-center">
+                            <li
+                                key={index}
+                                onClick={() => handleClickStore(item._id)}
+                                className={`${item._id === googleMap?.id ? "active" : "" } store__list-item flex py-4 transition ease-linear duration-300 hover:bg-gray-50 cursor-pointer px-3 items-center`}
+                            >
                                 <img
                                     className="w-36 h-24 object-cover"
                                     src={item.image}
@@ -49,7 +70,7 @@ const StorePage = () => {
                     </ul>
                 </div>
                 <div className="col-span-12 md:col-span-7 min-h-[450px] store__list-map">
-                    <Iframe iframe={googleMap || ""} />
+                    <Iframe iframe={googleMap?.map || ""} />
                 </div>
             </div>
         </section>

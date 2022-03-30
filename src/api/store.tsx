@@ -10,6 +10,11 @@ export const getAll = () => {
     return instance.get(url);
 };
 
+export const search = (keyword: string) => {
+    const url = `/${DB_NAME}/?name_like=${keyword}&_sort=createdAt&_order=desc`;
+    return instance.get(url);
+}
+
 export const get = (id: string) => {
     const url = `/${DB_NAME}/${id}`;
     return instance.get(url);
