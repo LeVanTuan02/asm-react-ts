@@ -1,13 +1,23 @@
 import { faFacebookF, faInstagram, faTiktok, faYoutube } from "@fortawesome/free-brands-svg-icons";
 import { faBars, faChevronUp, faClock, faEnvelope, faHeart, faHome, faPhoneAlt, faSearch, faShoppingCart, faSortDown, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useRef, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import toastr from "toastr";
+import { useEffect, useState } from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { search } from "../../api/product";
+import { ProductType } from "../../types/product";
+import { formatCurrency } from "../../utils";
 import { isAuthenticate } from "../../utils/localStorage";
+import { CategoryType } from "../../types/category";
+import { getAll } from "../../api/category";
 
 const WebsiteLayout = () => {
     const [visible, setVisible] = useState(false);
     const [headerFixed, setHeaderFixed] = useState<boolean>(false);
+    const [productsSearch, setProductsSearch] = useState<ProductType[]>();
+    const [isEmptyProduct, setIsEmptyProduct] = useState<boolean>(false);
+    const [keyword, setKeyword] = useState<string>();
+    const [categories, setCategories] = useState<CategoryType[]>();
 
     const auth = isAuthenticate();
 
@@ -17,6 +27,12 @@ const WebsiteLayout = () => {
             setVisible(scrollTop > 1000 ? true : false);
             setHeaderFixed(scrollTop > 1000 ? true : false);
         });
+
+        const getCate = async () => {
+            const { data } = await getAll();
+            setCategories(data);
+        };
+        getCate();
     }, []);
 
     const handleScrollTop = () => {
@@ -24,6 +40,25 @@ const WebsiteLayout = () => {
             top: 0,
             behavior: "smooth"
         });
+    }
+
+    // search
+    const handleSearchProduct = async (e: any) => {
+        const key = e.target.value;
+        setKeyword(key);
+        const { data } = await search(key);
+        setIsEmptyProduct(!data.length ? true : false);
+        setProductsSearch(data);
+    }
+
+    const navigate = useNavigate();
+    const handleSubmitFormSearch = (e:any) => {
+        e.preventDefault();
+        if (!keyword) {
+            toastr.error("Vui lòng nhập tên SP");
+        } else {
+            navigate(`/tim-kiem/${keyword}`);
+        }
     }
 
     return (
@@ -55,13 +90,30 @@ const WebsiteLayout = () => {
                                     <FontAwesomeIcon icon={faSearch} />
                                 </button>
                                 <div className="hidden min-w-[280px] z-20 group-hover:block absolute top-full -right-[100px] bg-white shadow p-3 opacity-100">
-                                    <form action="" className="flex" id="form-search-product">
-                                        <input type="text" id="form-search-control" className="text-black shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] flex-1 border px-2 h-8 text-sm outline-none" placeholder="Nhập tên sản phẩm" />
+                                    <form action="" className="flex" onSubmit={e => handleSubmitFormSearch(e)}>
+                                        <input
+                                            type="text"
+                                            onChange={e => handleSearchProduct(e)}
+                                            className="text-black shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] flex-1 border px-2 h-8 text-sm outline-none"
+                                            placeholder="Nhập tên sản phẩm"
+                                        />
                                         <button className="px-3 bg-red-500 transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">
                                             <FontAwesomeIcon icon={faSearch} />
                                         </button>
                                     </form>
-                                    <ul className="mt-3 grid grid-cols-1 divide-y max-h-[70vh] overflow-y-auto" id="search-product-result" />
+                                    <ul className="mt-3 grid grid-cols-1 divide-y max-h-[70vh] overflow-y-auto">
+                                        {productsSearch?.map((item, index) => (
+                                            <li key={index}>
+                                                <Link to={`/san-pham/${item.slug}`} className="flex py-2 transition duration-200 hover:bg-gray-50 hover:text-[#D9A953] text-black items-center px-2">
+                                                    <img src={item.image} className="w-10 h-10 object-cover rounded-full bg-[#f7f7f7]" alt="" />
+                                                    <p className="pl-1 pr-2 normal-case font-normal">{item.name}</p>
+                                                    <p className="font-medium ml-auto">{formatCurrency(item.price)}</p>
+                                                </Link>
+                                            </li>
+                                        ))}
+
+                                        {isEmptyProduct && <li className="text-black normal-case">Không tìm thấy sản phẩm nào!</li>}
+                                    </ul>
                                 </div>
                             </li>
 
@@ -118,10 +170,12 @@ const WebsiteLayout = () => {
                                             <FontAwesomeIcon icon={faSortDown} />
                                         </div>
                                     </Link>
-                                    <ul className="z-20 invisible group-hover:visible absolute top-full left-0 bg-white shadow min-w-[150px] grid grid-cols-1 divide-y px-2 rounded-sm">
-                                        <li>
-                                            <Link to="" className="block py-1.5 text-gray-500 transition ease-linear duration-200 hover:text-[#D9A953]">Trà sữa</Link>
-                                        </li>
+                                    <ul className="z-20 invisible group-hover:visible absolute top-full left-0 bg-white shadow min-w-[150px] max-w-full grid grid-cols-1 divide-y px-2 rounded-sm">
+                                        {categories?.map((item, index) => (
+                                            <li key={index}>
+                                                <Link to={`/danh-muc/${item.slug}`} className="block py-1.5 text-gray-500 transition ease-linear duration-200 hover:text-[#D9A953]">{item.name}</Link>
+                                            </li>
+                                        ))}
                                     </ul>
                                 </li>
                             </ul>
