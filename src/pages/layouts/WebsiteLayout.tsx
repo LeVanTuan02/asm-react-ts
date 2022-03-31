@@ -46,7 +46,7 @@ const WebsiteLayout = () => {
     const handleSearchProduct = async (e: any) => {
         const key = e.target.value;
         setKeyword(key);
-        const { data } = await search(key);
+        const { data } = await search(0, 0, "createdAt", "desc", key);
         setIsEmptyProduct(!data.length ? true : false);
         setProductsSearch(data);
     }
