@@ -84,8 +84,11 @@ const App = () => {
                 <Route index element={<HomePage />} />
                 <Route path="gioi-thieu" element={<AboutPage />} />
                 <Route path="thuc-don" element={<ProductPage />} />
+                <Route path="thuc-don/page/:page" element={<ProductPage />} />
                 <Route path="danh-muc/:slug" element={<ProductByCate />} />
+                <Route path="danh-muc/:slug/page/:page" element={<ProductByCate />} />
                 <Route path="tim-kiem/:keyword" element={<ProductSearchPage />} />
+                <Route path="tim-kiem/:keyword/page/:page" element={<ProductSearchPage />} />
                 <Route path="san-pham/:slug" element={<ProductDetailPage />} />
                 <Route path="tin-tuc" element={<NewsPage />} />
                 <Route path="bai-viet/:slug" element={<NewsDetail />} />

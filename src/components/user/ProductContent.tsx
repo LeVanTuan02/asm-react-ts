@@ -1,14 +1,49 @@
 import { faAngleLeft, faAngleRight, faHeart, faStar, faTh, faThList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ProductType } from "../../types/product";
 import { formatCurrency } from "../../utils";
 
 type ProductContentProps = {
-    products: ProductType[]
+    url: string,
+    page: number,
+    parameter?: string,
+    getProducts: (start?: number, limit?: number, sort?: string, order?: string, parameter?: string) => any
 };
 
-const ProductContent = ({ products }: ProductContentProps) => {
+const ProductContent = ({ url, page, getProducts, parameter }: ProductContentProps) => {
+    const [totalProduct, setTotalProduct] = useState<number>(0);
+    const [products, setProducts] = useState<ProductType[]>([]);
+
+    const limit = 2;
+    const totalPage = Math.ceil(totalProduct / limit);
+    page = page < 1 ? 1 : page > totalPage ? totalPage : page;
+    const start = (page - 1) * limit > 0 ? (page - 1) * limit : 0;
+
+    useEffect(() => {
+        const getData = async () => {
+            const { data } = await getProducts(start, limit, "createdAt", "desc", parameter);
+            setProducts(data);
+        };
+        getData();
+
+        const getTotalProduct = async () => {
+            const { data } = await getProducts(0, 0, "createdAt", "desc", parameter);
+            setTotalProduct(data.length);
+        };
+        getTotalProduct();
+    }, [page, parameter]);
+
+    const pagination = [];
+    for (let i = 1; i <= totalPage; i++) {
+        pagination.push(
+            <li key={i}>
+                <Link to={`/${url}/page/${i}`} className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white ${page === i ? "border-[#D9A953] bg-[#D9A953] text-white" : "border-gray-500 text-gray-500"}`}>{i}</Link>
+            </li>
+        )
+    }
+
     return (
         <div className="col-span-12 lg:col-span-9">
             <div className="border-b pb-2 flex justify-between items-center">
@@ -79,26 +114,27 @@ const ProductContent = ({ products }: ProductContentProps) => {
                 </div>
             </div>
             <ul className="flex justify-center mt-5">
-                <li>
-                    <a href="" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold border-gray-500 text-gray-500 mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
-                        <button>
-                            <FontAwesomeIcon icon={faAngleLeft} />
-                        </button>
-                    </a>
-                </li>
-                <li>
-                    <a href="" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white border-[#d9a953] bg-[#d9a953] text-white">1</a>
-                </li>
-                <li>
-                    <a href="" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white border-gray-500 text-gray-500">2</a>
-                </li>
-                <li>
-                    <a href="" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold border-gray-500 text-gray-500 mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
-                        <button>
-                            <FontAwesomeIcon icon={faAngleRight} />
-                        </button>
-                    </a>
-                </li>
+                {page > 1 && (
+                    <li>
+                        <Link to={`/${url}/page/${page - 1}`} className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold border-gray-500 text-gray-500 mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
+                            <button>
+                                <FontAwesomeIcon icon={faAngleLeft} />
+                            </button>
+                        </Link>
+                    </li>
+                )}
+
+                {totalPage > 1 && pagination}
+
+                {page < totalPage && (
+                    <li>
+                        <Link to={`/${url}/page/${page + 1}`} className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold border-gray-500 text-gray-500 mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
+                            <button>
+                                <FontAwesomeIcon icon={faAngleRight} />
+                            </button>
+                        </Link>
+                    </li>
+                )}
             </ul>
         </div>
     )

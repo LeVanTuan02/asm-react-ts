@@ -6,18 +6,21 @@ const { token, user } = isAuthenticate();
 
 const DB_NAME = "products";
 
-export const getAll = () => {
-    const url = `/${DB_NAME}/?_expand=categoryId&_sort=createdAt&_order=desc`;
+export const getAll = (start = 0, limit = 0, sort = "createdAt", order = "desc") => {
+    let url = `/${DB_NAME}/?_expand=categoryId&_sort=${sort}&_order=${order}`;
+    if (limit) url += `&_start=${start}&_limit=${limit}`;
     return instance.get(url);
 };
 
-export const getProductByCate = (cateId: string | undefined) => {
-    const url = `/${DB_NAME}/?categoryId=${cateId}&_sort=createdAt&_order=desc&_expand=categoryId`;
+export const getProductByCate = (start = 0, limit = 0, sort = "createdAt", order = "desc", cateId: string | undefined) => {
+    let url = `/${DB_NAME}/?categoryId=${cateId}&_sort=${sort}&_order=${order}&_expand=categoryId`;
+    if (limit) url += `&_start=${start}&_limit=${limit}`;
     return instance.get(url);
 }
 
-export const search = (keyword: string | undefined) => {
-    const url = `/${DB_NAME}/?_sort=createdAt&_order=desc&name_like=${keyword}`;
+export const search = (start = 0, limit = 0, sort = "createdAt", order = "desc", keyword: string | undefined) => {
+    let url = `/${DB_NAME}/?_sort=${sort}&_order=${order}&name_like=${keyword}`;
+    if (limit) url += `&_start=${start}&_limit=${limit}`;
     return instance.get(url);
 }
 
