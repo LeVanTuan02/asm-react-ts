@@ -1,9 +1,11 @@
-import { faAngleLeft, faAngleRight, faHeart, faStar, faTh, faThList } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faStar, faTh, faThList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ProductType } from "../../types/product";
 import { formatCurrency } from "../../utils";
+import FilterProduct from "./FilterProduct";
+import PaginationProduct from "./PaginationProduct";
 
 type ProductContentProps = {
     url: string,
@@ -12,68 +14,97 @@ type ProductContentProps = {
     getProducts: (start?: number, limit?: number, sort?: string, order?: string, parameter?: string) => any
 };
 
+type FilterType = {
+    view: string,
+    sort: string,
+    order: string,
+}
+
 const ProductContent = ({ url, page, getProducts, parameter }: ProductContentProps) => {
     const [totalProduct, setTotalProduct] = useState<number>(0);
     const [products, setProducts] = useState<ProductType[]>([]);
+    const [filter, setFilter] = useState<FilterType>({
+        view: "grid",
+        sort: "createdAt",
+        order: "desc"
+    });
 
-    const limit = 2;
+    const limit = 9;
     const totalPage = Math.ceil(totalProduct / limit);
     page = page < 1 ? 1 : page > totalPage ? totalPage : page;
     const start = (page - 1) * limit > 0 ? (page - 1) * limit : 0;
 
     useEffect(() => {
         const getData = async () => {
-            const { data } = await getProducts(start, limit, "createdAt", "desc", parameter);
+            const { data } = await getProducts(start, limit, filter.sort, filter.order, parameter);
             setProducts(data);
         };
         getData();
 
         const getTotalProduct = async () => {
-            const { data } = await getProducts(0, 0, "createdAt", "desc", parameter);
+            const { data } = await getProducts(0, 0, filter.sort, filter.order, parameter);
             setTotalProduct(data.length);
         };
         getTotalProduct();
-    }, [page, parameter]);
+    }, [page, parameter, filter]);
 
-    const pagination = [];
-    for (let i = 1; i <= totalPage; i++) {
-        pagination.push(
-            <li key={i}>
-                <Link to={`/${url}/page/${i}`} className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white ${page === i ? "border-[#D9A953] bg-[#D9A953] text-white" : "border-gray-500 text-gray-500"}`}>{i}</Link>
-            </li>
-        )
+    const handlerUpdateFilter = (data: FilterType) => {
+        setFilter(data);
     }
 
     return (
         <div className="col-span-12 lg:col-span-9">
-            <div className="border-b pb-2 flex justify-between items-center">
-                <div className="flex items-center">
-                    <ul className="flex">
-                        <li data-view="grid" className="filter__btn-view active text-xl cursor-pointer mr-2 text-gray-600 transition ease-linear duration-150 hover:text-[#D9A953]">
-                            <FontAwesomeIcon icon={faTh} />
-                        </li>
-                        <li data-view="list" className="filter__btn-view text-xl cursor-pointer mr-2 text-gray-600 transition ease-linear duration-150 hover:text-[#D9A953]">
-                            <FontAwesomeIcon icon={faThList} />
-                        </li>
-                    </ul>
-                    <span>Hiển thị 1 - 9 trong 32 kết quả</span>
+            <FilterProduct filter={filter} onUpdateFilter={handlerUpdateFilter} start={start} limit={limit} totalProduct={totalProduct}/>
+
+            {filter.view === "list" ? (
+                <div className="grid grid-cols-1 divide-y">
+                    {products?.map((item, index) => (
+                        <div className="grid grid-cols-12 py-4 gap-3 product-item" key={index}>
+                            <div className="col-span-3 relative group overflow-hidden">
+                                <Link to={`/san-pham/${item.slug}`} className="bg-no-repeat bg-cover bg-center block h-full bg-[#f7f7f7] absolute w-full" style={{ backgroundImage: `url(${item.image})`}} />
+                                <button className="absolute w-full h-8 bottom-0 bg-[#D9A953] opacity-90 transition ease-linear duration-300 text-white font-semibold uppercase text-sm hover:opacity-100 translate-y-full group-hover:translate-y-0">Xem nhanh</button>
+                                <button className="btn-heart opacity-0 group-hover:opacity-100 absolute top-3 right-3 border-2 border-gray-400 rounded-full w-8 h-8 text-gray-400 transition ease-linear duration-300 hover:bg-red-700 hover:text-white hover:border-red-700">
+                                    <FontAwesomeIcon icon={faHeart} />
+                                </button>
+                            </div>
+
+                            <div className="col-span-9">
+                                <h3>
+                                    <Link to={`/san-pham/${item.slug}`} className="block font-semibold text-xl text-gray-800 pb-1 mb-3 relative after:content-[''] after:absolute after:top-[100%] after:left-0 after:w-8 after:h-1 after:bg-gray-300">{item.name}</Link>
+                                </h3>
+                                <ul className="flex items-center mt-4">
+                                    <li className="flex text-yellow-400 text-xs pr-6 relative after:content-[''] after:absolute after:right-3 after:top-1/2 after:-translate-y-1/2 after:w-[1px] after:bg-gray-300 after:h-4">
+                                        <div className="text-gray-300">
+                                            <FontAwesomeIcon icon={faStar} />
+                                        </div>
+                                        <div className="text-gray-300">
+                                            <FontAwesomeIcon icon={faStar} />
+                                        </div>
+                                        <div className="text-gray-300">
+                                            <FontAwesomeIcon icon={faStar} />
+                                        </div>
+                                        <div className="text-gray-300">
+                                            <FontAwesomeIcon icon={faStar} />
+                                        </div>
+                                        <div className="text-gray-300">
+                                            <FontAwesomeIcon icon={faStar} />
+                                        </div>
+                                    </li>
+                                    <li className="pr-6 relative after:content-[''] after:absolute after:right-3 after:top-1/2 after:-translate-y-1/2 after:w-[1px] after:bg-gray-300 after:h-4">1 Đánh giá</li>
+                                    <li>10 Đã bán</li>
+                                </ul>
+                                <div className="mt-1 mb-2">
+                                    <span className="text-xl text-[#D9A953] font-semibold">{formatCurrency(item.price)}</span>
+                                </div>
+                                <p>
+                                    {item.description}
+                                </p>
+                                <button className="mt-4 px-3 py-2 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Thêm vào giỏ hàng</button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-                <form action="" className="flex items-center">
-                    <label htmlFor="filter-sort">Sắp xếp theo</label>
-                    <select id="filter-sort" className="ml-2 flex-1 shadow-[inset_0_-1.4em_1em_0_rgba(0,0,0,0.02)] hover:shadow-none hover:cursor-default focus:shadow-[0_0_5px_#ccc] w-full border px-2 h-9 text-sm outline-none">
-                        <option value="">Mặc định</option>
-                        <option value="createdAt-desc">Thứ tự theo ngày tạo: mới nhất</option>
-                        <option value="createdAt-asc">Thứ tự theo ngày tạo: cũ nhất</option>
-                        <option value="favorites-asc">Lượt yêu thích: thấp -&gt; cao</option>
-                        <option value="favorites-desc">Lượt yêu thích: cao -&gt; thấp</option>
-                        <option value="view-asc">Lượt xem: thấp -&gt; cao</option>
-                        <option value="view-desc">Lượt xem: cao -&gt; thấp</option>
-                        <option value="price-asc">Thứ tự theo giá: thấp -&gt; cao</option>
-                        <option value="price-desc">Thứ tự theo giá: cao -&gt; thấp</option>
-                    </select>
-                </form>
-            </div>
-            <div id="product-list">
+            ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
                     {products?.map((item, index) => (
                         <div className="group" key={index}>
@@ -112,30 +143,9 @@ const ProductContent = ({ url, page, getProducts, parameter }: ProductContentPro
                         </div>
                     ))}
                 </div>
-            </div>
-            <ul className="flex justify-center mt-5">
-                {page > 1 && (
-                    <li>
-                        <Link to={`/${url}/page/${page - 1}`} className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold border-gray-500 text-gray-500 mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
-                            <button>
-                                <FontAwesomeIcon icon={faAngleLeft} />
-                            </button>
-                        </Link>
-                    </li>
-                )}
-
-                {totalPage > 1 && pagination}
-
-                {page < totalPage && (
-                    <li>
-                        <Link to={`/${url}/page/${page + 1}`} className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold border-gray-500 text-gray-500 mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
-                            <button>
-                                <FontAwesomeIcon icon={faAngleRight} />
-                            </button>
-                        </Link>
-                    </li>
-                )}
-            </ul>
+            )}
+            
+            <PaginationProduct page={page} totalPage={totalPage} url={url} />
         </div>
     )
 }
