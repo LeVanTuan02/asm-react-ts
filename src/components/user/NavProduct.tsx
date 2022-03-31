@@ -6,9 +6,11 @@ import { CategoryType } from "../../types/category";
 import { ProductType } from "../../types/product";
 import { formatCurrency } from "../../utils";
 
-type Props = {};
+type NavProductProps = {
+    cateId?: string
+};
 
-const NavProduct = (props: Props) => {
+const NavProduct = ({ cateId }: NavProductProps) => {
     const [categories, setCategories] = useState<CategoryType[]>();
     const [productTop10, setProductTop10] = useState<ProductType[]>();
 
@@ -34,7 +36,10 @@ const NavProduct = (props: Props) => {
                 <ul className="grid grid-cols-1 divide-y mt-3">
                     {categories?.map((item, index)=> (
                         <li key={index}>
-                            <Link to={`/danh-muc/${item.slug}`} className="text-[#D9A953] block uppercase py-2 transition duration-300 ease-linear hover:text-black">{item.name}</Link>
+                            <Link
+                                to={`/danh-muc/${item.slug}`}
+                                className={`${item._id === cateId && "text-black font-semibold"} text-[#D9A953] block uppercase py-2 transition duration-300 ease-linear hover:text-black`}
+                            >{item.name}</Link>
                         </li>
                     ))}
                 </ul>

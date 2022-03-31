@@ -28,7 +28,7 @@ const ProductByCate = () => {
             </section>
 
             <section className="container max-w-6xl mx-auto px-3 grid grid-cols-12 gap-6 mb-8">
-                <NavProduct />
+                <NavProduct cateId={cateId} />
 
                 <ProductContent url={`danh-muc/${slug}`} getProducts={getProductByCate} page={Number(page) || 0} parameter={cateId} />
             </section>
