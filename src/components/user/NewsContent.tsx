@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { NewsType } from "../../types/news";
 import { formatDateNews } from "../../utils";
-import PaginationProduct from "./PaginationProduct";
+import Pagination from "./Pagination";
 
 type NewsContentProps = {
     page: number,
@@ -77,7 +77,7 @@ const NewsContent = ({ page, getNews, parameter, url }: NewsContentProps) => {
                         ))}
                     </div>
                     
-                    <PaginationProduct page={page} totalPage={totalPage} url={url} />
+                    <Pagination page={page} totalPage={totalPage} url={url} />
                 </section>
 
             )}

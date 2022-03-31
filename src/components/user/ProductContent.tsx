@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { ProductType } from "../../types/product";
 import { formatCurrency } from "../../utils";
 import FilterProduct from "./FilterProduct";
-import PaginationProduct from "./PaginationProduct";
+import Pagination from "./Pagination";
 
 type ProductContentProps = {
     url: string,
@@ -153,7 +153,7 @@ const ProductContent = ({ url, page, getProducts, parameter }: ProductContentPro
                         </div>
                     )}
                     
-                    <PaginationProduct page={page} totalPage={totalPage} url={url} />
+                    <Pagination page={page} totalPage={totalPage} url={url} />
                 </div>
             )}
         </>

@@ -2,13 +2,13 @@ import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 
-type PaginationProductProps = {
+type PaginationProps = {
     page: number,
     url: string,
     totalPage: number,
 };
 
-const PaginationProduct = ({ page, totalPage, url }: PaginationProductProps) => {
+const Pagination = ({ page, totalPage, url }: PaginationProps) => {
     const pagination = [];
     for (let i = 1; i <= totalPage; i++) {
         pagination.push(
@@ -45,4 +45,4 @@ const PaginationProduct = ({ page, totalPage, url }: PaginationProductProps) => 
     )
 }
 
-export default PaginationProduct;
+export default Pagination;

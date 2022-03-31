@@ -19,7 +19,7 @@ const NewsByCatePage = () => {
 
     return (
         <>
-            <NavNews slug={slug} />
+            <NavNews slug={slug || ""} />
 
             <NewsContent getNews={getNewsById} page={Number(page) || 1} url={`tin-tuc/${slug}`} parameter={cateId} />
         </>
