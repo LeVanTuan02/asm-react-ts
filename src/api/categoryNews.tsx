@@ -11,7 +11,7 @@ export const getAll = () => {
     return instance.get(url);
 };
 
-export const get = (slug: string) => {
+export const get = (slug: string | undefined) => {
     const url = `/${DB_NAME}/${slug}`;
     return instance.get(url);
 }

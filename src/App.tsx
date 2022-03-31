@@ -72,6 +72,7 @@ import { useState } from "react";
 import NewsDetail from "./pages/user/NewsDetail";
 import ProductSearchPage from "./pages/user/ProductSearchPage";
 import ProductByCate from "./pages/user/ProductByCate";
+import NewsByCatePage from "./pages/user/NewsByCatePage";
 
 const App = () => {
     const [logged, setLogged] = useState(false);
@@ -91,6 +92,9 @@ const App = () => {
                 <Route path="tim-kiem/:keyword/page/:page" element={<ProductSearchPage />} />
                 <Route path="san-pham/:slug" element={<ProductDetailPage />} />
                 <Route path="tin-tuc" element={<NewsPage />} />
+                <Route path="tin-tuc/:slug" element={<NewsByCatePage />} />
+                <Route path="tin-tuc/:slug/page/:page" element={<NewsByCatePage />} />
+                <Route path="tin-tuc/page/:page" element={<NewsPage />} />
                 <Route path="bai-viet/:slug" element={<NewsDetail />} />
                 <Route path="lien-he" element={<ContactPage />} />
                 <Route path="cua-hang" element={<StorePage />} />

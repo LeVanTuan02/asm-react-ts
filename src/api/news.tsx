@@ -6,10 +6,17 @@ const { token, user } = isAuthenticate();
 
 const DB_NAME = "news";
 
-export const getAll = () => {
-    const url = `/${DB_NAME}/?_sort=createdAt&_order=desc`;
+export const getAll = (start = 0, limit = 0) => {
+    let url = `/${DB_NAME}/?_sort=createdAt&_order=desc`;
+    if (limit) url += `&_start=${start}&_limit=${limit}`;
     return instance.get(url);
 };
+
+export const getNewsById = (start = 0, limit = 0, category?: string) => {
+    let url = `/${DB_NAME}/?_sort=createdAt&_order=desc&category=${category}`;
+    if (limit) url += `&_start=${start}&_limit=${limit}`;
+    return instance.get(url);
+}
 
 export const get = (slug: string | undefined) => {
     const url = `/${DB_NAME}/${slug}/?_expand=category`;
