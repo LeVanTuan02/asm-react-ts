@@ -11,7 +11,7 @@ const HomeProducts = () => {
 
     useEffect(() => {
         const getProducts = async () => {
-            const { data } = await getAll();
+            const { data } = await getAll(0, 8);
             setProducts(data);
         };
         getProducts();

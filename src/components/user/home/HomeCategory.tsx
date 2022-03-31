@@ -8,7 +8,7 @@ const HomeCategory = () => {
 
     useEffect(() => {
         const getCate = async () => {
-            const { data } = await getAll();
+            const { data } = await getAll(0, 4);
             setCategories(data);
         };
         getCate();
