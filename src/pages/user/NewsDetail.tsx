@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { get } from "../../api/news";
 import NewsRelated from "../../components/user/NewsRelated";
+import SidebarNews from "../../components/user/SidebarNews";
 import { NewsType } from "../../types/news";
 import { formatDate } from "../../utils";
 
@@ -53,24 +54,8 @@ const NewsDetail = () => {
                         <NewsRelated id={news?._id} category={news?.category._id} />
                     </div>
                 </div>
-                <aside className="hidden lg:block lg:col-span-3 pl-6 border-l">
-                    <section>
-                        <h2 className="uppercase font-bold pb-2 relative after:content-[''] after:absolute after:top-[100%] after:left-0 after:w-8 after:h-1 after:bg-gray-300">CHUYÊN MỤC</h2>
-                        <ul className="mt-4 grid grid-cols-1 divide-y">
-                            <li>
-                                <a href="/#/category-news/${cate.id}" className="block py-1 leading-7 text-gray-500 transition duration-200 hover:text-black">Tên danh mục</a>
-                            </li>
-                        </ul>
-                    </section>
-                    <section className="mt-5">
-                        <h2 className="uppercase font-bold pb-2 relative after:content-[''] after:absolute after:top-[100%] after:left-0 after:w-8 after:h-1 after:bg-gray-300">Bài viết mới</h2>
-                        <ul className="mt-4 grid grid-cols-1 divide-y">
-                            <li>
-                                <a href="/#/news/${post.id}" className="limit-line-2 block py-1 leading-7 text-gray-500 transition duration-200 hover:text-black">${'{'}post.title{'}'}</a>
-                            </li>
-                        </ul>
-                    </section>
-                </aside>
+                
+                <SidebarNews cateId={news?.category._id} newsId={news?._id} />
             </section>
         </div>
     )
