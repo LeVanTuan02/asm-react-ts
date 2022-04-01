@@ -258,8 +258,17 @@ const ProductDetailPage = () => {
                                 <div className="flex items-center mt-2">
                                     <label className="min-w-[80px] font-bold text-sm">Topping</label>
                                     <select {...register("topping")} className="px-3 py-1 outline-none border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">
-                                        <option value="">Chọn topping</option>
-                                        {toppings?.map((item, index) => <option key={index} value={item._id}>{item.name} +{formatCurrency(item.price)}</option>)}
+                                        {toppings?.map((item, index) => {
+                                            return (
+                                                <option
+                                                    key={index}
+                                                    value={item._id}
+                                                    selected={!item.price && true}
+                                                >
+                                                    {item.name} +{formatCurrency(item.price)}
+                                                </option>
+                                            )
+                                        })}
                                     </select>
                                 </div>
                                 <div className="border-b border-dashed pb-4 mt-6">
