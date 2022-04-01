@@ -48,3 +48,9 @@ export const removeItemCart = (cartId: string, next: () => void, cart = getCart(
 
     next();
 }
+
+export const finishOrder = (next: () => void) => {
+    localStorage.removeItem("cart");
+
+    next();
+}

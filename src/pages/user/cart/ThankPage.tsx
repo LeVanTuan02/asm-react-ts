@@ -40,12 +40,12 @@ const ThankPage = () => {
                             <span> Tiếp tục mua hàng</span>
                         </button>
                     </Link>
-                    <a href="/#/my-account/cart" className="ml-2">
+                    <Link to={`/my-account/cart`} className="ml-2">
                         <button className="uppercase h-8 text-[#D9A953] font-semibold text-sm border-[#D9A953] border-2 px-3 transition ease-linear duration-300 hover:bg-[#D9A953] hover:text-white">
                             <span>Kiểm tra đơn hàng </span>
                             <FontAwesomeIcon icon={faLongArrowAltRight} />
                         </button>
-                    </a>
+                    </Link>
                 </div>
             </section>
         </div>
