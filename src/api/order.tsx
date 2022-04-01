@@ -13,6 +13,11 @@ export const get = (id: string | undefined) => {
     return instance.get(url);
 }
 
+export const getByUserId = (userId: string) => {
+    const url = `/${DB_NAME}/?userId=${userId}&_sort=createdAt&_order=desc`;
+    return instance.get(url);
+}
+
 export const add = (order: OrderType) => {
     const url = `/${DB_NAME}`;
     return instance.post(url, order);

@@ -1,7 +1,24 @@
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { getByUserId } from "../../../api/order";
+import { OrderType } from "../../../types/order";
+import { formatCurrency, formatDate } from "../../../utils";
+import { isAuthenticate } from "../../../utils/localStorage";
 
 const MyCartPage = () => {
+    const [orders, setOrders] = useState<OrderType[]>();
+    const { user } = isAuthenticate();
+
+    useEffect(() => {
+        const getOrders = async () => {
+            const { data } = await getByUserId(user._id);
+            setOrders(data);
+        };
+        getOrders();
+    }, []);
+
     return (
         <>
             <form action="" className="flex" id="cart__form-search">
@@ -18,7 +35,8 @@ const MyCartPage = () => {
             <table className="mt-3 text-gray-600 w-full text-left">
                 <thead>
                     <tr>
-                        <th className="pb-1 border-b-2 uppercase text-sm">Mã ĐH</th>
+                        <th className="pb-1 border-b-2 uppercase text-sm">STT</th>
+                        {/* <th className="pb-1 border-b-2 uppercase text-sm">Mã ĐH</th> */}
                         <th className="pb-1 border-b-2 uppercase text-sm">Tên người nhận</th>
                         <th className="pb-1 border-b-2 uppercase text-sm">Ngày đặt</th>
                         <th className="pb-1 border-b-2 uppercase text-sm">Tổng giá trị</th>
@@ -27,21 +45,28 @@ const MyCartPage = () => {
                     </tr>
                 </thead>
                 <tbody id="cart__list">
-                    <tr className="border-b">
-                        <td>#102</td>
-                        <td className="py-2">Lê Văn Tuân</td>
-                        <td className="py-2">20/2/2022 19:54:06</td>
-                        <td className="py-2">244.000 VND</td>
-                        <td className="py-2">
-                            <label className="px-1 py-0.5 text-sm rounded-[4px] font-medium bg-[#FFE2E5] text-[#F64E60]">Đã hủy</label>
-                        </td>
-                        <td className="py-2 text-right">
-                            <a href="/#/my-account/cart/${item.id}/detail">
-                                <button className="px-3 py-1.5 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">View</button>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr className="border-b">
+                    {orders?.map((item, index) => (
+                        <tr className="border-b" key={index}>
+                            <td>{++index}</td>
+                            {/* <td>{item._id}</td> */}
+                            <td className="py-2">{item.customerName}</td>
+                            <td className="py-2">{formatDate(item.createdAt || "")}</td>
+                            <td className="py-2">{formatCurrency(item.totalPrice - item.priceDecrease)}</td>
+                            <td className="py-2">
+                                <label
+                                    className={`${item.status !== 4 ? "bg-[#E1F0FF] text-[#3699FF]" : "bg-[#FFE2E5] text-[#F64E60]"} px-1 py-0.5 text-sm rounded-[4px] font-medium`}
+                                >
+                                {!item.status ? "Đơn hàng mới" : item.status === 1 ? "Đã xác nhận" : item.status === 2 ? "Đang giao hàng" : item.status === 3 ? "Đã giao hàng" : "Đã hủy"}
+                                </label>
+                            </td>
+                            <td className="py-2 text-right">
+                                <Link to={`/my-account/cart/${item._id}`}>
+                                    <button className="px-3 py-1.5 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">View</button>
+                                </Link>
+                            </td>
+                        </tr>
+                    ))}
+                    {/* <tr className="border-b">
                         <td>#102</td>
                         <td className="py-2">Lê Văn Tuân</td>
                         <td className="py-2">20/2/2022 19:54:06</td>
@@ -54,7 +79,7 @@ const MyCartPage = () => {
                                 <button className="px-3 py-1.5 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">View</button>
                             </a>
                         </td>
-                    </tr>
+                    </tr> */}
                 </tbody>
             </table>
             <ul className="flex justify-center mt-5" id="cart__list-pagination">
