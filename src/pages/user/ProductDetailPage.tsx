@@ -32,6 +32,7 @@ const ProductDetailPage = () => {
     const [sizes, setSizes] = useState<SizeType[]>();
     const [showBtnClear, setShowBtnClear] = useState<boolean>(false);
     const [totalPrice, setTotalPrice] = useState<number>(0);
+    const [toppingDefault, setToppingDefault] = useState<string>();
 
     const {
         register,
@@ -97,24 +98,30 @@ const ProductDetailPage = () => {
             const { data } = await get(slug);
             setProduct(data);
         };
-        getProduct();
 
         const getToppings = async () => {
             const { data } = await getAll();
+            const toppingDefault = await data.find((item: any) => !item.price);
+            setToppingDefault(toppingDefault._id);
             setToppings(data);
         };
-        getToppings();
 
         const getSizes = async () => {
             const { data } = await getAllSize("name", "desc");
             setSizes(data);
         };
-        getSizes();
-    }, [slug]);
+        
+        const start = async () => {
+            await getProduct();
+            await getToppings();
+            await getSizes();
 
-    const handleChangeFormAddCart = ({ size, topping }: InputsType) => {
-        setShowBtnClear(true);
-    }
+            reset({
+                topping: toppingDefault
+            });
+        };
+        start();
+    }, [slug]);
 
     const handleIncrease = () => {
         setQuantity(prev => prev + 1);
@@ -263,7 +270,6 @@ const ProductDetailPage = () => {
                                                 <option
                                                     key={index}
                                                     value={item._id}
-                                                    selected={!item.price && true}
                                                 >
                                                     {item.name} +{formatCurrency(item.price)}
                                                 </option>
@@ -272,7 +278,7 @@ const ProductDetailPage = () => {
                                     </select>
                                 </div>
                                 <div className="border-b border-dashed pb-4 mt-6">
-                                    {showBtnClear  && <p className="transition-all ease-linear duration-100 mt-6 border-t border-dashed pt-2 text-xl font-semibold">{formatCurrency(totalPrice)}</p>}
+                                    {/* {showBtnClear  && <p className="transition-all ease-linear duration-100 mt-6 border-t border-dashed pt-2 text-xl font-semibold">{formatCurrency(totalPrice)}</p>} */}
                                     <div className="flex mt-2 items-center">
                                         <div className="flex items-center h-9">
                                             <button

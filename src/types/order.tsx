@@ -1,5 +1,6 @@
 export type OrderType = {
     _id?: string,
+    userId: string,
     customerName: string,
     address: string,
     phone: string,

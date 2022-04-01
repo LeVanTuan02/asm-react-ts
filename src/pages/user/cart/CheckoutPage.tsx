@@ -38,13 +38,13 @@ const schema = yup.object().shape({
         .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Email không đúng định dạng"),
     provinceCode: yup
         .string()
-        .required("Vui lòng chọn Tỉnh/Tp"),
+        .test("is_empty", "Vui lòng chọn Tỉnh/Tp", value => Number(value) !== 0),
     districtCode: yup
         .string()
-        .required("Vui lòng chọn Quận/Huyện"),
+        .test("is_empty", "Vui lòng chọn Quận/Huyện", value => Number(value) !== 0),
     wardsCode: yup
         .string()
-        .required("Vui lòng chọn Xã/Phường"),
+        .test("is_empty", "Vui lòng chọn Xã/Phường", value => Number(value) !== 0),
     address: yup
         .string()
         .required("Vui lòng nhập địa chỉ chi tiết"),
@@ -77,6 +77,7 @@ const CheckoutPage = () => {
         const address = await getAddress(dataInput.address, dataInput.wardsCode, dataInput.districtCode, dataInput.provinceCode);
         // save order
         const orderData = {
+            userId: user && user._id || "",
             customerName: dataInput.fullName,
             address,
             phone: dataInput.phone,
@@ -139,9 +140,9 @@ const CheckoutPage = () => {
             await callApiLocation();
             reset({
                 ...user,
-                provinceCode: user && user.provinceCode || "",
-                districtCode: user && user.districtCode || "",
-                wardsCode: user && user.wardsCode || "",
+                provinceCode: user && user.provinceCode || 0,
+                districtCode: user && user.districtCode || 0,
+                wardsCode: user && user.wardsCode || 0,
             });
         };
         start();
