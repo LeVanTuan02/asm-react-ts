@@ -1,5 +1,3 @@
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as yup from "yup";
 import toastr from "toastr";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -13,6 +11,7 @@ import { getAllProvince, getDistrictById, getDistrictByProvince, getProvinceById
 import { add as addOrder } from "../../../api/order";
 import { add as addOrderDetail } from "../../../api/orderDetail";
 import { useNavigate } from "react-router-dom";
+import CartNav from "../../../components/user/CartNav";
 
 type InputsType = {
     fullName: string,
@@ -170,25 +169,8 @@ const CheckoutPage = () => {
         <>
             {cart.length ? (
                 <>
-                    <section className="container max-w-6xl mx-auto px-3 mt-10">
-                        <ul className="flex justify-center items-center">
-                            <li className="text-2xl px-2">
-                                <a href="/#/cart" className="text-black uppercase transition ease-linear duration-200 hover:text-black">SHOPPING CART</a>
-                            </li>
-                            <li className="text-md text-gray-400 px-2 hidden md:block">
-                                <FontAwesomeIcon icon={faChevronRight} />
-                            </li>
-                            <li className="text-2xl px-2">
-                                <a href="/#/cart-checkout" className="uppercase text-gray-400 transition ease-linear duration-200 hover:text-black">Checkout details</a>
-                            </li>
-                            <li className="text-md text-gray-400 px-2 hidden md:block">
-                                <FontAwesomeIcon icon={faChevronRight} />
-                            </li>
-                            <li className="text-2xl px-2">
-                                <span className="uppercase text-gray-400 cursor-default">Order Complete</span>
-                            </li>
-                        </ul>
-                    </section>
+                    <CartNav page="checkout" />
+
                     <form action="" onSubmit={handleSubmit(onSubmit)} method="POST" className="container max-w-6xl mx-auto px-3 mt-10 mb-9 grid grid-cols-12 gap-5">
                         <div className="col-span-12 lg:col-span-8 border-t-2 pt-3">
                             <div className="flex items-center justify-between mb-2">

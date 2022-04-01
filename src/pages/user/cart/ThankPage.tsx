@@ -1,29 +1,13 @@
-import { faChevronRight, faLongArrowAltLeft, faLongArrowAltRight } from "@fortawesome/free-solid-svg-icons";
+import { faLongArrowAltLeft, faLongArrowAltRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
+import CartNav from "../../../components/user/CartNav";
 
 const ThankPage = () => {
     return (
         <div className="mb-32">
-            <section className="container max-w-6xl mx-auto px-3 mt-10">
-                <ul className="flex justify-center items-center">
-                    <li className="text-2xl px-2">
-                        <a href="/#/cart" className="text-black uppercase transition ease-linear duration-200 hover:text-black">SHOPPING CART</a>
-                    </li>
-                    <li className="text-md text-gray-400 px-2 hidden md:block">
-                        <FontAwesomeIcon icon={faChevronRight} />
-                    </li>
-                    <li className="text-2xl px-2">
-                        <a href="/#/cart-checkout" className="uppercase text-gray-400 transition ease-linear duration-200 hover:text-black">Checkout details</a>
-                    </li>
-                    <li className="text-md text-gray-400 px-2 hidden md:block">
-                        <FontAwesomeIcon icon={faChevronRight} />
-                    </li>
-                    <li className="text-2xl px-2">
-                        <span className="uppercase text-gray-400 cursor-default">Order Complete</span>
-                    </li>
-                </ul>
-            </section>
+            <CartNav page="thank-you" />
+
             <section className="container max-w-6xl mx-auto">
                 <h1 className="text-center mt-4 font-semibold text-2xl uppercase">Đặt hàng thành công</h1>
 
