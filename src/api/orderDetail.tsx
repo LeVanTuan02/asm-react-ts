@@ -8,8 +8,8 @@ export const getAll = () => {
     return instance.get(url);
 };
 
-export const get = (id: string) => {
-    const url = `/${DB_NAME}/${id}`;
+export const get = (orderId: string | undefined) => {
+    const url = `/${DB_NAME}/?orderId=${orderId}&_expand=sizeId&_expand=productId&_expand=toppingId`;
     return instance.get(url);
 }
 

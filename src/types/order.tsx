@@ -9,7 +9,9 @@ export type OrderType = {
     priceDecrease: number,
     message: string,
     status?: number,
-    voucher?: string[]
+    voucher?: string[],
+    createdAt?: string,
+    updatedAt?: string,
 }
 
 export type OrderDetailType = {
