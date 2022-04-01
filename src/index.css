@@ -59,3 +59,13 @@ select.disabled {
 .cate-news-item.active .cate-news-name {
     @apply text-[#D9A953]
 }
+
+.form__add-cart-ice:checked ~ label,
+.form__add-cart-sugar:checked ~ label,
+.form__add-cart-size:checked ~ label{
+    @apply shadow-md border-gray-500 text-black
+}
+
+#btn-cart-update[disabled] {
+    @apply opacity-60
+}

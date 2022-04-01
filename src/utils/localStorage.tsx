@@ -26,3 +26,25 @@ export const addToCart = (newProduct: CartType, next: () => void, cart = getCart
     localStorage.setItem("cart", JSON.stringify(cart));
     next();
 };
+
+export const updateQuantity = (listQuantity: { id: string, quantity: number }[] | undefined, next: () => void, cart = getCart()) => {
+    listQuantity?.forEach((cartItem) => {
+        if (!cartItem.quantity) {
+            cart = cart.filter((item) => item.id !== cartItem.id);
+        } else {
+            const currentProduct = cart.find((item) => item.id === cartItem.id);
+            currentProduct.quantity = cartItem.quantity;
+        }
+    });
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    next();
+}
+
+export const removeItemCart = (cartId: string, next: () => void, cart = getCart()) => {
+    cart = cart.filter(item => item.id !== cartId);
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    next();
+}
