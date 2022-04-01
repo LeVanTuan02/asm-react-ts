@@ -1,14 +1,92 @@
 import { faFacebookF, faLinkedin, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { faAngleLeft, faAngleRight, faExpandArrowsAlt, faHeart, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import toastr from "toastr";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { get } from "../../api/product";
+import { get as getSize } from "../../api/size";
+import { get as getTopping } from "../../api/topping";
 import { ProductType } from "../../types/product";
 import { formatCurrency } from "../../utils";
+import { ToppingType } from "../../types/topping";
+import { SizeType } from "../../types/size";
+import { getAll } from "../../api/topping";
+import { getAll as getAllSize } from "../../api/size";
+import ProductRelated from "../../components/user/ProductRelated";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
+import { addToCart } from "../../utils/localStorage";
+
+type InputsType = {
+    ice: number,
+    sugar: number,
+    size: string,
+    topping: string,
+}
 
 const ProductDetailPage = () => {
     const [product, setProduct] = useState<ProductType>();
+    const [quantity, setQuantity] = useState<number>(1);
+    const [toppings, setToppings] = useState<ToppingType[]>();
+    const [sizes, setSizes] = useState<SizeType[]>();
+    const [showBtnClear, setShowBtnClear] = useState<boolean>(false);
+    const [totalPrice, setTotalPrice] = useState<number>(0);
+
+    const {
+        register,
+        handleSubmit,
+        reset
+    } = useForm<InputsType>();
+
+    const onSubmit: SubmitHandler<InputsType> = async ({ ice, sugar, size, topping }) => {
+        // get data product
+        const { data: product } = await get(slug);
+        const productData = {
+            productSlug: product.slug,
+            productId: product._id,
+            productName: product.name,
+            productPrice: product.price,
+            productImage: product.image,
+        };
+
+        // get thông tin size
+        const { data: sizeInfo } = await getSize(size);
+        const sizeData = {
+            sizeId: size,
+            sizeName: sizeInfo.name,
+            sizePrice: sizeInfo.priceIncrease,
+        }
+
+        // get topping
+        const toppingData = {
+            toppingId: topping,
+            toppingName: "Không chọn Topping",
+            toppingPrice: 0
+        };
+
+        if (topping) {
+            const { data: toppingInfo } = await getTopping(topping);
+            toppingData.toppingName = toppingInfo.name;
+            toppingData.toppingPrice = toppingInfo.price;
+        }
+    
+        const cartData = {
+            id: uuidv4(),
+            ...productData,
+            ...sizeData,
+            ...toppingData,
+            quantity,
+            ice: +ice,
+            sugar: +sugar,
+        }
+
+        addToCart(cartData, () => {
+            toastr.success(`Thêm ${product.name} vào giỏ hàng thành công`);
+            reset();
+            setQuantity(1);
+        });
+    }
 
     const { slug } = useParams();
 
@@ -20,7 +98,37 @@ const ProductDetailPage = () => {
             setProduct(data);
         };
         getProduct();
-    }, []);
+
+        const getToppings = async () => {
+            const { data } = await getAll();
+            setToppings(data);
+        };
+        getToppings();
+
+        const getSizes = async () => {
+            const { data } = await getAllSize("name", "desc");
+            setSizes(data);
+        };
+        getSizes();
+    }, [slug]);
+
+    const handleChangeFormAddCart = ({ size, topping }: InputsType) => {
+        setShowBtnClear(true);
+    }
+
+    const handleIncrease = () => {
+        setQuantity(prev => prev + 1);
+        setShowBtnClear(true);
+    }
+
+    const handleDecrease = () => {
+        if (quantity === 1) {
+            toastr.info("Vui lòng chọn ít nhất 1 sản phẩm");
+        } else {
+            setQuantity(quantity - 1);
+            setShowBtnClear(true);
+        }
+    }
 
     return (
         <>
@@ -85,28 +193,28 @@ const ProductDetailPage = () => {
                     </div>
                     <div className="flex justify-between">
                         <div>
-                            <form action="" id="form__add-cart" data-id="${id}">
+                            <form action="" onSubmit={handleSubmit(onSubmit)}>
                                 <div className="flex items-center mt-2">
                                     <label className="min-w-[80px] font-bold text-sm">Đá</label>
                                     <ul className="flex">
                                         <li>
-                                            <input type="radio" defaultValue={0} className="form__add-cart-ice" hidden name="ice" id="ice-0" />
+                                            <input type="radio" defaultValue={0} className="form__add-cart-ice" hidden {...register("ice")} id="ice-0" />
                                             <label htmlFor="ice-0" className="block cursor-pointer px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">0%</label>
                                         </li>
                                         <li>
-                                            <input type="radio" defaultValue={30} className="form__add-cart-ice" hidden name="ice" id="ice-30" />
+                                            <input type="radio" defaultValue={30} className="form__add-cart-ice" hidden {...register("ice")} id="ice-30" />
                                             <label htmlFor="ice-30" className="block cursor-pointer px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">30%</label>
                                         </li>
                                         <li>
-                                            <input type="radio" defaultValue={50} className="form__add-cart-ice" hidden name="ice" id="ice-50" />
+                                            <input type="radio" defaultValue={50} className="form__add-cart-ice" hidden {...register("ice")} id="ice-50" />
                                             <label htmlFor="ice-50" className="block cursor-pointer px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">50%</label>
                                         </li>
                                         <li>
-                                            <input type="radio" defaultValue={70} className="form__add-cart-ice" hidden name="ice" id="ice-70" />
+                                            <input type="radio" defaultValue={70} className="form__add-cart-ice" hidden {...register("ice")} id="ice-70" />
                                             <label htmlFor="ice-70" className="block cursor-pointer px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">70%</label>
                                         </li>
                                         <li>
-                                            <input type="radio" defaultValue={100} defaultChecked className="form__add-cart-ice" hidden name="ice" id="ice-100" />
+                                            <input type="radio" defaultValue={100} defaultChecked className="form__add-cart-ice" hidden {...register("ice")} id="ice-100" />
                                             <label htmlFor="ice-100" className="block cursor-pointer px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">100%</label>
                                         </li>
                                     </ul>
@@ -115,23 +223,23 @@ const ProductDetailPage = () => {
                                     <label className="min-w-[80px] font-bold text-sm">Đường</label>
                                     <ul className="flex">
                                         <li>
-                                            <input type="radio" defaultValue={0} name="sugar" hidden className="form__add-cart-sugar" id="sugar-0" />
+                                            <input type="radio" defaultValue={0} {...register("sugar")} hidden className="form__add-cart-sugar" id="sugar-0" />
                                             <label htmlFor="sugar-0" className="cursor-pointer block px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">0%</label>
                                         </li>
                                         <li>
-                                            <input type="radio" defaultValue={30} name="sugar" hidden className="form__add-cart-sugar" id="sugar-30" />
+                                            <input type="radio" defaultValue={30} {...register("sugar")} hidden className="form__add-cart-sugar" id="sugar-30" />
                                             <label htmlFor="sugar-30" className="cursor-pointer block px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">30%</label>
                                         </li>
                                         <li>
-                                            <input type="radio" defaultValue={50} name="sugar" hidden className="form__add-cart-sugar" id="sugar-50" />
+                                            <input type="radio" defaultValue={50} {...register("sugar")} hidden className="form__add-cart-sugar" id="sugar-50" />
                                             <label htmlFor="sugar-50" className="cursor-pointer block px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">50%</label>
                                         </li>
                                         <li>
-                                            <input type="radio" defaultValue={70} name="sugar" hidden className="form__add-cart-sugar" id="sugar-70" />
+                                            <input type="radio" defaultValue={70} {...register("sugar")} hidden className="form__add-cart-sugar" id="sugar-70" />
                                             <label htmlFor="sugar-70" className="cursor-pointer block px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">70%</label>
                                         </li>
                                         <li>
-                                            <input type="radio" defaultValue={100} defaultChecked name="sugar" hidden className="form__add-cart-sugar" id="sugar-100" />
+                                            <input type="radio" defaultValue={100} defaultChecked {...register("sugar")} hidden className="form__add-cart-sugar" id="sugar-100" />
                                             <label htmlFor="sugar-100" className="cursor-pointer block px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">100%</label>
                                         </li>
                                     </ul>
@@ -139,36 +247,50 @@ const ProductDetailPage = () => {
                                 <div className="flex items-center mt-2">
                                     <label className="min-w-[80px] font-bold text-sm">Size</label>
                                     <ul className="flex">
-                                        <li>
-                                            <input hidden defaultChecked type="radio" name="size" className="form__add-cart-size" id="size-s" />
-                                            <label htmlFor="size-s" className="cursor-pointer block px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">S</label>
-                                        </li>
-                                        <li>
-                                            <input hidden type="radio" defaultValue="${size.id}" name="size" className="form__add-cart-size" id="size-${size.name.toLowerCase()}" />
-                                            <label htmlFor="size-${size.name.toLowerCase()}" className="cursor-pointer block px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">S</label>
-                                        </li>
-                                        <li>
-                                            <input hidden type="radio" defaultValue="${size.id}" name="size" className="form__add-cart-size" id="size-${size.name.toLowerCase()}" />
-                                            <label htmlFor="size-${size.name.toLowerCase()}" className="cursor-pointer block px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">M</label>
-                                        </li>
+                                        {sizes?.map((item, index) => (
+                                            <li key={index}>
+                                                <input hidden defaultChecked={item.name === "S"} type="radio" {...register("size")} value={item._id} className="form__add-cart-size" id={`size-${item.name}`} />
+                                                <label htmlFor={`size-${item.name}`} className="cursor-pointer block px-3 py-1 border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">{item.name}</label>
+                                            </li>
+                                        ))}
                                     </ul>
                                 </div>
                                 <div className="flex items-center mt-2">
                                     <label className="min-w-[80px] font-bold text-sm">Topping</label>
-                                    <select id="form__add-cart-topping" className="px-3 py-1 outline-none border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">
+                                    <select {...register("topping")} className="px-3 py-1 outline-none border-2 border-gray-300 transition duration-300 hover:shadow-md rounded-[4px] mr-1 shadow-sm text-gray-500">
                                         <option value="">Chọn topping</option>
-                                        <option value="${item.id}">Topping x</option>
+                                        {toppings?.map((item, index) => <option key={index} value={item._id}>{item.name} +{formatCurrency(item.price)}</option>)}
                                     </select>
                                 </div>
                                 <div className="border-b border-dashed pb-4 mt-6">
-                                    <p className="form__add-cart-total-price h-0 overflow-hidden transition-all ease-linear duration-100 mt-6 border-t border-dashed pt-2 text-xl font-semibold"></p>
+                                    {showBtnClear  && <p className="transition-all ease-linear duration-100 mt-6 border-t border-dashed pt-2 text-xl font-semibold">{formatCurrency(totalPrice)}</p>}
                                     <div className="flex mt-2 items-center">
                                         <div className="flex items-center h-9">
-                                            <button type="button" id="form__add-cart-qnt-minus" className="px-2 bg-gray-100 border-gray-200 h-full border-l border-y transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">-</button>
-                                            <input type="text" id="form__add-cart-qnt" className="border border-gray-200 h-full w-10 text-center outline-none shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc]" defaultValue={1} />
-                                            <button type="button" id="form__add-cart-qnt-plus" className="px-2 bg-gray-100 border-gray-200 h-full border-r border-y transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">+</button>
+                                            <button
+                                                type="button"
+                                                onClick={handleDecrease}
+                                                className="px-2 bg-gray-100 border-gray-200 h-full border-l border-y transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]"
+                                            >-</button>
+                                            <input
+                                                type="text"
+                                                className="border border-gray-200 h-full w-10 text-center outline-none shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc]"
+                                                value={quantity}
+                                                onChange={(e: any) => {
+                                                    const qnt = e.target.value;
+                                                    if (isNaN(qnt)) {
+                                                        toastr.info("Vui lòng nhập số");
+                                                    } else {
+                                                        setQuantity(+e.target.value)
+                                                    }
+                                                }}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={handleIncrease}
+                                                className="px-2 bg-gray-100 border-gray-200 h-full border-r border-y transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]"
+                                            >+</button>
                                         </div>
-                                        <button id="form__add-cart-btn" className="ml-2 px-3 py-2 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Thêm vào giỏ hàng</button>
+                                        <button className="ml-2 px-3 py-2 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Thêm vào giỏ hàng</button>
                                     </div>
                                 </div>
                             </form>
@@ -194,7 +316,10 @@ const ProductDetailPage = () => {
                             </ul>
                         </div>
                         <div>
-                            <button type="button" className="hidden form__add-cart-btn-clear text-gray-400 transition hover:text-black">Xóa</button>
+                            <button
+                                type="button"
+                                className={`${showBtnClear || "hidden"} text-gray-400 transition hover:text-black`}
+                            >Xóa</button>
                         </div>
                     </div>
                 </div>
@@ -266,44 +391,8 @@ const ProductDetailPage = () => {
                     </ul>
                 </div>
             </section>
-            <section className="container max-w-6xl px-3 mx-auto my-6">
-                <div className="border-t">
-                    <h2 className="text-2xl font-semibold mt-2">Sản phẩm tương tự</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                        <div className="group">
-                            <div className="relative bg-[#f7f7f7] overflow-hidden">
-                                <a href="/#/product/${item.id}" style={{backgroundImage: 'url(https://res.cloudinary.com/levantuan/image/upload/v1645173990/assignment-js/rhp6jtqptdqxb3e00cjd.png)'}} className="bg-cover pt-[100%] bg-center block" />
-                                <button className="absolute w-full bottom-0 h-9 bg-[#D9A953] text-center text-gray-50 opacity-95 uppercase font-semibold text-sm transition ease-linear duration-300 hover:opacity-100 hover:text-white translate-y-full group-hover:translate-y-0">Xem nhanh</button>
-                                <button data-id="${item.id}" className="btn-heart absolute top-3 right-3 w-8 h-8 rounded-full border-2 text-[#c0c0c0] text-lg border-[#c0c0c0] transition duration-300 hover:text-white hover:bg-red-700 hover:border-red-700 opacity-0 group-hover:opacity-100">
-                                    <FontAwesomeIcon icon={faHeart} />
-                                </button>
-                            </div>
-                            <div className="text-center py-3">
-                                <p className="uppercase text-xs text-gray-400">Milk Tea</p>
-                                <a href="/#/product/${item.id}" className="block font-semibold text-lg">Trà sữa trân châu đường đen</a>
-                                <ul className="flex text-yellow-500 text-xs justify-center pt-1">
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                </ul>
-                                <div className="text-sm pt-1"> 40.000 VND </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            
+            <ProductRelated id={product?._id} cateId={product?.categoryId._id} />
         </>
     )
 }

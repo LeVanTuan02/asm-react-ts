@@ -18,6 +18,12 @@ export const getProductByCate = (start = 0, limit = 0, sort = "createdAt", order
     return instance.get(url);
 }
 
+export const getProductsRelated = (start = 0, limit = 0, id: string | undefined, cateId: string | undefined) => {
+    let url = `/${DB_NAME}/?categoryId=${cateId}&_id_ne=${id}&status=1&_expand=categoryId&_sort=createdAt&_order=desc`;
+    if (limit) url += `&_start=${start}&_limit=${limit}`;
+    return instance.get(url);
+}
+
 export const search = (start = 0, limit = 0, sort = "createdAt", order = "desc", keyword: string | undefined) => {
     let url = `/${DB_NAME}/?_sort=${sort}&_order=${order}&name_like=${keyword}`;
     if (limit) url += `&_start=${start}&_limit=${limit}`;
