@@ -38,7 +38,7 @@ const NavProduct = ({ cateId }: NavProductProps) => {
                         <li key={index}>
                             <Link
                                 to={`/danh-muc/${item.slug}`}
-                                className={`${item._id === cateId && "text-black font-semibold"} text-[#D9A953] block uppercase py-2 transition duration-300 ease-linear hover:text-black`}
+                                className={`${item._id === cateId ? "text-black font-semibold" : "text-[#D9A953]"} block uppercase py-2 transition duration-300 ease-linear hover:text-black`}
                             >{item.name}</Link>
                         </li>
                     ))}
