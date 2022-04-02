@@ -5,13 +5,15 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CartType } from "../../../types/cart";
 import { formatCurrency } from "../../../utils";
-import { finishOrder, isAuthenticate } from "../../../utils/localStorage";
+import { finishOrder, getListIdVoucher, isAuthenticate } from "../../../utils/localStorage";
 import { LocationType } from "../../../types/location";
 import { getAllProvince, getDistrictById, getDistrictByProvince, getProvinceById, getWardByDistrict, getWardById } from "../../../api/location";
 import { add as addOrder } from "../../../api/order";
 import { add as addOrderDetail } from "../../../api/orderDetail";
+import { get as getVoucher, update } from "../../../api/voucher";
 import { useNavigate } from "react-router-dom";
 import CartNav from "../../../components/user/CartNav";
+import { VoucherType } from "../../../types/voucher";
 
 type InputsType = {
     fullName: string,
@@ -57,6 +59,8 @@ const CheckoutPage = () => {
     const [districts, setDistricts] = useState<LocationType[]>();
     const [wards, setWards] = useState<LocationType[]>();
     const [totalPrice, setTotalPrice] = useState<number>(0);
+    const vouchers: VoucherType[] = JSON.parse(localStorage.getItem("voucher") as string) || [];
+    const [totalPriceVoucher, setTotalPriceVoucher] = useState<number>(0);
 
     const {
         register,
@@ -74,6 +78,7 @@ const CheckoutPage = () => {
 
     const navigate = useNavigate();
     const onSubmit: SubmitHandler<InputsType> = async dataInput => {
+        const listIdVoucher = getListIdVoucher();
         const address = await getAddress(dataInput.address, dataInput.wardsCode, dataInput.districtCode, dataInput.provinceCode);
         // save order
         const orderData = {
@@ -83,7 +88,8 @@ const CheckoutPage = () => {
             phone: dataInput.phone,
             email: dataInput.email,
             totalPrice,
-            priceDecrease: 0,
+            voucher: listIdVoucher,
+            priceDecrease: totalPriceVoucher,
             message: dataInput.message
         }
         const { data: { _id: orderId } } = await addOrder(orderData);
@@ -103,6 +109,20 @@ const CheckoutPage = () => {
                 toppingPrice,
             });
         })
+
+        // save voucher
+        listIdVoucher.forEach(async (idVoucher: string) => {
+            const { data: voucherData } = await getVoucher(idVoucher);
+
+            // add id user
+            voucherData.user_ids.push(user._id);
+
+            // decrease quantity
+            voucherData.quantity--;
+
+            // update voucher
+            await update(voucherData);
+        });
 
         finishOrder(() => {
             toastr.success("Đặt hàng thành công");
@@ -148,6 +168,22 @@ const CheckoutPage = () => {
         start();
 
     }, []);
+
+    useEffect(() => {
+        const getPriceDecrease = () => {
+            let totalDecrease = 0;
+            vouchers.forEach((item) => {
+                if (item.condition) {
+                    totalDecrease += item.conditionNumber;
+                } else {
+                    totalDecrease += totalPrice * (item.conditionNumber / 100);
+                }
+            });
+
+            setTotalPriceVoucher(totalDecrease);
+        };
+        getPriceDecrease();
+    }, [totalPrice]);
 
     const handleChangeProvince = async (e: any) => {
         const { data: { districts } } = await getDistrictByProvince(e.target.value);
@@ -313,14 +349,17 @@ const CheckoutPage = () => {
                                         <td className="font-semibold text-sm py-2">Tạm tính</td>
                                         <td className="font-semibold text-right">{formatCurrency(totalPrice)}</td>
                                     </tr>
-                                    {/* <tr className="border-b">
-                                        <td className="font-semibold text-sm py-2"> Voucher <strong className="ml-1 mr-2">COVID</strong>
-                                        </td>
-                                        <td className="py-2 text-right font-semibold">- 25.000 VND</td>
-                                    </tr> */}
+                                    {vouchers?.map((item, index) => (
+                                        <tr className="border-b" key={index}>
+                                            <td className="flex items-center py-2">
+                                                Voucher <strong className="ml-1 mr-2">{item.code}</strong>
+                                            </td>
+                                            <td className="text-right font-semibold">- {item.condition === 0 ? `${item.conditionNumber}%` : formatCurrency(item.conditionNumber)}</td>
+                                        </tr>
+                                    ))}
                                     <tr className="border-b">
                                         <td className="font-semibold text-sm py-2">Tổng</td>
-                                        <td className="font-semibold text-right">{formatCurrency(totalPrice)}</td>
+                                        <td className="font-semibold text-right">{formatCurrency((totalPrice - totalPriceVoucher) > 0 ? totalPrice - totalPriceVoucher : 0)}</td>
                                     </tr>
                                 </tfoot>
                             </table>

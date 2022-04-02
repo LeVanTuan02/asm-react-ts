@@ -4,10 +4,12 @@ import { get } from "../../../api/order";
 import { OrderDetailType, OrderType } from "../../../types/order";
 import { formatCurrency, formatDate } from "../../../utils";
 import { get as getOrderById } from "../../../api/orderDetail";
+import { get as getVoucher } from "../../../api/voucher";
 
 const MyCartDetailPage = () => {
     const [order, setOrder] = useState<OrderType>({});
     const [orderDetail, setOrderDetail] = useState<OrderDetailType[]>();
+    const [voucherText, setVoucherText] = useState<string>();
 
     const { id } = useParams();
 
@@ -24,6 +26,23 @@ const MyCartDetailPage = () => {
         };
         getOrderDetail();
     }, []);
+
+    useEffect(() => {
+        const renderVoucher = async () => {
+            let voucherStr: string = "";
+            if (order?.voucher) {
+                for await (const voucherItem of order.voucher) {
+                    const { data: voucher } = await getVoucher(voucherItem);
+
+                    voucherStr += `${voucher.code} (Giảm ${voucher.condition ? formatCurrency(voucher.conditionNumber) : `${voucher.conditionNumber}%`}), `;
+                }
+            }
+
+            voucherStr = voucherStr.slice(0, -2);
+            setVoucherText(voucherStr);
+        };
+        renderVoucher();
+    }, [order]);
     
     return (
         <>
@@ -78,12 +97,14 @@ const MyCartDetailPage = () => {
                     <tbody>
                         <tr className="border-b">
                             <td className="py-1.5 font-medium">Tiền tạm tính:</td>
-                            <td className="py-1.5 text-right">{formatCurrency(order?.totalPrice - order?.priceDecrease)}</td>
+                            <td className="py-1.5 text-right">{formatCurrency(order?.totalPrice || 0)}</td>
                         </tr>
-                        {/* <tr className="border-b">
-                            <td className="py-1.5 font-medium">Voucher đã sử dụng</td>
-                            <td className="py-1.5 text-right">BGMAIDINH10 (Giảm 9.999 VND)</td>
-                        </tr> */}
+                        {voucherText && (
+                            <tr className="border-b">
+                                <td className="py-1.5 font-medium">Voucher đã sử dụng</td>
+                                <td className="py-1.5 text-right">{voucherText}</td>
+                            </tr>
+                        )}
                         <tr className="border-b">
                             <td className="py-1.5 font-medium">Tổng giảm:</td>
                             <td className="py-1.5 text-right">{formatCurrency(order?.priceDecrease || 0)}</td>

@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CartType } from "../../../types/cart";
 import { formatCurrency } from "../../../utils";
-import { removeItemCart, updateQuantity } from "../../../utils/localStorage";
+import { addVoucher, isAuthenticate, removeItemCart, removeVoucher, updateQuantity } from "../../../utils/localStorage";
 import Swal from "sweetalert2";
 import CartNav from "../../../components/user/CartNav";
+import { checkValidVoucher } from "../../../api/voucher";
+import { VoucherType } from "../../../types/voucher";
 
 const CartPage = () => {
     const [cartQnt, setCartQnt] = useState<{ id: string, quantity: number }[]>();
@@ -16,6 +18,11 @@ const CartPage = () => {
     })
     const [disableBtnUpdate, setDisableBtnUpdate] = useState<boolean>(true);
     const [totalPrice, setTotalPrice] = useState<number>(0);
+    const [voucher, setVoucher] = useState<string>();
+    const [vouchers, setVouchers] = useState<VoucherType[]>(() => {
+        return JSON.parse(localStorage.getItem("voucher") as string) || [];
+    });
+    const [totalPriceVoucher, setTotalPriceVoucher] = useState<number>(0);
 
     useEffect(() => {
         // get id + quantity
@@ -39,7 +46,23 @@ const CartPage = () => {
             })
         };
         getTotalPrice();
-    }, [cart]);
+
+        const getPriceDecrease = () => {
+            let totalDecrease = 0;
+            vouchers.forEach((item) => {
+                if (item.condition) {
+                    totalDecrease += item.conditionNumber;
+                } else {
+                    totalDecrease += totalPrice * (item.conditionNumber / 100);
+                }
+            });
+
+            setTotalPriceVoucher(totalDecrease);
+        };
+        getPriceDecrease();
+    }, [cart, totalPrice, vouchers]);
+
+    const { user } = isAuthenticate();
 
     const handleUpdateQuantity = (cartId: string, e: any) => {
         setDisableBtnUpdate(false);
@@ -111,6 +134,36 @@ const CartPage = () => {
             }
         })
         
+    }
+
+    const handleRemoveVoucher = (id: string) => {
+        removeVoucher(id, () => {
+            toastr.success("Đã xóa mã Voucher");
+            setVouchers(JSON.parse(localStorage.getItem("voucher") as string));
+        });
+    }
+
+    const handleAddVoucher = async (e: any) => {
+        e.preventDefault();
+        if (!user) {
+            toastr.info("Vui lòng đăng nhập để sử dụng Voucher");
+        } else {
+            if (!voucher) {
+                toastr.info("Vui lòng nhập mã Voucher");
+            } else {
+                const response: any = await checkValidVoucher(voucher, user._id);
+                
+                if (!response.success) {
+                    toastr.info(response.message);
+                } else {
+                    addVoucher(response.voucherData, () => {
+                        toastr.success("Áp mã giảm giá thành công");
+                        setVoucher("");
+                        setVouchers(JSON.parse(localStorage.getItem("voucher") as string));
+                    });
+                }
+            }
+        }
     }
 
     return (
@@ -220,30 +273,40 @@ const CartPage = () => {
                                         <td>Tạm tính</td>
                                         <td className="py-2 text-right font-semibold">{formatCurrency(totalPrice)}</td>
                                     </tr>
-                                    {/* <tr className="border-b">
-                                        <td> Voucher <strong className="ml-1 mr-2">COVID</strong>
-                                            <button className="btn-remove-voucher" data-id="${item.id}">
-                                                <FontAwesomeIcon icon={faTimes} />
-                                            </button>
-                                        </td>
-                                        <td className="py-2 text-right font-semibold">- 30%</td>
-                                    </tr> */}
+
+                                    {vouchers?.map((item, index) => (
+                                        <tr className="border-b" key={index}>
+                                            <td className="flex items-center py-2">
+                                                Voucher <strong className="ml-1 mr-2">{item.code}</strong>
+                                                <button onClick={() => handleRemoveVoucher(item._id)}>
+                                                    <FontAwesomeIcon icon={faTimes} />
+                                                </button>
+                                            </td>
+                                            <td className="text-right font-semibold">- {item.condition === 0 ? `${item.conditionNumber}%` : formatCurrency(item.conditionNumber)}</td>
+                                        </tr>
+                                    ))}
                                     <tr className="border-b">
                                         <td>Tổng</td>
-                                        <td className="py-2 text-right font-semibold">{formatCurrency(totalPrice)}</td>
+                                        <td className="py-2 text-right font-semibold">{formatCurrency((totalPrice - totalPriceVoucher) > 0 ? totalPrice - totalPriceVoucher : 0)}</td>
                                     </tr>
                                 </tbody>
                             </table>
                             <Link to="/checkout">
                                 <button className="mt-4 w-full px-3 py-2 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Tiến hành thanh toán</button>
                             </Link>
-                            <form action="" className="mt-7" id="form__voucher-add">
+                            <form action="" className="mt-7" onSubmit={handleAddVoucher}>
                                 <div className="flex items-center pb-2 font-semibold border-b-2 text-gray-500">
                                     <div className="mr-2">
                                         <FontAwesomeIcon icon={faTag} />
                                     </div> Mã giảm giá
                                 </div>
-                                <input type="text" id="form__voucher-add-control" placeholder="Mã giảm giá" className="shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] my-4 w-full border px-2 h-10 text-sm outline-none" />
+                                <input
+                                    type="text"
+                                    value={voucher}
+                                    onChange={e => setVoucher(e.target.value)}
+                                    placeholder="Mã giảm giá"
+                                    className="shadow-[inset_0_1px_2px_rgba(0,0,0,0.1)] hover:shadow-none focus:shadow-[0_0_5px_#ccc] my-4 w-full border px-2 h-10 text-sm outline-none"
+                                />
                                 <button className="w-full px-3 py-2 bg-gray-100 border border-gray-300 text-black text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Áp dụng</button>
                             </form>
                         </div>

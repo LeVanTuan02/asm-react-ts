@@ -1,4 +1,5 @@
 import { CartType } from "../types/cart";
+import { VoucherType } from "../types/voucher";
 
 export const isAuthenticate = () => {
     const auth = JSON.parse(localStorage.getItem("auth") as string);
@@ -51,6 +52,38 @@ export const removeItemCart = (cartId: string, next: () => void, cart = getCart(
 
 export const finishOrder = (next: () => void) => {
     localStorage.removeItem("cart");
+    localStorage.removeItem("voucher");
 
     next();
+}
+
+const getVoucher = () => {
+    return JSON.parse(localStorage.getItem("voucher") as string) || [];
+}
+
+export const addVoucher = (voucherItem: VoucherType, next: () => void, voucher = getVoucher()) => {
+    const exitsVoucher = voucher.some((item: any) => item._id === voucherItem._id);
+
+    if (!exitsVoucher) {
+        voucher.push(voucherItem);
+        localStorage.setItem("voucher", JSON.stringify(voucher));
+    }
+
+    next();
+}
+
+export const removeVoucher = (id: string, next: () => void, voucher = getVoucher()) => {
+    voucher = voucher.filter((item: any) => item._id !== id);
+    localStorage.setItem("voucher", JSON.stringify(voucher));
+    next();
+}
+
+export const getListIdVoucher = (voucher = getVoucher()) => {
+    let listId = [];
+
+    if (voucher.length) {
+        listId = voucher.map((item: any) => item._id);
+    }
+
+    return listId;
 }
