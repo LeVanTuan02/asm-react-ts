@@ -2,8 +2,6 @@ import { SliderType } from "../types/slider";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
 
-const { token, user } = isAuthenticate();
-
 const DB_NAME = "slider";
 
 export const getAll = () => {
@@ -16,7 +14,7 @@ export const get = (id: string) => {
     return instance.get(url);
 }
 
-export const add = (slider: SliderType) => {
+export const add = (slider: SliderType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${user._id}`;
     return instance.post(url, slider, {
         headers: {
@@ -25,7 +23,7 @@ export const add = (slider: SliderType) => {
     });
 };
 
-export const remove = (id: string) => {
+export const remove = (id: string, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
     return instance.delete(url, {
         headers: {
@@ -34,7 +32,7 @@ export const remove = (id: string) => {
     });
 }
 
-export const update = (slider: SliderType) => {
+export const update = (slider: SliderType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${slider._id}/${user._id}`;
     return instance.put(url, slider, {
         headers: {

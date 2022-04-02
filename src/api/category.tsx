@@ -2,8 +2,6 @@ import { CategoryType } from "../types/category";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
 
-const { token, user } = isAuthenticate();
-
 const DB_NAME = "category";
 
 export const getAll = (start = 0, limit = 0) => {
@@ -17,7 +15,7 @@ export const get = (slug: string | undefined) => {
     return instance.get(url);
 }
 
-export const add = (category: CategoryType) => {
+export const add = (category: CategoryType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${user._id}`;
     return instance.post(url, category, {
         headers: {
@@ -26,7 +24,7 @@ export const add = (category: CategoryType) => {
     });
 };
 
-export const remove = (id: string) => {
+export const remove = (id: string, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
     return instance.delete(url, {
         headers: {
@@ -35,7 +33,7 @@ export const remove = (id: string) => {
     });
 }
 
-export const update = (category: CategoryType) => {
+export const update = (category: CategoryType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${category._id}/${user._id}`;
     return instance.put(url, category, {
         headers: {

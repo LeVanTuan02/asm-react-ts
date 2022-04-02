@@ -2,7 +2,6 @@ import { StoreType } from "../types/store";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
 
-const { token, user } = isAuthenticate();
 const DB_NAME = "store";
 
 export const getAll = () => {
@@ -20,7 +19,7 @@ export const get = (id: string) => {
     return instance.get(url);
 }
 
-export const add = (store: StoreType) => {
+export const add = (store: StoreType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${user._id}`;
     return instance.post(url, store, {
         headers: {
@@ -29,7 +28,7 @@ export const add = (store: StoreType) => {
     });
 };
 
-export const remove = (id: string) => {
+export const remove = (id: string, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
     return instance.delete(url, {
         headers: {
@@ -38,7 +37,7 @@ export const remove = (id: string) => {
     });
 }
 
-export const update = (store: StoreType) => {
+export const update = (store: StoreType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${store._id}/${user._id}`;
     return instance.put(url, store, {
         headers: {

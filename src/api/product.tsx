@@ -2,8 +2,6 @@ import { ProductType } from "../types/product";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
 
-const { token, user } = isAuthenticate();
-
 const DB_NAME = "products";
 
 export const getAll = (start = 0, limit = 0, sort = "createdAt", order = "desc") => {
@@ -35,7 +33,7 @@ export const get = (slug: string) => {
     return instance.get(url);
 }
 
-export const add = (product: ProductType) => {
+export const add = (product: ProductType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${user._id}`;
     return instance.post(url, product, {
         headers: {
@@ -44,7 +42,7 @@ export const add = (product: ProductType) => {
     });
 };
 
-export const remove = (id: string) => {
+export const remove = (id: string, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
     return instance.delete(url, {
         headers: {
@@ -53,7 +51,7 @@ export const remove = (id: string) => {
     });
 }
 
-export const update = (product: ProductType) => {
+export const update = (product: ProductType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${product._id}/${user._id}`;
     return instance.put(url, product, {
         headers: {

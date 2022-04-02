@@ -2,8 +2,6 @@ import { VoucherType } from "../types/voucher";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
 
-const { token, user } = isAuthenticate();
-
 const DB_NAME = "voucher";
 
 export const getAll = () => {
@@ -16,7 +14,7 @@ export const get = (id: string) => {
     return instance.get(url);
 }
 
-export const add = (voucher: VoucherType) => {
+export const add = (voucher: VoucherType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${user._id}`;
     return instance.post(url, voucher, {
         headers: {
@@ -25,7 +23,7 @@ export const add = (voucher: VoucherType) => {
     });
 };
 
-export const remove = (id: string) => {
+export const remove = (id: string, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
     return instance.delete(url, {
         headers: {
@@ -34,7 +32,7 @@ export const remove = (id: string) => {
     });
 }
 
-export const update = (voucher: VoucherType) => {
+export const update = (voucher: VoucherType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${voucher._id}/${user._id}`;
     return instance.put(url, voucher, {
         headers: {

@@ -2,12 +2,10 @@ import { SizeType } from "../types/size";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
 
-const { token, user } = isAuthenticate();
-
 const DB_NAME = "size";
 
-export const getAll = () => {
-    const url = `/${DB_NAME}/?_sort=createdAt&_order=desc`;
+export const getAll = (sort = "createdAt", order = "desc") => {
+    const url = `/${DB_NAME}/?_sort=${sort}&_order=${order}`;
     return instance.get(url);
 };
 
@@ -16,7 +14,7 @@ export const get = (id: string) => {
     return instance.get(url);
 }
 
-export const add = (size: SizeType) => {
+export const add = (size: SizeType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${user._id}`;
     return instance.post(url, size, {
         headers: {
@@ -25,7 +23,7 @@ export const add = (size: SizeType) => {
     });
 };
 
-export const remove = (id: string) => {
+export const remove = (id: string, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
     return instance.delete(url, {
         headers: {
@@ -34,7 +32,7 @@ export const remove = (id: string) => {
     });
 }
 
-export const update = (size: SizeType) => {
+export const update = (size: SizeType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${size._id}/${user._id}`;
     return instance.put(url, size, {
         headers: {

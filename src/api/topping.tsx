@@ -2,8 +2,6 @@ import { ToppingType } from "../types/topping";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
 
-const { token, user } = isAuthenticate();
-
 const DB_NAME = "toppings";
 
 export const getAll = () => {
@@ -16,7 +14,7 @@ export const get = (id: string) => {
     return instance.get(url);
 }
 
-export const add = (topping: ToppingType) => {
+export const add = (topping: ToppingType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${user._id}`;
     return instance.post(url, topping, {
         headers: {
@@ -25,7 +23,7 @@ export const add = (topping: ToppingType) => {
     });
 };
 
-export const remove = (id: string) => {
+export const remove = (id: string, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
     return instance.delete(url, {
         headers: {
@@ -34,7 +32,7 @@ export const remove = (id: string) => {
     });
 }
 
-export const update = (topping: ToppingType) => {
+export const update = (topping: ToppingType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${topping._id}/${user._id}`;
     return instance.put(url, topping, {
         headers: {

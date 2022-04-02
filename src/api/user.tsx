@@ -2,7 +2,6 @@ import { UserType } from "../types/user";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
 
-
 const DB_NAME = "users";
 
 export const getAll = () => {

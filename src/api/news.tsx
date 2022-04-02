@@ -2,8 +2,6 @@ import { NewsType } from "../types/news";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
 
-const { token, user } = isAuthenticate();
-
 const DB_NAME = "news";
 
 export const getAll = (start = 0, limit = 0) => {
@@ -23,7 +21,7 @@ export const get = (slug: string | undefined) => {
     return instance.get(url);
 }
 
-export const add = (news: NewsType) => {
+export const add = (news: NewsType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${user._id}`;
     return instance.post(url, news, {
         headers: {
@@ -32,7 +30,7 @@ export const add = (news: NewsType) => {
     });
 };
 
-export const remove = (id: string) => {
+export const remove = (id: string, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
     return instance.delete(url, {
         headers: {
@@ -41,7 +39,7 @@ export const remove = (id: string) => {
     });
 }
 
-export const update = (news: NewsType) => {
+export const update = (news: NewsType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${news._id}/${user._id}`;
     return instance.put(url, news, {
         headers: {

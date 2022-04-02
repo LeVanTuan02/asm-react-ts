@@ -2,8 +2,6 @@ import { ContactType } from "../types/contact";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
 
-const { token, user } = isAuthenticate();
-
 const DB_NAME = "contact";
 
 export const getAll = () => {
@@ -21,7 +19,7 @@ export const add = (contact: ContactType) => {
     return instance.post(url, contact);
 };
 
-export const remove = (id: string) => {
+export const remove = (id: string, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
     return instance.delete(url, {
         headers: {
@@ -30,7 +28,7 @@ export const remove = (id: string) => {
     });
 }
 
-export const update = (contact: ContactType) => {
+export const update = (contact: ContactType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${contact._id}/${user._id}`;
     return instance.put(url, contact, {
         headers: {
