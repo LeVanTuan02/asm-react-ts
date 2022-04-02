@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { get } from "../../../api/order";
+import { get, update } from "../../../api/order";
 import { OrderDetailType, OrderType } from "../../../types/order";
 import { formatCurrency, formatDate } from "../../../utils";
 import { get as getOrderById } from "../../../api/orderDetail";
 import { get as getVoucher } from "../../../api/voucher";
+import Swal from "sweetalert2";
 
 const MyCartDetailPage = () => {
     const [order, setOrder] = useState<OrderType>({});
@@ -43,6 +44,31 @@ const MyCartDetailPage = () => {
         };
         renderVoucher();
     }, [order]);
+
+    const handleCancelOrder = () => {
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn hủy đơn hàng?',
+            text: "Bạn không thể hoàn tác sau khi hủy!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const { data } = await update({
+                    ...order,
+                    status: 4
+                })
+                Swal.fire(
+                    'Thành công!',
+                    'Đơn hàng đã bị hủy.',
+                    'success'
+                )
+                setOrder(data);
+            }
+        })
+    }
     
     return (
         <>
@@ -51,7 +77,12 @@ const MyCartDetailPage = () => {
                     Đơn hàng #<mark>{order._id}</mark> đặt lúc <mark>{formatDate(order.createdAt || "")}</mark> hiện tại <mark>{order.status === 0 ? "Đang chờ xác nhận" : order.status === 1 ? `Đã xác nhận lúc ${formatDate(order.updatedAt || "")}` : order.status === 2 ? `Đang giao hàng lúc ${formatDate(order.updatedAt || "")}` : order.status === 3 ? `Đã giao thành công lúc ${formatDate(order.updatedAt || "")}` : order.status === 4 ? `Đã bị hủy lúc ${formatDate(order.updatedAt || "")}` : ""}</mark>
                 </div>
                 <div className="flex">
-                    <button id="btn-cancel" className="px-3 py-1.5 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)] mr-2">Hủy ĐH</button>
+                    {(order.status === 0 || order.status === 1) && (
+                        <button
+                            className="px-3 py-1.5 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)] mr-2"
+                            onClick={handleCancelOrder}
+                        >Hủy ĐH</button>
+                    )}
                     <button className="px-3 py-1.5 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Lịch sử ĐH</button>
                 </div>
             </section>

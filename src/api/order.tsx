@@ -1,4 +1,5 @@
 import { OrderType } from "../types/order";
+import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
 
 const DB_NAME = "orders";
@@ -28,7 +29,11 @@ export const remove = (id: string) => {
     return instance.delete(url);
 }
 
-export const update = (order: OrderType) => {
-    const url = `/${DB_NAME}/${order._id}`;
-    return instance.put(url, order);
+export const update = (order: OrderType, { token, user } = isAuthenticate()) => {
+    const url = `/${DB_NAME}/${order._id}/${user._id}`;
+    return instance.put(url, order, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
 }

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { get } from "../../../api/order";
+import { get, update } from "../../../api/order";
 import { OrderDetailType, OrderType } from "../../../types/order";
 import { formatCurrency, formatDate } from "../../../utils";
 import { get as getOrderById } from "../../../api/orderDetail";
 import { get as getVoucher } from "../../../api/voucher";
+import Swal from "sweetalert2";
 
 const CartDetailPage = () => {
     const [order, setOrder] = useState<OrderType>({});
@@ -44,6 +45,31 @@ const CartDetailPage = () => {
         renderVoucher();
     }, [order]);
 
+    const handleUpdateStt = (status: number) => {
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng?',
+            text: "Bạn không thể hoàn tác sau khi cập nhật!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const { data } = await update({
+                    ...order,
+                    status
+                })
+                Swal.fire(
+                    'Thành công!',
+                    'Đơn hàng đã bị hủy.',
+                    'success'
+                )
+                setOrder(data);
+            }
+        })
+    }
+
     return (
         <>
             <header className="z-10 fixed top-14 left-0 md:left-60 right-0 px-4 py-1.5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)] flex items-center justify-between">
@@ -55,9 +81,26 @@ const CartDetailPage = () => {
                 </div>
 
                 <div>
-                    <button type="button" data-status="1" className="btn-update-stt btn-update-stt-confirm mr-2 inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Xác nhận ĐH
-                    </button>
+                    {order.status === 0 ? (
+                        <button type="button" onClick={() => handleUpdateStt(1)} className="mr-2 inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Xác nhận ĐH
+                        </button>
+                    ) : order.status === 1 ? (
+                        <button type="button" onClick={() => handleUpdateStt(2)} className="mr-2 btn-update-stt btn-update-stt-process inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Đang giao hàng
+                        </button>
+                    ) : order.status === 2 ? (
+                        <button type="button" onClick={() => handleUpdateStt(3)} className="mr-2 btn-update-stt btn-update-stt-success inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Đã giao hàng
+                        </button>
+                        ) : ""
+                    }
+
+                    {order.status !== 4 && order.status !== 3 ? (
+                        <button type="button" onClick={() => handleUpdateStt(4)} className="mr-2 inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Hủy ĐH
+                        </button>
+                    ) : ""}
                     <Link to="/admin/cart">
                         <button type="button" className="inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             DS đơn hàng
