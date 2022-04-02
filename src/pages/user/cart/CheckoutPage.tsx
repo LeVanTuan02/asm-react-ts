@@ -14,6 +14,10 @@ import { get as getVoucher, update } from "../../../api/voucher";
 import { useNavigate } from "react-router-dom";
 import CartNav from "../../../components/user/CartNav";
 import { VoucherType } from "../../../types/voucher";
+import { checkAddExits, add as addAddress, getByUserId, get as getAddressById } from "../../../api/address";
+import { AddressType } from "../../../types/address";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 type InputsType = {
     fullName: string,
@@ -23,7 +27,8 @@ type InputsType = {
     districtCode: number,
     wardsCode: number,
     address: string,
-    message: string
+    message: string,
+    saveAddress: boolean,
 }
 
 const schema = yup.object().shape({
@@ -61,6 +66,8 @@ const CheckoutPage = () => {
     const [totalPrice, setTotalPrice] = useState<number>(0);
     const vouchers: VoucherType[] = JSON.parse(localStorage.getItem("voucher") as string) || [];
     const [totalPriceVoucher, setTotalPriceVoucher] = useState<number>(0);
+    const [listAddress, setListAddress] = useState<AddressType[]>();
+    const [showAddress, setShowAddress] = useState<boolean>(false);
 
     const {
         register,
@@ -124,11 +131,28 @@ const CheckoutPage = () => {
             await update(voucherData);
         });
 
+        // lưu thông tin thanh toán
+        if (dataInput.saveAddress) {
+            const currentAddress = {
+                userId: user._id,
+                fullName: dataInput.fullName,
+                phone: dataInput.phone,
+                email: dataInput.email,
+                provinceCode: +dataInput.provinceCode,
+                districtCode: +dataInput.districtCode,
+                wardsCode: +dataInput.wardsCode,
+                address: dataInput.address,
+            };
+            
+            // check duplicate
+            const isExits = await checkAddExits(currentAddress);
+            if (!isExits) await addAddress(currentAddress);
+        }
+
         finishOrder(() => {
             toastr.success("Đặt hàng thành công");
             navigate("/thank-you");
         });
-
     }
 
     useEffect(() => {
@@ -167,6 +191,23 @@ const CheckoutPage = () => {
         };
         start();
 
+        if (user) {
+            const getListAdd = async () => {
+                const { data } = await getByUserId(user._id);
+
+                const listAddress = [];
+                for await (const addItem of data) {
+                    listAddress.push({
+                        ...addItem,
+                        address: await getAddress(addItem.address, addItem.wardsCode, addItem.districtCode, addItem.provinceCode)
+                    })
+                }
+
+                setListAddress(listAddress);
+            };
+            getListAdd();
+        }
+
     }, []);
 
     useEffect(() => {
@@ -185,8 +226,8 @@ const CheckoutPage = () => {
         getPriceDecrease();
     }, [totalPrice]);
 
-    const handleChangeProvince = async (e: any) => {
-        const { data: { districts } } = await getDistrictByProvince(e.target.value);
+    const handleChangeProvince = async (code: number) => {
+        const { data: { districts } } = await getDistrictByProvince(code);
         reset({
             districtCode: 0,
             wardsCode: 0
@@ -194,12 +235,32 @@ const CheckoutPage = () => {
         setDistricts(districts);
     }
 
-    const handleChangeDistrict = async (e: any) => {
-        const { data: { wards } } = await getWardByDistrict(e.target.value);
+    const handleChangeDistrict = async (code: number) => {
+        const { data: { wards } } = await getWardByDistrict(code);
         reset({
             wardsCode: 0
         })
         setWards(wards);
+    }
+
+    const handleShowModalAddress = () => {
+        setShowAddress(!showAddress);
+    }
+
+    const handleChangeAddress = async (id: string) => {
+        const { data: { fullName, phone, email, provinceCode, districtCode, wardsCode, address } } = await getAddressById(id);
+        await handleChangeProvince(provinceCode);
+        await handleChangeDistrict(districtCode);
+        reset({
+            fullName,
+            phone,
+            email,
+            provinceCode,
+            districtCode,
+            wardsCode,
+            address
+        });
+        handleShowModalAddress();
     }
 
     return (
@@ -212,7 +273,15 @@ const CheckoutPage = () => {
                         <div className="col-span-12 lg:col-span-8 border-t-2 pt-3">
                             <div className="flex items-center justify-between mb-2">
                                 <h3 className="uppercase text-gray-500 font-semibold text-lg">Thông tin thanh toán</h3>
-                                <button type="button" id="btn-choose-address" className="px-3 py-2 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Sử dụng địa chỉ khác</button>
+                                {user && (
+                                    <button
+                                        type="button"
+                                        onClick={handleShowModalAddress}
+                                        className="px-3 py-2 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]"
+                                    >
+                                        Sử dụng địa chỉ khác
+                                    </button>
+                                )}
                             </div>
 
                             <div className="grid grid-cols-12 gap-x-4">
@@ -254,7 +323,7 @@ const CheckoutPage = () => {
                                     <select
                                         id="cart__checkout-province"
                                         {...register("provinceCode")}
-                                        onChange={e => handleChangeProvince(e)}
+                                        onChange={e => handleChangeProvince(e.target.value)}
                                         className="shadow-[inset_0_-1.4em_1em_0_rgba(0,0,0,0.02)] hover:shadow-none hover:cursor-default focus:shadow-none focus:cursor-text w-full border px-2 h-10 text-sm outline-none"
                                     >
                                         <option value={0}>-- Chọn Tỉnh/TP --</option>
@@ -267,7 +336,7 @@ const CheckoutPage = () => {
                                     <select
                                         id="cart__checkout-district"
                                         {...register("districtCode")}
-                                        onChange={e => handleChangeDistrict(e)}
+                                        onChange={e => handleChangeDistrict(e.target.value)}
                                         className="shadow-[inset_0_-1.4em_1em_0_rgba(0,0,0,0.02)] hover:shadow-none hover:cursor-default focus:shadow-none focus:cursor-text w-full border px-2 h-10 text-sm outline-none"
                                     >
                                         <option value={0}>-- Chọn Quận/Huyện --</option>
@@ -298,10 +367,13 @@ const CheckoutPage = () => {
                                     />
                                     <div className="text-sm mt-0.5 text-red-500">{errors.address?.message}</div>
                                 </div>
-                                <div className="col-span-12 mb-3 flex items-center">
-                                    <input type="checkbox" id="cart__checkout-save-address" />
-                                    <label htmlFor="cart__checkout-save-address" className="ml-1 block text-md">Lưu thông tin thanh toán?</label>
-                                </div>
+                                
+                                {user && (
+                                    <div className="col-span-12 mb-3 flex items-center">
+                                        <input type="checkbox" id="cart__checkout-save-address" {...register("saveAddress")} />
+                                        <label htmlFor="cart__checkout-save-address" className="ml-1 block text-md">Lưu thông tin thanh toán?</label>
+                                    </div>
+                                )}
                             </div>
                             <h3 className="uppercase text-gray-500 font-semibold my-2 text-lg">Thông tin bổ sung</h3>
                             <div className="grid grid-cols-12">
@@ -366,6 +438,37 @@ const CheckoutPage = () => {
                             <button className="mt-4 px-3 py-2 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Đặt hàng</button>
                         </div>
                     </form>
+
+                    <div id="modal"
+                        className={`${showAddress && "active"} invisible fixed top-0 right-0 bottom-0 left-0 z-20 flex justify-center items-start`}
+                    >
+                        <div id="modal__overlay" onClick={handleShowModalAddress} className="opacity-0 transition-all duration-400 ease-linear absolute top-0 right-0 bottom-0 left-0 bg-[rgba(0,0,0,0.6)]"></div>
+
+                        <div id="modal__body" className="min-w-[700px] transition-all ease-out duration-500 -translate-y-[calc(100%+56px)] bg-white rounded shadow mt-14 z-20">
+                            <header className="px-3 py-2 flex justify-between items-center text-lg font-semibold border-b">
+                                <h1>Danh sách địa chỉ</h1>
+
+                                <div className="cursor-pointer" onClick={handleShowModalAddress}>
+                                    <FontAwesomeIcon icon={faTimes} />
+                                </div>
+                            </header>
+
+                            <div className="px-3 py-2">
+                                <table className="w-full text-left">
+                                    <tbody className="grid grid-cols-1 divide-y" id="list-address">
+                                        {listAddress?.map((item, index) => (
+                                            <tr className="hover:bg-gray-100 cursor-pointer" key={index} onClick={() => handleChangeAddress(item._id)}>
+                                                <td className="p-2">{++index}</td>
+                                                <td className="p-2">{item.fullName}</td>
+                                                <td className="p-2">{item.phone}</td>
+                                                <td className="p-2">{item.address}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </>
             ) : (
                 navigate("/cart")

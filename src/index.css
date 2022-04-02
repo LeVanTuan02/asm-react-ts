@@ -69,3 +69,15 @@ select.disabled {
 #btn-cart-update[disabled] {
     @apply opacity-60
 }
+
+#modal.active {
+    @apply visible;
+}
+
+#modal.active #modal__overlay {
+    @apply opacity-100
+}
+
+#modal.active #modal__body {
+    @apply translate-y-0
+}
