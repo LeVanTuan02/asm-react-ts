@@ -72,16 +72,21 @@ const EditProductPage = () => {
 
     useEffect(() => {
         // get categories
-        (async () => {
+        const getCates = async () => {
             const { data } = await getAll();
             setCategories(data);
-        })();
+        };
 
-        (async () => {
+        const start = async () => {
+            await getCates();
             const { data } = await get(slug);
             setPreview(data.image);
-            reset(data);
-        })();
+            reset({
+                ...data,
+                categoryId: data.categoryId._id
+            });
+        };
+        start();
     }, []);
 
     return (
