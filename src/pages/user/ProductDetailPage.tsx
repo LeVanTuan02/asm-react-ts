@@ -113,6 +113,7 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
             onUpdateTitle(`${data.name} - Trà sữa Yotea`);
             setProduct(data);
         };
+        getProduct();
 
         const getToppings = async () => {
             const { data } = await getAll();
@@ -120,23 +121,20 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
             setToppingDefault(toppingDefault._id);
             setToppings(data);
         };
+        getToppings();
 
         const getSizes = async () => {
             const { data } = await getAllSize("name", "desc");
             setSizes(data);
         };
-        
-        const start = async () => {
-            await getProduct();
-            await getToppings();
-            await getSizes();
-
-            reset({
-                topping: toppingDefault
-            });
-        };
-        start();
+        getSizes();
     }, [slug]);
+
+    useEffect(() => {
+        reset({
+            topping: toppingDefault
+        });
+    }, [toppingDefault])
 
     const handleIncrease = () => {
         setQuantity(prev => prev + 1);
