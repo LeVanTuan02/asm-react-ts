@@ -8,8 +8,9 @@ export const getAll = () => {
     return instance.get(url);
 };
 
-export const getByUserId = (userId: string) => {
+export const getByUserId = (userId: string, start = 0, limit = 0) => {
     let url = `/${DB_NAME}/?userId=${userId}&_sort=createdAt&_order=desc`;
+    if (limit) url += `&_start=${start}&_limit=${limit}`;
     return instance.get(url);
 };
 

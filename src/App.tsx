@@ -116,8 +116,10 @@ const App = () => {
                     <Route index element={<UpdateInfoPage />} />
                     <Route path="update-password" element={<UpdatePasswordPage />} />
                     <Route path="cart" element={<MyCartPage />} />
+                    <Route path="cart/page/:page" element={<MyCartPage />} />
                     <Route path="cart/:id" element={<MyCartDetailPage />} />
                     <Route path="address" element={<AddressPage />} />
+                    <Route path="address/page/:page" element={<AddressPage />} />
                     <Route path="address/:id" element={<AddressDetailPage />} />
                 </Route>
             </Route>

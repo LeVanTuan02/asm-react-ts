@@ -1,23 +1,33 @@
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getByUserId } from "../../../api/order";
+import Pagination from "../../../components/user/Pagination";
 import { OrderType } from "../../../types/order";
 import { formatCurrency, formatDate } from "../../../utils";
 import { isAuthenticate } from "../../../utils/localStorage";
 
 const MyCartPage = () => {
     const [orders, setOrders] = useState<OrderType[]>();
+    const [totalOrder, setTotalOrder] = useState<number>(0);
     const { user } = isAuthenticate();
+
+    const { page } = useParams();
+
+    const limit = 10;
+    const totalPage = Math.ceil(totalOrder / limit);
+    let currentPage = Number(page) || 1;
+    currentPage = currentPage < 1 ? 1 : currentPage > totalPage ? totalPage : currentPage;
+    const start = (currentPage - 1) * limit > 0 ? (currentPage - 1) * limit : 0;
 
     useEffect(() => {
         const getOrders = async () => {
             const { data } = await getByUserId(user._id);
-            setOrders(data);
+            setTotalOrder(data.length);
+            const { data: ordersData } = await getByUserId(user._id, start, limit);
+            setOrders(ordersData);
         };
         getOrders();
-    }, []);
+    }, [currentPage]);
 
     return (
         <>
@@ -36,7 +46,6 @@ const MyCartPage = () => {
                 <thead>
                     <tr>
                         <th className="pb-1 border-b-2 uppercase text-sm">STT</th>
-                        {/* <th className="pb-1 border-b-2 uppercase text-sm">Mã ĐH</th> */}
                         <th className="pb-1 border-b-2 uppercase text-sm">Tên người nhận</th>
                         <th className="pb-1 border-b-2 uppercase text-sm">Ngày đặt</th>
                         <th className="pb-1 border-b-2 uppercase text-sm">Tổng giá trị</th>
@@ -47,8 +56,7 @@ const MyCartPage = () => {
                 <tbody id="cart__list">
                     {orders?.map((item, index) => (
                         <tr className="border-b" key={index}>
-                            <td>{++index}</td>
-                            {/* <td>{item._id}</td> */}
+                            <td>{++index + start}</td>
                             <td className="py-2">{item.customerName}</td>
                             <td className="py-2">{formatDate(item.createdAt || "")}</td>
                             <td className="py-2">{formatCurrency(item.totalPrice - item.priceDecrease)}</td>
@@ -66,44 +74,10 @@ const MyCartPage = () => {
                             </td>
                         </tr>
                     ))}
-                    {/* <tr className="border-b">
-                        <td>#102</td>
-                        <td className="py-2">Lê Văn Tuân</td>
-                        <td className="py-2">20/2/2022 19:54:06</td>
-                        <td className="py-2">244.000 VND</td>
-                        <td className="py-2">
-                            <label className="px-1 py-0.5 text-sm rounded-[4px] font-medium bg-[#E1F0FF] text-[#3699FF]">Đã xác nhận</label>
-                        </td>
-                        <td className="py-2 text-right">
-                            <a href="/#/my-account/cart/${item.id}/detail">
-                                <button className="px-3 py-1.5 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">View</button>
-                            </a>
-                        </td>
-                    </tr> */}
                 </tbody>
             </table>
-            <ul className="flex justify-center mt-5" id="cart__list-pagination">
-                <li>
-                    <a href="/#/my-account/cart/page/${currentPage - 1}" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold border-gray-500 text-gray-500 mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
-                        <button>
-                            <FontAwesomeIcon icon={faAngleLeft} />
-                        </button>
-                    </a>
-                </li>
-                <li>
-                    <a href="/#/my-account/cart/page/${i}" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white border-[#d9a953] bg-[#d9a953] text-white">1</a>
-                </li>
-                <li>
-                    <a href="/#/my-account/cart/page/${i}" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white border-gray-500 text-gray-500">2</a>
-                </li>
-                <li>
-                    <a href="/#/my-account/cart/page/${+currentPage + 1}" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold border-gray-500 text-gray-500 mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
-                        <button>
-                            <FontAwesomeIcon icon={faAngleRight} />
-                        </button>
-                    </a>
-                </li>
-            </ul>
+            
+            <Pagination page={Number(currentPage) || 1} totalPage={totalPage} url="my-account/cart" />
         </>
     )
 }

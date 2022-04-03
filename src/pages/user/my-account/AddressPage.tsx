@@ -1,16 +1,24 @@
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { getByUserId, remove } from "../../../api/address";
 import { getDistrictById, getProvinceById, getWardById } from "../../../api/location";
+import Pagination from "../../../components/user/Pagination";
 import { AddressType } from "../../../types/address";
 import { isAuthenticate } from "../../../utils/localStorage";
 
 const AddressPage = () => {
     const [address, setAddress] = useState<AddressType[]>();
+    const [totalAddress, setTotalAddress] = useState(0);
     const { user } = isAuthenticate();
+
+    const { page } = useParams();
+
+    const limit = 10;
+    const totalPage = Math.ceil(totalAddress / limit);
+    let currentPage = Number(page) || 1;
+    currentPage = currentPage < 1 ? 1 : currentPage > totalPage ? totalPage : currentPage;
+    const start = (currentPage - 1) * limit > 0 ? (currentPage - 1) * limit : 0;
 
     const renderAddress = async (address: string, wardsCode: number, districtCode: number, provinceCode: number) => {
         const wardsData = await getWardById(wardsCode);
@@ -22,9 +30,12 @@ const AddressPage = () => {
     useEffect(() => {
         const getAddress = async () => {
             const { data } = await getByUserId(user._id);
+            setTotalAddress(data.length);
+            
+            const { data: addressData } = await getByUserId(user._id, start, limit);
 
             const listAddress = [];
-            for await (const addItem of data) {
+            for await (const addItem of addressData) {
                 listAddress.push({
                     ...addItem,
                     address: await renderAddress(addItem.address, addItem.wardsCode, addItem.districtCode, addItem.provinceCode)
@@ -33,7 +44,7 @@ const AddressPage = () => {
             setAddress(listAddress);
         };
         getAddress();
-    }, [])
+    }, [currentPage])
 
     const handleRemoveAddress = async (id: string) => {
         Swal.fire({
@@ -74,7 +85,7 @@ const AddressPage = () => {
                 <tbody>
                     {address?.map((item, index)=> (
                         <tr className="border-b" key={index}>
-                            <td>#{++index}</td>
+                            <td>#{++index + start}</td>
                             <td className="py-2">{item.fullName}</td>
                             <td className="py-2">{item.phone}</td>
                             <td className="py-2">{item.address}</td>
@@ -91,28 +102,8 @@ const AddressPage = () => {
                     ))}
                 </tbody>
             </table>
-            <ul className="flex justify-center mt-5">
-                <li>
-                    <a href="/#/my-account/address/page/${currentPage - 1}" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold border-gray-500 text-gray-500 mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
-                        <button>
-                            <FontAwesomeIcon icon={faAngleLeft} />
-                        </button>
-                    </a>
-                </li>
-                <li>
-                    <a href="/#/my-account/cart/page/${i}" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white border-[#d9a953] bg-[#d9a953] text-white">1</a>
-                </li>
-                <li>
-                    <a href="/#/my-account/cart/page/${i}" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white border-gray-500 text-gray-500">2</a>
-                </li>
-                <li>
-                    <a href="/#/my-account/address/page/${+currentPage + 1}" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold border-gray-500 text-gray-500 mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
-                        <button>
-                            <FontAwesomeIcon icon={faAngleRight} />
-                        </button>
-                    </a>
-                </li>
-            </ul>
+            
+            <Pagination page={currentPage} totalPage={totalPage} url="my-account/address" />
         </>
     )
 }
