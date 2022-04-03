@@ -77,6 +77,7 @@ import NewsByCatePage from "./pages/user/NewsByCatePage";
 const App = () => {
     const [logged, setLogged] = useState(false);
     const [showWishList, setShowWishList] = useState(false);
+    const [renderCart, setRenderCart] = useState(false);
 
     const handleLogin = () => setLogged(!logged);
 
@@ -91,8 +92,8 @@ const App = () => {
                 <Route path="danh-muc/:slug/page/:page" element={<ProductByCate onSetShowWishlist={setShowWishList} />} />
                 <Route path="tim-kiem/:keyword" element={<ProductSearchPage onSetShowWishlist={setShowWishList} />} />
                 <Route path="tim-kiem/:keyword/page/:page" element={<ProductSearchPage onSetShowWishlist={setShowWishList} />} />
-                <Route path="san-pham/:slug" element={<ProductDetailPage onSetShowWishlist={setShowWishList} />} />
-                <Route path="san-pham/:slug/page/:page" element={<ProductDetailPage onSetShowWishlist={setShowWishList} />} />
+                <Route path="san-pham/:slug" element={<ProductDetailPage onRenderCart={setRenderCart} onSetShowWishlist={setShowWishList} />} />
+                <Route path="san-pham/:slug/page/:page" element={<ProductDetailPage onRenderCart={setRenderCart} onSetShowWishlist={setShowWishList} />} />
                 <Route path="tin-tuc" element={<NewsPage />} />
                 <Route path="tin-tuc/:slug" element={<NewsByCatePage />} />
                 <Route path="tin-tuc/:slug/page/:page" element={<NewsByCatePage />} />
@@ -103,7 +104,7 @@ const App = () => {
                 <Route path="login" element={<LoginPage onLogin={handleLogin} />} />
                 <Route path="register" element={<RegisterPage />} />
                 <Route path="forgot" element={<ForgotPage />} />
-                <Route path="cart" element={<CartPage />} />
+                <Route path="cart" element={<CartPage onRenderCart={setRenderCart} />} />
                 <Route path="checkout" element={<CheckoutPage />} />
                 <Route path="thank-you" element={<ThankPage />} />
                 <Route path="my-account" element={<PrivateRouter page="user"><MyAccountLayout onLogout={handleLogin} /></PrivateRouter>}>

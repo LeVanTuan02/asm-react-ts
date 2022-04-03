@@ -24,7 +24,7 @@ const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps
     const [isEmptyProduct, setIsEmptyProduct] = useState<boolean>(false);
     const [keyword, setKeyword] = useState<string>();
     const [categories, setCategories] = useState<CategoryType[]>();
-    const [wishList, setWishList] = useState<FavoritesProductType[]>();
+    const [wishList, setWishList] = useState<FavoritesProductType[]>([]);
 
     const auth = isAuthenticate();
 
@@ -163,7 +163,9 @@ const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps
                             </li>
                             <li id="header-cart-label" className="uppercase text-base pl-4 text-gray-50 font-light opacity-80 transition ease-linear duration-200 hover:text-white hover:opacity-100">
                                 <Link to="/cart" className="relative">
-                                    <label className="absolute w-4 h-4 bg-green-700 text-xs text-center rounded-full -right-3 -top-1">10</label>
+                                    <label className="absolute w-4 h-4 bg-green-700 text-xs text-center rounded-full -right-3 -top-1">
+                                        {JSON.parse(localStorage.getItem("cart") as string)?.length || 0}
+                                    </label>
                                     <FontAwesomeIcon icon={faShoppingCart} />
                                 </Link>
                             </li>

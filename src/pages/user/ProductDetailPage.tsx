@@ -29,10 +29,11 @@ type InputsType = {
 }
 
 type ProductDetailPageProps = {
-    onSetShowWishlist: (args: any) => void
+    onSetShowWishlist: (args: any) => void,
+    onRenderCart: (args: any) => void
 }
 
-const ProductDetailPage = ({ onSetShowWishlist }: ProductDetailPageProps) => {
+const ProductDetailPage = ({ onSetShowWishlist, onRenderCart }: ProductDetailPageProps) => {
     const { user } = isAuthenticate();
     const [product, setProduct] = useState<ProductType>();
     const [quantity, setQuantity] = useState<number>(1);
@@ -91,6 +92,7 @@ const ProductDetailPage = ({ onSetShowWishlist }: ProductDetailPageProps) => {
         }
 
         addToCart(cartData, () => {
+            onRenderCart((prev: any) => !prev);
             toastr.success(`Thêm ${product.name} vào giỏ hàng thành công`);
             reset();
             setQuantity(1);

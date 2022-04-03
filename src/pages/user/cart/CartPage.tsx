@@ -11,7 +11,11 @@ import CartNav from "../../../components/user/CartNav";
 import { checkValidVoucher } from "../../../api/voucher";
 import { VoucherType } from "../../../types/voucher";
 
-const CartPage = () => {
+type CartPageProps = {
+    onRenderCart: (args: any) => void
+}
+
+const CartPage = ({ onRenderCart }: CartPageProps) => {
     const [cartQnt, setCartQnt] = useState<{ id: string, quantity: number }[]>();
     const [cart, setCart] = useState<CartType[]>(() => {
         return JSON.parse(localStorage.getItem("cart") as string) || [];
@@ -129,6 +133,7 @@ const CartPage = () => {
                         'Sản phẩm đã bị xóa.',
                         'success'
                     )
+                    onRenderCart((prev: any) => !prev);
                     setCart(JSON.parse(localStorage.getItem("cart") as string));
                 });
             }
