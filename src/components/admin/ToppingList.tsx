@@ -5,16 +5,25 @@ import { getAll, remove } from "../../api/topping";
 import { ToppingType } from "../../types/topping";
 import { formatCurrency } from "../../utils";
 
-const ToppingList = () => {
+type ToppingListProps = {
+    onSetTotal: (total: number) => void,
+    start: number,
+    limit: number,
+}
+
+const ToppingList = ({ onSetTotal, start, limit }: ToppingListProps) => {
     const [toppings, setToppings] = useState<ToppingType[]>();
 
     useEffect(() => {
-        // get sliders
-        (async () => {
+        const getToppings = async () => {
             const { data } = await getAll();
-            setToppings(data);
-        })();
-    }, []);
+            onSetTotal(data.length);
+
+            const { data: ToppingList } = await getAll(start, limit);
+            setToppings(ToppingList);
+        };
+        getToppings();
+    }, [start]);
 
     const handleRemove = async (id: string) => {
         Swal.fire({
@@ -54,7 +63,7 @@ const ToppingList = () => {
             <tbody className="bg-white divide-y divide-gray-200">
                 {toppings?.map((item, index) => (
                     <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{++index + start}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item._id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatCurrency(item.price)}</td>

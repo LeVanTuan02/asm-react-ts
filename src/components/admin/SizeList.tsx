@@ -9,11 +9,11 @@ const SizeList = () => {
     const [sizes, setSizes] = useState<SizeType[]>();
 
     useEffect(() => {
-        // get sliders
-        (async () => {
+        const getSizes = async () => {
             const { data } = await getAll();
             setSizes(data);
-        })();
+        };
+        getSizes();
     }, []);
 
     const handleRemove = async (id: string) => {

@@ -4,16 +4,26 @@ import { getAll } from "../../api/order";
 import { OrderType } from "../../types/order";
 import { formatCurrency, formatDate } from "../../utils";
 
-const OrderList = () => {
+type OrderListProps = {
+    onSetTotal: (total: number) => void,
+    start: number,
+    limit: number
+}
+
+const OrderList = ({ onSetTotal, start, limit }: OrderListProps) => {
     const [orders, setOrders] = useState<OrderType[]>();
 
     useEffect(() => {
         const getOrders = async () => {
             const { data } = await getAll();
-            setOrders(data);
+            
+            onSetTotal(data.length);
+
+            const { data: orderList } = await getAll(start, limit);
+            setOrders(orderList);
         };
         getOrders();
-    }, []);
+    }, [start]);
     
     return (
         <table className="min-w-full divide-y divide-gray-200" id="cate__list-table">
@@ -31,7 +41,7 @@ const OrderList = () => {
             <tbody className="bg-white divide-y divide-gray-200" id="cart__list">
                 {orders?.map((item, index) => (
                     <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{++index}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{++index + start}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item._id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             <div className="text-sm font-medium text-gray-900">{item.customerName}</div>

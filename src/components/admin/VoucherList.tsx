@@ -5,17 +5,26 @@ import { getAll, remove } from "../../api/voucher";
 import { VoucherType } from "../../types/voucher";
 import { formatCurrency, formatDate } from "../../utils";
 
-const VoucherList = () => {
+type VoucherListProps = {
+    onSetTotal: (total: number) => void,
+    start: number,
+    limit: number,
+}
+
+const VoucherList = ({ onSetTotal, start, limit }: VoucherListProps) => {
     const [vouchers, setVouchers] = useState<VoucherType[]>();
 
     useEffect(() => {
         // get data
         const getVouchers = async () => {
             const { data } = await getAll();
-            setVouchers(data);
+            onSetTotal(data.length);
+            
+            const { data: voucherList } = await getAll(start, limit);
+            setVouchers(voucherList);
         }
         getVouchers();
-    }, []);
+    }, [start]);
 
     const handleRemove = async (id: string) => {
         Swal.fire({
@@ -59,7 +68,7 @@ const VoucherList = () => {
             <tbody className="bg-white divide-y divide-gray-200" id="voucher__list">
                 {vouchers?.map((item, index) => (
                     <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{++index + start}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item._id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.code}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.quantity}</td>

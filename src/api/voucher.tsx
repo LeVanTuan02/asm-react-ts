@@ -4,8 +4,9 @@ import instance from "./instance";
 
 const DB_NAME = "voucher";
 
-export const getAll = () => {
-    const url = `/${DB_NAME}/?_sort=createdAt&_order=desc`;
+export const getAll = (start = 0, limit = 0) => {
+    let url = `/${DB_NAME}/?_sort=createdAt&_order=desc`;
+    if (limit) url += `&_start=${start}&_limit=${limit}`;
     return instance.get(url);
 };
 

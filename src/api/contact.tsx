@@ -4,8 +4,9 @@ import instance from "./instance";
 
 const DB_NAME = "contact";
 
-export const getAll = () => {
-    const url = `/${DB_NAME}/?_sort=createdAt&_order=desc&_expand=store`;
+export const getAll = (start = 0, limit = 0) => {
+    let url = `/${DB_NAME}/?_sort=createdAt&_order=desc&_expand=store`;
+    if (limit) url += `&_start=${start}&_limit=${limit}`;
     return instance.get(url);
 };
 

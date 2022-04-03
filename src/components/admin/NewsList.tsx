@@ -5,17 +5,26 @@ import { getAll, remove } from "../../api/news";
 import { NewsType } from "../../types/news";
 import { formatDate } from "../../utils";
 
-const NewsList = () => {
+type NewsListProps = {
+    onSetTotal: (total: number) => void,
+    start: number,
+    limit: number,
+}
+
+const NewsList = ({ onSetTotal, start, limit }: NewsListProps) => {
     const [news, setNews] = useState<NewsType[]>();
 
     useEffect(() => {
         // get data
         const getNews = async () => {
             const { data } = await getAll();
-            setNews(data);
+            onSetTotal(data.length);
+
+            const { data: newsList } = await getAll(start, limit);
+            setNews(newsList);
         };
         getNews();
-    }, []);
+    }, [start]);
 
     const handleRemove = async (id: string) => {
         Swal.fire({
@@ -56,7 +65,7 @@ const NewsList = () => {
             <tbody className="bg-white divide-y divide-gray-200">
                 {news?.map((item, index) => (
                     <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{++index + start}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item._id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             <a href="/#/news/${post.id}" className="hover:underline">{item.title}</a>

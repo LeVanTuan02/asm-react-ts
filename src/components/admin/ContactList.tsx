@@ -5,17 +5,26 @@ import { getAll, remove } from "../../api/contact";
 import { ContactType } from "../../types/contact";
 import { formatDate } from "../../utils";
 
-const ContactList = () => {
+type ContactListProps = {
+    onSetTotal: (total: number) => void,
+    start: number,
+    limit: number,
+}
+
+const ContactList = ({ onSetTotal, start, limit }: ContactListProps) => {
     const [contacts, setContacts] = useState<ContactType[]>();
 
     useEffect(() => {
         // get data
         const getContacts = async () => {
             const { data } = await getAll();
-            setContacts(data);
+            onSetTotal(data.length);
+            
+            const { data: contactList } = await getAll(start, limit);
+            setContacts(contactList);
         };
         getContacts();
-    }, []);
+    }, [start]);
 
     const handleRemove = async (id: string) => {
         Swal.fire({
@@ -57,7 +66,7 @@ const ContactList = () => {
             <tbody className="bg-white divide-y divide-gray-200">
                 {contacts?.map((item, index) => (
                     <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{++index + start}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item._id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             <div className="text-sm font-medium text-gray-900">{item.name}</div>

@@ -128,12 +128,14 @@ const App = () => {
                 <Route index element={<Dashboard />} />
                 <Route path="user">
                     <Route index element={<AdminUserList />} />
+                    <Route path="page/:page" element={<AdminUserList />} />
                     <Route path="add" element={<AddUserPage />} />
                     <Route path=":id/edit" element={<EditUserPage />} />
                 </Route>
 
                 <Route path="news">
                     <Route index element={<NewsListPage />} />
+                    <Route path="page/:page" element={<NewsListPage />} />
                     <Route path="add" element={<AddNewsPage />} />
                     <Route path=":slug/edit" element={<EditNewsPage />} />
                 </Route>
@@ -146,6 +148,7 @@ const App = () => {
 
                 <Route path="product">
                     <Route index element={<ProductListPage />} />
+                    <Route path="page/:page" element={<ProductListPage />} />
                     <Route path="add" element={<AddProductPage />} />
                     <Route path=":slug/edit" element={<EditProductPage />} />
                 </Route>
@@ -164,12 +167,14 @@ const App = () => {
 
                 <Route path="topping">
                     <Route index element={<ToppingListPage />} />
+                    <Route path="page/:page" element={<ToppingListPage />} />
                     <Route path="add" element={<AddToppingPage />} />
                     <Route path=":id/edit" element={<EditToppingPage />} />
                 </Route>
 
                 <Route path="store">
                     <Route index element={<StoreListPage />} />
+                    <Route path="page/:page" element={<StoreListPage />} />
                     <Route path="add" element={<AddStorePage />} />
                     <Route path=":id/edit" element={<EditStorePage />} />
                 </Route>
@@ -188,6 +193,7 @@ const App = () => {
 
                 <Route path="contact">
                     <Route index element={<ContactListPage />} />
+                    <Route path="page/:page" element={<ContactListPage />} />
                     <Route path=":id/detail" element={<ContactDetailPage />} />
                 </Route>
 
@@ -198,6 +204,7 @@ const App = () => {
 
                 <Route path="cart">
                     <Route index element={<CartListPage />} />
+                    <Route path="page/:page" element={<CartListPage />} />
                     <Route path=":id/detail" element={<CartDetailPage />} />
                 </Route>
 

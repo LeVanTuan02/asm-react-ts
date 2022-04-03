@@ -5,16 +5,25 @@ import { getAll, remove } from "../../api/user";
 import { UserType } from "../../types/user";
 import { formatDate } from "../../utils";
 
-const UserList = () => {
+type UserListProps = {
+    onSetTotal: (total: number) => void,
+    start: number,
+    limit: number,
+}
+
+const UserList = ({ onSetTotal, start, limit }: UserListProps) => {
     const [users, setUsers] = useState<UserType[]>();
 
     useEffect(() => {
         const getUsers = async () => {
             const { data } = await getAll();
-            setUsers(data);
+            onSetTotal(data.length);
+            
+            const { data: userList } = await getAll(start, limit);
+            setUsers(userList);
         };
         getUsers();
-    }, []);
+    }, [start]);
 
     const handleRemove = async (id: string) => {
         Swal.fire({
@@ -56,7 +65,7 @@ const UserList = () => {
             <tbody className="bg-white divide-y divide-gray-200" id="user__list">
                 {users?.map((item, index) => (
                     <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{++index + start}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item._id}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">

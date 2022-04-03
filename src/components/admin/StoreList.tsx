@@ -4,16 +4,25 @@ import Swal from "sweetalert2";
 import { getAll, remove } from "../../api/store";
 import { StoreType } from "../../types/store";
 
-const StoreList = () => {
+type StoreListProps = {
+    onSetTotal: (total: number) => void,
+    start: number,
+    limit: number,
+}
+
+const StoreList = ({ onSetTotal, start, limit }: StoreListProps) => {
     const [stores, setStores] = useState<StoreType[]>();
 
     useEffect(() => {
         // get sliders
         (async () => {
             const { data } = await getAll();
-            setStores(data);
+            onSetTotal(data.length);
+            
+            const { data: listStore } = await getAll(start, limit);
+            setStores(listStore);
         })();
-    }, []);
+    }, [start]);
 
     const handleRemove = async (id: string) => {
         Swal.fire({
@@ -53,7 +62,7 @@ const StoreList = () => {
             <tbody className="bg-white divide-y divide-gray-200">
                 {stores?.map((item, index) => (
                     <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{++index + start}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item._id}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">

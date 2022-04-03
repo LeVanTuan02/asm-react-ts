@@ -4,16 +4,25 @@ import Swal from "sweetalert2";
 import { getAll, remove } from "../../api/product";
 import { ProductType } from "../../types/product";
 
-const ListProduct = () => {
+type ListProductProps = {
+    onSetTotal: (total: number) => void,
+    start: number,
+    limit: number,
+}
+
+const ListProduct = ({ onSetTotal, start, limit }: ListProductProps) => {
     const [products, setProducts] = useState<ProductType[]>();
 
     useEffect(() => {
         // get products
         (async () => {
             const { data } = await getAll();
-            setProducts(data);
+            onSetTotal(data.length);
+
+            const { data: products } = await getAll(start, limit);
+            setProducts(products);
         })();
-    }, []);
+    }, [start]);
 
     const handleRemove = async (id: string) => {
         Swal.fire({
@@ -56,7 +65,7 @@ const ListProduct = () => {
             <tbody className="bg-white divide-y divide-gray-200" id="product__list">
                 {products?.map((item, index) => (
                     <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{++index + start}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item._id}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
