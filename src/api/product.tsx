@@ -56,13 +56,9 @@ export const remove = (id: string, { token, user } = isAuthenticate()) => {
     });
 }
 
-export const update = (product: ProductType, { token, user } = isAuthenticate()) => {
-    const url = `/${DB_NAME}/${product._id}/${user._id}`;
-    return instance.put(url, product, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
+export const update = (product: ProductType) => {
+    const url = `/${DB_NAME}/${product._id}`;
+    return instance.put(url, product);
 }
 
 export const getFavorites = () => {
