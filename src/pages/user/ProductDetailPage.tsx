@@ -107,6 +107,9 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
         
         const getProduct = async () => {
             const { data } = await get(slug);
+            data.view++;
+
+            await updateProduct(data);
             onUpdateTitle(`${data.name} - Trà sữa Yotea`);
             setProduct(data);
         };
