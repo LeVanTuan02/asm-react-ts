@@ -16,7 +16,9 @@ import { getAll as getAllSize } from "../../api/size";
 import ProductRelated from "../../components/user/ProductRelated";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { addToCart } from "../../utils/localStorage";
+import { addToCart, isAuthenticate } from "../../utils/localStorage";
+import CommentProduct from "../../components/user/CommentProduct";
+import CommentList from "../../components/user/CommentList";
 
 type InputsType = {
     ice: number,
@@ -26,13 +28,14 @@ type InputsType = {
 }
 
 const ProductDetailPage = () => {
+    const { user } = isAuthenticate();
     const [product, setProduct] = useState<ProductType>();
     const [quantity, setQuantity] = useState<number>(1);
     const [toppings, setToppings] = useState<ToppingType[]>();
     const [sizes, setSizes] = useState<SizeType[]>();
-    const [showBtnClear, setShowBtnClear] = useState<boolean>(false);
-    const [totalPrice, setTotalPrice] = useState<number>(0);
+    // const [showBtnClear, setShowBtnClear] = useState<boolean>(false);
     const [toppingDefault, setToppingDefault] = useState<string>();
+    const [reRender, setRerender] = useState<boolean>(false);
 
     const {
         register,
@@ -89,7 +92,7 @@ const ProductDetailPage = () => {
         });
     }
 
-    const { slug } = useParams();
+    const { slug, page } = useParams();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -125,7 +128,7 @@ const ProductDetailPage = () => {
 
     const handleIncrease = () => {
         setQuantity(prev => prev + 1);
-        setShowBtnClear(true);
+        // setShowBtnClear(true);
     }
 
     const handleDecrease = () => {
@@ -133,7 +136,7 @@ const ProductDetailPage = () => {
             toastr.info("Vui lòng chọn ít nhất 1 sản phẩm");
         } else {
             setQuantity(quantity - 1);
-            setShowBtnClear(true);
+            // setShowBtnClear(true);
         }
     }
 
@@ -330,12 +333,12 @@ const ProductDetailPage = () => {
                                 </li>
                             </ul>
                         </div>
-                        <div>
+                        {/* <div>
                             <button
                                 type="button"
                                 className={`${showBtnClear || "hidden"} text-gray-400 transition hover:text-black`}
                             >Xóa</button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </section>
@@ -346,65 +349,17 @@ const ProductDetailPage = () => {
                 </ul>
             </section>
             <section className="container max-w-6xl mx-auto px-3">
-                <div className="mt-5"> Vui lòng <Link to={`/login`}>
-                        <button className="bg-[#D9A953] px-2 py-1 rounded text-white text-sm font-semibold transition duration-200 ease-linear hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">đăng nhập</button>
-                    </Link> để nhận xét </div>
-                <div id="list-comment">
-                    <ul className="mt-4 grid grid-cols-1 divide-y divide-dashed">
-                        <li className="flex py-4">
-                            <img src="https://res.cloudinary.com/levantuan/image/upload/v1645455652/assignment-js/rx7cgkojxqz9tqeidv7l.png" alt="" className="w-16 h-16 rounded-full object-cover" />
-                            <div className="ml-2">
-                                <div className="flex text-xs mb-0.5">
-                                    <div className="text-yellow-400">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-yellow-400">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-yellow-400">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-yellow-400">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                </div>
-                                <div>
-                                    <span className="font-semibold">Lê Văn Tuân</span>
-                                    <span className="text-sm text-gray-500">(22 Tháng 2, 2022)</span>
-                                </div>
-                                <p className="text-gray-500">Test</p>
-                                <ul className="text-gray-500 flex text-sm mt-1">
-                                    <li data-cmt-id="${cmt.cmtId}" className="btn-remove transition hover:text-black cursor-pointer">Xóa</li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                    <ul className="flex justify-center mt-5">
-                        <li>
-                            <a href="/#/product/${productId}/page/${currentPage - 1}" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold border-gray-500 text-gray-500 mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
-                                <button>
-                                    <FontAwesomeIcon icon={faAngleLeft} />
-                                </button>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/#/product/${productId}/page/${i}" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white border-[#D9A953] bg-[#D9A953] text-white">1</a>
-                        </li>
-                        <li>
-                            <a href="/#/product/${productId}/page/${i}" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white border-gray-500 text-gray-500">2</a>
-                        </li>
-                        <li>
-                            <a href="/#/product/${productId}/page/${+currentPage + 1}" className="w-10 h-10 rounded-full border-2 flex items-center justify-center font-semibold border-gray-500 text-gray-500 mx-0.5 cursor-pointer transition ease-linear duration-200 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
-                                <button>
-                                    <FontAwesomeIcon icon={faAngleRight} />
-                                </button>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+
+                {!user ? (
+                    <div className="mt-5">
+                        Vui lòng <Link to={`/login`}>
+                            <button className="bg-[#D9A953] px-2 py-1 rounded text-white text-sm font-semibold transition duration-200 ease-linear hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">đăng nhập</button>
+                        </Link> để nhận xét
+                    </div>
+                ) : <CommentProduct productId={product?._id} onReRender={setRerender} productData={product} />}
+
+                <CommentList productId={product?._id} reRender={reRender} slug={slug} page={Number(page) || 1} />
+                
             </section>
             
             <ProductRelated id={product?._id} cateId={product?.categoryId._id} />

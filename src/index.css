@@ -81,3 +81,20 @@ select.disabled {
 #modal.active #modal__body {
     @apply translate-y-0
 }
+
+.stars {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    color: #ddd;
+}
+.star__item {
+    padding: 0px 3px;
+    cursor: pointer;
+}
+.star__item:hover,
+.star__item:hover ~ .star__item,
+input[name="star"]:checked ~ .star__item,
+.star__item--active {
+    color: #FFBA01;
+}

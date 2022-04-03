@@ -91,6 +91,7 @@ const App = () => {
                 <Route path="tim-kiem/:keyword" element={<ProductSearchPage />} />
                 <Route path="tim-kiem/:keyword/page/:page" element={<ProductSearchPage />} />
                 <Route path="san-pham/:slug" element={<ProductDetailPage />} />
+                <Route path="san-pham/:slug/page/:page" element={<ProductDetailPage />} />
                 <Route path="tin-tuc" element={<NewsPage />} />
                 <Route path="tin-tuc/:slug" element={<NewsByCatePage />} />
                 <Route path="tin-tuc/:slug/page/:page" element={<NewsByCatePage />} />
