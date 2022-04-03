@@ -3,7 +3,11 @@ import { getAll } from "../../api/product";
 import NavProduct from "../../components/user/NavProduct";
 import ProductContent from "../../components/user/ProductContent";
 
-const ProductPage = () => {
+type ProductPageProps = {
+    onSetShowWishlist: (args: any) => void
+}
+
+const ProductPage = ({ onSetShowWishlist }: ProductPageProps) => {
     const { page } = useParams();
 
     return (
@@ -19,7 +23,7 @@ const ProductPage = () => {
             <section className="container max-w-6xl mx-auto px-3 grid grid-cols-12 gap-6 mb-8">
                 <NavProduct />
 
-                <ProductContent getProducts={getAll} page={Number(page) || 1} url="thuc-don" />
+                <ProductContent onSetShowWishlist={onSetShowWishlist} getProducts={getAll} page={Number(page) || 1} url="thuc-don" />
             </section>
         </>
     )

@@ -3,7 +3,11 @@ import { search } from "../../api/product";
 import NavProduct from "../../components/user/NavProduct";
 import ProductContent from "../../components/user/ProductContent";
 
-const ProductSearchPage = () => {
+type ProductSearchPageProps = {
+    onSetShowWishlist: (args: any) => void
+}
+
+const ProductSearchPage = ({ onSetShowWishlist }: ProductSearchPageProps) => {
     const { keyword, page } = useParams();
 
     return (
@@ -19,7 +23,7 @@ const ProductSearchPage = () => {
             <section className="container max-w-6xl mx-auto px-3 grid grid-cols-12 gap-6 mb-8">
                 <NavProduct />
 
-                <ProductContent url={`tim-kiem/${keyword}`} getProducts={search} parameter={keyword} page={Number(page) || 0} />
+                <ProductContent onSetShowWishlist={onSetShowWishlist} url={`tim-kiem/${keyword}`} getProducts={search} parameter={keyword} page={Number(page) || 0} />
             </section>
         </>
     )

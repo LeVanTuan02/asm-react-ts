@@ -33,6 +33,11 @@ export const get = (slug: string) => {
     return instance.get(url);
 }
 
+export const getById = (id: string) => {
+    const url = `/${DB_NAME}/${id}/?_expand=categoryId`;
+    return instance.get(url);
+}
+
 export const add = (product: ProductType, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${user._id}`;
     return instance.post(url, product, {

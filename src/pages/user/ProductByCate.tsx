@@ -5,7 +5,11 @@ import { getProductByCate } from "../../api/product";
 import NavProduct from "../../components/user/NavProduct";
 import ProductContent from "../../components/user/ProductContent";
 
-const ProductByCate = () => {
+type ProductByCateProps = {
+    onSetShowWishlist: (args: any) => void
+}
+
+const ProductByCate = ({ onSetShowWishlist }: ProductByCateProps) => {
     const { slug, page } = useParams();
     const [cateId, setCateId] = useState<string>()
 
@@ -30,7 +34,7 @@ const ProductByCate = () => {
             <section className="container max-w-6xl mx-auto px-3 grid grid-cols-12 gap-6 mb-8">
                 <NavProduct cateId={cateId} />
 
-                <ProductContent url={`danh-muc/${slug}`} getProducts={getProductByCate} page={Number(page) || 0} parameter={cateId} />
+                <ProductContent onSetShowWishlist={onSetShowWishlist} url={`danh-muc/${slug}`} getProducts={getProductByCate} page={Number(page) || 0} parameter={cateId} />
             </section>
         </>
     )

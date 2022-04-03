@@ -10,3 +10,9 @@ export type ProductType = {
     categoryId: string,
     slug?: string,
 }
+
+export type FavoritesProductType = {
+    userId: string,
+    productId: string,
+    createdAt?: Date
+}

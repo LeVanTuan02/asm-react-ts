@@ -1,16 +1,22 @@
-import { faHeart, faStar, faTh, faThList } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { checkUserHeart } from "../../api/favorites";
+import { get as getProduct, update as updateProduct } from "../../api/product";
+import { add } from "../../api/favorites";
 import { ProductType } from "../../types/product";
 import { formatCurrency } from "../../utils";
+import { isAuthenticate } from "../../utils/localStorage";
 import FilterProduct from "./FilterProduct";
 import Pagination from "./Pagination";
+import toastr from "toastr";
 
 type ProductContentProps = {
     url: string,
     page: number,
     parameter?: string,
+    onSetShowWishlist: (args: any) => void
     getProducts: (start?: number, limit?: number, sort?: string, order?: string, parameter?: string) => any
 };
 
@@ -20,7 +26,7 @@ type FilterType = {
     order: string,
 }
 
-const ProductContent = ({ url, page, getProducts, parameter }: ProductContentProps) => {
+const ProductContent = ({ url, page, getProducts, parameter, onSetShowWishlist }: ProductContentProps) => {
     const [emptyProduct, setEmptyProduct] = useState<boolean>(false);
     const [totalProduct, setTotalProduct] = useState<number>(0);
     const [products, setProducts] = useState<ProductType[]>([]);
@@ -54,6 +60,33 @@ const ProductContent = ({ url, page, getProducts, parameter }: ProductContentPro
         setFilter(data);
     }
 
+    const { user } = isAuthenticate();
+    const handleFavorites = async (productId: string, slug: string) => {
+        if (!user) {
+            toastr.info("Vui lòng đăng nhập để yêu thích sản phẩm");
+        } else {
+            const { data } = await checkUserHeart(user._id, productId);
+
+            if (!data.length) {
+                // cập nhật số lượng yêu thích
+                const { data: product } = await getProduct(slug);
+                product.favorites++;
+
+                updateProduct(product);
+
+                add({
+                    userId: user._id,
+                    productId
+                })
+                    .then(() => toastr.success("Đã thêm sản phẩm vào danh sách yêu thích"))
+                    .then(() => onSetShowWishlist((prev: any) => !prev));
+            } else {
+                toastr.info("Sản phẩm đã tồn tại trong danh sách yêu thích");
+            }
+
+        }
+    }
+
     return (
         <>
             {emptyProduct ? (
@@ -71,7 +104,7 @@ const ProductContent = ({ url, page, getProducts, parameter }: ProductContentPro
                                     <div className="col-span-3 relative group overflow-hidden">
                                         <Link to={`/san-pham/${item.slug}`} className="bg-no-repeat bg-cover bg-center block h-full bg-[#f7f7f7] absolute w-full" style={{ backgroundImage: `url(${item.image})`}} />
                                         <button className="absolute w-full h-8 bottom-0 bg-[#D9A953] opacity-90 transition ease-linear duration-300 text-white font-semibold uppercase text-sm hover:opacity-100 translate-y-full group-hover:translate-y-0">Xem nhanh</button>
-                                        <button className="btn-heart opacity-0 group-hover:opacity-100 absolute top-3 right-3 border-2 border-gray-400 rounded-full w-8 h-8 text-gray-400 transition ease-linear duration-300 hover:bg-red-700 hover:text-white hover:border-red-700">
+                                        <button onClick={() => handleFavorites(item._id, item.slug)} className="btn-heart opacity-0 group-hover:opacity-100 absolute top-3 right-3 border-2 border-gray-400 rounded-full w-8 h-8 text-gray-400 transition ease-linear duration-300 hover:bg-red-700 hover:text-white hover:border-red-700">
                                             <FontAwesomeIcon icon={faHeart} />
                                         </button>
                                     </div>
@@ -122,7 +155,7 @@ const ProductContent = ({ url, page, getProducts, parameter }: ProductContentPro
                                             className="bg-cover pt-[100%] bg-center block"
                                         />
                                         <button className="absolute w-full bottom-0 h-9 bg-[#D9A953] text-center text-gray-50 opacity-95 uppercase font-semibold text-sm transition ease-linear duration-300 hover:opacity-100 hover:text-white translate-y-full group-hover:translate-y-0">Xem nhanh</button>
-                                        <button className="btn-heart absolute top-3 right-3 w-8 h-8 rounded-full border-2 text-[#c0c0c0] text-lg border-[#c0c0c0] transition duration-300 hover:text-white hover:bg-red-700 hover:border-red-700 opacity-0 group-hover:opacity-100">
+                                        <button onClick={() => handleFavorites(item._id, item.slug)} className="btn-heart absolute top-3 right-3 w-8 h-8 rounded-full border-2 text-[#c0c0c0] text-lg border-[#c0c0c0] transition duration-300 hover:text-white hover:bg-red-700 hover:border-red-700 opacity-0 group-hover:opacity-100">
                                             <FontAwesomeIcon icon={faHeart} />
                                         </button>
                                     </div>

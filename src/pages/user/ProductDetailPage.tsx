@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import toastr from "toastr";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { get } from "../../api/product";
+import { get, update as updateProduct } from "../../api/product";
 import { get as getSize } from "../../api/size";
 import { get as getTopping } from "../../api/topping";
 import { ProductType } from "../../types/product";
@@ -19,6 +19,7 @@ import { v4 as uuidv4 } from "uuid";
 import { addToCart, isAuthenticate } from "../../utils/localStorage";
 import CommentProduct from "../../components/user/CommentProduct";
 import CommentList from "../../components/user/CommentList";
+import { add, checkUserHeart } from "../../api/favorites";
 
 type InputsType = {
     ice: number,
@@ -27,7 +28,11 @@ type InputsType = {
     topping: string,
 }
 
-const ProductDetailPage = () => {
+type ProductDetailPageProps = {
+    onSetShowWishlist: (args: any) => void
+}
+
+const ProductDetailPage = ({ onSetShowWishlist }: ProductDetailPageProps) => {
     const { user } = isAuthenticate();
     const [product, setProduct] = useState<ProductType>();
     const [quantity, setQuantity] = useState<number>(1);
@@ -140,6 +145,32 @@ const ProductDetailPage = () => {
         }
     }
 
+    const handleFavorites = async (productId: string, slug: string) => {
+        if (!user) {
+            toastr.info("Vui lòng đăng nhập để yêu thích sản phẩm");
+        } else {
+            const { data } = await checkUserHeart(user._id, productId);
+
+            if (!data.length) {
+                // cập nhật số lượng yêu thích
+                const { data: product } = await get(slug);
+                product.favorites++;
+
+                updateProduct(product);
+
+                add({
+                    userId: user._id,
+                    productId
+                })
+                    .then(() => toastr.success("Đã thêm sản phẩm vào danh sách yêu thích"))
+                    .then(() => onSetShowWishlist((prev: any) => !prev));
+            } else {
+                toastr.info("Sản phẩm đã tồn tại trong danh sách yêu thích");
+            }
+
+        }
+    }
+
     return (
         <>
             <section className="container max-w-6xl mx-auto px-3 grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 pb-8">
@@ -151,7 +182,7 @@ const ProductDetailPage = () => {
                     <button className="absolute bottom-2 left-2 rounded-full border-2 border-gray-400 w-9 h-9 text-gray-400 text-lg transition ease-linear duration-300 hover:bg-[#D9A953] hover:border-[#D9A953] hover:text-white">
                         <FontAwesomeIcon icon={faExpandArrowsAlt} />
                     </button>
-                    <button data-id="${productDetail.id}" className="btn-heart opacity-0 group-hover:opacity-100 absolute top-3 right-3 border-2 border-gray-400 rounded-full w-8 h-8 text-gray-400 transition ease-linear duration-300 hover:bg-red-700 hover:text-white hover:border-red-700">
+                    <button onClick={() => handleFavorites(product?._id, product?.slug)} className="btn-heart opacity-0 group-hover:opacity-100 absolute top-3 right-3 border-2 border-gray-400 rounded-full w-8 h-8 text-gray-400 transition ease-linear duration-300 hover:bg-red-700 hover:text-white hover:border-red-700">
                         <FontAwesomeIcon icon={faHeart} />
                     </button>
                 </div>
@@ -362,7 +393,7 @@ const ProductDetailPage = () => {
                 
             </section>
             
-            <ProductRelated id={product?._id} cateId={product?.categoryId._id} />
+            <ProductRelated id={product?._id} cateId={product?.categoryId._id} onHandleFavorites={handleFavorites} />
         </>
     )
 }

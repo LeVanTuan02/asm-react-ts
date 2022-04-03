@@ -9,9 +9,10 @@ import { formatCurrency } from "../../utils";
 type ProductRelatedProps = {
     id?: string,
     cateId?: string,
+    onHandleFavorites: (args: any) => void
 };
 
-const ProductRelated = ({ id, cateId }: ProductRelatedProps) => {
+const ProductRelated = ({ id, cateId, onHandleFavorites }: ProductRelatedProps) => {
     const [products, setProducts] = useState<ProductType[]>();
 
     useEffect(() => {
@@ -32,7 +33,7 @@ const ProductRelated = ({ id, cateId }: ProductRelatedProps) => {
                             <div className="relative bg-[#f7f7f7] overflow-hidden">
                                 <Link to={`/san-pham/${item.slug}`} style={{backgroundImage: `url(${item.image})`}} className="bg-cover pt-[100%] bg-center block" />
                                 <button className="absolute w-full bottom-0 h-9 bg-[#D9A953] text-center text-gray-50 opacity-95 uppercase font-semibold text-sm transition ease-linear duration-300 hover:opacity-100 hover:text-white translate-y-full group-hover:translate-y-0">Xem nhanh</button>
-                                <button data-id="${item.id}" className="btn-heart absolute top-3 right-3 w-8 h-8 rounded-full border-2 text-[#c0c0c0] text-lg border-[#c0c0c0] transition duration-300 hover:text-white hover:bg-red-700 hover:border-red-700 opacity-0 group-hover:opacity-100">
+                                <button onClick={() => onHandleFavorites(item._id, item.slug)} className="btn-heart absolute top-3 right-3 w-8 h-8 rounded-full border-2 text-[#c0c0c0] text-lg border-[#c0c0c0] transition duration-300 hover:text-white hover:bg-red-700 hover:border-red-700 opacity-0 group-hover:opacity-100">
                                     <FontAwesomeIcon icon={faHeart} />
                                 </button>
                             </div>

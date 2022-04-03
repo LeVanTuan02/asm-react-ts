@@ -98,3 +98,12 @@ input[name="star"]:checked ~ .star__item,
 .star__item--active {
     color: #FFBA01;
 }
+
+.wishlist.active .wishlist__content,
+.nav__mobile.active .nav__mobile-content {
+    @apply translate-x-0
+}
+.wishlist.active .wishlist__overlay,
+.nav__mobile.active .nav__mobile-overlay {
+    @apply visible opacity-100
+}
