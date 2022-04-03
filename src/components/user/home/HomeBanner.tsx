@@ -34,6 +34,7 @@ const HomeBanner = () => {
                                 title={item.title}
                                 style={{ backgroundImage: `url(${item.image})` }}
                                 className="block pt-[34%] bg-center bg-cover bg-no-repeat"
+                                target="_blank"
                             />
                         </li>
                     ))}
