@@ -120,7 +120,7 @@ const CommentList = ({ productId, reRender: productDetailRerender, slug, page }:
                             </div>
                             <p className="text-gray-500">{item.content}</p>
                             <ul className="text-gray-500 flex text-sm mt-1">
-                                {((item.userId === user._id) || user.role) && (
+                                {user && (((item.userId === user._id) || user.role)) && (
                                     <li
                                         onClick={() => handleRemoveCmt(item.cmtId)}
                                         className="btn-remove transition hover:text-black cursor-pointer"
