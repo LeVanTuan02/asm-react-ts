@@ -1,14 +1,20 @@
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getAll } from "../../api/product";
 import NavProduct from "../../components/user/NavProduct";
 import ProductContent from "../../components/user/ProductContent";
 
 type ProductPageProps = {
-    onSetShowWishlist: (args: any) => void
+    onSetShowWishlist: (args: any) => void,
+    onUpdateTitle: (title: string) => void
 }
 
-const ProductPage = ({ onSetShowWishlist }: ProductPageProps) => {
+const ProductPage = ({ onSetShowWishlist, onUpdateTitle }: ProductPageProps) => {
     const { page } = useParams();
+
+    useEffect(() => {
+        onUpdateTitle("Thực đơn - Trà sữa Yotea");
+    }, []);
 
     return (
         <>

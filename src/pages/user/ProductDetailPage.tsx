@@ -30,10 +30,11 @@ type InputsType = {
 
 type ProductDetailPageProps = {
     onSetShowWishlist: (args: any) => void,
-    onRenderCart: (args: any) => void
+    onRenderCart: (args: any) => void,
+    onUpdateTitle: (title: string) => void
 }
 
-const ProductDetailPage = ({ onSetShowWishlist, onRenderCart }: ProductDetailPageProps) => {
+const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: ProductDetailPageProps) => {
     const { user } = isAuthenticate();
     const [product, setProduct] = useState<ProductType>();
     const [quantity, setQuantity] = useState<number>(1);
@@ -106,6 +107,7 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart }: ProductDetailPag
         
         const getProduct = async () => {
             const { data } = await get(slug);
+            onUpdateTitle(`${data.name} - Trà sữa Yotea`);
             setProduct(data);
         };
 

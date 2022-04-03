@@ -6,17 +6,19 @@ import NavProduct from "../../components/user/NavProduct";
 import ProductContent from "../../components/user/ProductContent";
 
 type ProductByCateProps = {
-    onSetShowWishlist: (args: any) => void
+    onSetShowWishlist: (args: any) => void,
+    onUpdateTitle: (args: any) => void
 }
 
-const ProductByCate = ({ onSetShowWishlist }: ProductByCateProps) => {
+const ProductByCate = ({ onSetShowWishlist, onUpdateTitle }: ProductByCateProps) => {
     const { slug, page } = useParams();
     const [cateId, setCateId] = useState<string>()
 
     useEffect(() => {
         const getIdCate = async () => {
-            const { data: { _id } } = await get(slug);
-            setCateId(_id)
+            const { data } = await get(slug);
+            setCateId(data._id)
+            onUpdateTitle(`${data.name} - Trà sữa Yotea`);
         };
         getIdCate();
     }, [slug]);

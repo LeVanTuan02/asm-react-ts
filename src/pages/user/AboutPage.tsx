@@ -1,7 +1,16 @@
 import { faHandshake, faMedal, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect } from "react";
 
-const AboutPage = () => {
+type AboutPageProps = {
+    onUpdateTitle: (title: string) => void
+}
+
+const AboutPage = ({ onUpdateTitle }: AboutPageProps) => {
+    useEffect(() => {
+        onUpdateTitle("Về chúng tôi - Trà sữa Yotea")
+    }, []);
+
     return (
         <>
             <section className="container max-w-6xl mx-auto px-3 py-9">

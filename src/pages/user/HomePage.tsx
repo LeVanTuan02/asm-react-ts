@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import HomeBanner from "../../components/user/home/HomeBanner";
 import HomeCategory from "../../components/user/home/HomeCategory";
 import HomeFeedback from "../../components/user/home/HomeFeedback";
@@ -7,10 +8,15 @@ import HomeShow from "../../components/user/home/HomeShow";
 import HomeWhy from "../../components/user/home/HomeWhy";
 
 type HomePageProps = {
-    onSetShowWishlist: (args: any) => any
+    onSetShowWishlist: (args: any) => any,
+    onUpdateTitle: (title: string) => void
 }
 
-const HomePage = ({ onSetShowWishlist }: HomePageProps) => {
+const HomePage = ({ onSetShowWishlist, onUpdateTitle }: HomePageProps) => {
+    useEffect(() => {
+        onUpdateTitle("Trang chủ - Trà sữa Yotea");
+    }, []);
+
     return (
         <>
             <HomeBanner />
