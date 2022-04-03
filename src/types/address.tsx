@@ -1,5 +1,5 @@
 export type AddressType = {
-    userId: string,
+    userId?: string,
     fullName: string,
     phone: string,
     email: string,
