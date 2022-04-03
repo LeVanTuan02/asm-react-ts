@@ -6,11 +6,16 @@ import { formatCurrency, formatDate } from "../../../utils";
 import { get as getOrderById } from "../../../api/orderDetail";
 import { get as getVoucher } from "../../../api/voucher";
 import Swal from "sweetalert2";
+import OrderLogs from "../../../components/OrderLogs";
+import { add } from "../../../api/orderLogs";
+import { isAuthenticate } from "../../../utils/localStorage";
 
 const MyCartDetailPage = () => {
     const [order, setOrder] = useState<OrderType>({});
     const [orderDetail, setOrderDetail] = useState<OrderDetailType[]>();
     const [voucherText, setVoucherText] = useState<string>();
+    const [showCartLog, setShowCartLog] = useState(false);
+    const { user } = isAuthenticate();
 
     const { id } = useParams();
 
@@ -60,6 +65,14 @@ const MyCartDetailPage = () => {
                     ...order,
                     status: 4
                 })
+
+                // save logs
+                await add({
+                    userId: user._id,
+                    status: 4,
+                    orderId: id
+                })
+
                 Swal.fire(
                     'Thành công!',
                     'Đơn hàng đã bị hủy.',
@@ -83,7 +96,7 @@ const MyCartDetailPage = () => {
                             onClick={handleCancelOrder}
                         >Hủy ĐH</button>
                     )}
-                    <button className="px-3 py-1.5 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Lịch sử ĐH</button>
+                    <button onClick={() => setShowCartLog(prev => !prev)} className="px-3 py-1.5 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Lịch sử ĐH</button>
                 </div>
             </section>
             <section>
@@ -103,7 +116,7 @@ const MyCartDetailPage = () => {
                             <tr className="border-b" key={index}>
                                 <td>{++index}</td>
                                 <td className="py-2 flex items-center">
-                                    <img src="http://res.cloudinary.com/levantuan/image/upload/v1645543326/assignment-js/ffs35rcdv2zbejpfjnlv.png" className="w-10 h-10 object-cover" alt="" />
+                                    <img src={item.productId.image} className="w-10 h-10 object-cover" alt="" />
                                     <div className="pl-3">
                                         <Link to={`/san-pham/${item.productId.slug}`} className="text-blue-500">{item.productId.name}</Link>
                                         <div className="text-sm">
@@ -178,6 +191,8 @@ const MyCartDetailPage = () => {
                     </tbody>
                 </table>
             </section>
+
+            <OrderLogs isShow={showCartLog} orderId={order._id} order={order} onHandleShow={setShowCartLog} />
         </>
     )
 }

@@ -18,6 +18,8 @@ import { checkAddExits, add as addAddress, getByUserId, get as getAddressById } 
 import { AddressType } from "../../../types/address";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { add as addLogs } from "../../../api/orderLogs";
+import { OrderLogsType } from "../../../types/orderLogs";
 
 type InputsType = {
     fullName: string,
@@ -148,6 +150,14 @@ const CheckoutPage = () => {
             const isExits = await checkAddExits(currentAddress);
             if (!isExits) await addAddress(currentAddress);
         }
+
+        // save order logs
+        const orderLogs: OrderLogsType = {
+            orderId: orderId,
+            status: 0,
+        }
+        if (user) orderLogs.userId = user._id;
+        await addLogs(orderLogs);
 
         finishOrder(() => {
             toastr.success("Đặt hàng thành công");

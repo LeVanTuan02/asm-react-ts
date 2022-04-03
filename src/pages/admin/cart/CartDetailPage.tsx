@@ -6,13 +6,19 @@ import { formatCurrency, formatDate } from "../../../utils";
 import { get as getOrderById } from "../../../api/orderDetail";
 import { get as getVoucher } from "../../../api/voucher";
 import Swal from "sweetalert2";
+import OrderLogs from "../../../components/OrderLogs";
+import { add } from "../../../api/orderLogs";
+import { isAuthenticate } from "../../../utils/localStorage";
 
 const CartDetailPage = () => {
     const [order, setOrder] = useState<OrderType>({});
     const [orderDetail, setOrderDetail] = useState<OrderDetailType[]>();
     const [voucherText, setVoucherText] = useState<string>();
+    const [showCartLog, setShowCartLog] = useState(false);
 
     const { id } = useParams();
+
+    const { user } = isAuthenticate();
 
     useEffect(() => {
         const getOrder = async () => {
@@ -60,9 +66,17 @@ const CartDetailPage = () => {
                     ...order,
                     status
                 })
+
+                // save logs
+                await add({
+                    userId: user._id,
+                    status,
+                    orderId: id
+                })
+                
                 Swal.fire(
                     'Thành công!',
-                    'Đơn hàng đã bị hủy.',
+                    'Đơn hàng đã được cập nhật.',
                     'success'
                 )
                 setOrder(data);
@@ -102,10 +116,13 @@ const CartDetailPage = () => {
                         </button>
                     ) : ""}
                     <Link to="/admin/cart">
-                        <button type="button" className="inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <button type="button" className="mr-2 inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             DS đơn hàng
                         </button>
                     </Link>
+                    <button type="button" onClick={() => setShowCartLog(prev => !prev)} className="inline-flex items-center px-2 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Lịch sử ĐH
+                    </button>
                 </div>
             </header>
 
@@ -130,7 +147,7 @@ const CartDetailPage = () => {
                                     <tr className="border-b" key={index}>
                                         <td>{++index}</td>
                                         <td className="py-2 flex items-center">
-                                            <img src="http://res.cloudinary.com/levantuan/image/upload/v1645543326/assignment-js/ffs35rcdv2zbejpfjnlv.png" className="w-10 h-10 object-cover" alt="" />
+                                            <img src={item.productId.image} className="w-10 h-10 object-cover" alt="" />
                                             <div className="pl-3">
                                                 <Link to={`/san-pham/${item.productId.slug}`} className="text-blue-500">{item.productId.name}</Link>
                                                 <div className="text-sm">
@@ -207,6 +224,8 @@ const CartDetailPage = () => {
                     </section>
                 </div>
             </div>
+
+            <OrderLogs isShow={showCartLog} orderId={order._id} order={order} onHandleShow={setShowCartLog} />
         </>
     )
 }
