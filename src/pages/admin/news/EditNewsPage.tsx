@@ -61,7 +61,7 @@ const EditNewsPage = () => {
             toastr.success("Cập nhật bài viết thành công");
             navigate("/admin/news");
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 
@@ -80,7 +80,10 @@ const EditNewsPage = () => {
         const getNews = async () => {
             const { data } = await get(slug);
             setPreview(data.thumbnail);
-            reset(data);
+            reset({
+                ...data,
+                category: data.category._id
+            });
         };
         getNews();
     }, []);

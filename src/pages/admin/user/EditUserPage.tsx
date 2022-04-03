@@ -19,7 +19,7 @@ type InputsType = {
     districtCode: number,
     provinceCode: number,
     address: string,
-    avatar: string,
+    avatar: any,
     role: number,
     active: number,
     confirm: string,
@@ -92,7 +92,7 @@ const EditUserPage = () => {
     const onSubmit: SubmitHandler<InputsType> = async data => {
         try {
             if (typeof data.avatar === "object" && data.avatar.length) {
-                data.avatar = await uploadFile(data.image[0]);
+                data.avatar = await uploadFile(data.avatar[0]);
             }
 
             if (data.password === password) {
@@ -103,7 +103,7 @@ const EditUserPage = () => {
             toastr.success("Cập nhật user thành công");
             navigate("/admin/user");
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 
