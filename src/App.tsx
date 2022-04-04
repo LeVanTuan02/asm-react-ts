@@ -181,6 +181,7 @@ const App = () => {
 
                 <Route path="voucher">
                     <Route index element={<VoucherListPage />} />
+                    <Route path="page/:page" element={<VoucherListPage />} />
                     <Route path="add" element={<AddVoucherPage />} />
                     <Route path=":id/edit" element={<EditVoucherPage />} />
                 </Route>
@@ -200,6 +201,7 @@ const App = () => {
                 <Route path="comment">
                     <Route index element={<CommentListPage />} />
                     <Route path=":id/detail" element={<CommentDetailPage />} />
+                    <Route path=":id/detail/page/:page" element={<CommentDetailPage />} />
                 </Route>
 
                 <Route path="cart">
