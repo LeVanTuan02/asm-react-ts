@@ -2,7 +2,7 @@ import { faHeart, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAll, getById as getProduct, update as updateProduct } from "../../../api/product";
+import { clientUpdate, getAll, getById as getProduct } from "../../../api/product";
 import { ProductType } from "../../../types/product";
 import { formatCurrency } from "../../../utils";
 import { isAuthenticate } from "../../../utils/localStorage";
@@ -36,7 +36,7 @@ const HomeProducts = ({ onSetShowWishlist }: HomeProductsProps) => {
                 const { data: product } = await getProduct(slug);
                 product.favorites++;
 
-                updateProduct(product);
+                clientUpdate(product);
 
                 add({
                     userId: user._id,

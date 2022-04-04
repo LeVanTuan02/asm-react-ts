@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import toastr from "toastr";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { get, update as updateProduct } from "../../api/product";
+import { clientUpdate, get } from "../../api/product";
 import { get as getSize } from "../../api/size";
 import { get as getTopping } from "../../api/topping";
 import { ProductType } from "../../types/product";
@@ -109,7 +109,7 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
             const { data } = await get(slug);
             data.view++;
 
-            await updateProduct(data);
+            await clientUpdate(data);
             onUpdateTitle(`${data.name} - Trà sữa Yotea`);
             setProduct(data);
         };
@@ -161,7 +161,7 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
                 const { data: product } = await get(slug);
                 product.favorites++;
 
-                updateProduct(product);
+                clientUpdate(product);
 
                 add({
                     userId: user._id,

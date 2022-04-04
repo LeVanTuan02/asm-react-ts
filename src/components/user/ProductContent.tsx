@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { checkUserHeart } from "../../api/favorites";
-import { get as getProduct, update as updateProduct } from "../../api/product";
+import { clientUpdate, get as getProduct } from "../../api/product";
 import { add } from "../../api/favorites";
 import { ProductType } from "../../types/product";
 import { formatCurrency } from "../../utils";
@@ -72,7 +72,7 @@ const ProductContent = ({ url, page, getProducts, parameter, onSetShowWishlist }
                 const { data: product } = await getProduct(slug);
                 product.favorites++;
 
-                updateProduct(product);
+                clientUpdate(product);
 
                 add({
                     userId: user._id,
