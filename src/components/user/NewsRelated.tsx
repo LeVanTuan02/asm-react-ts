@@ -20,7 +20,7 @@ const NewsRelated = ({ id, category }: NewsRelatedProps) => {
 
     useEffect(() => {
         const getNewsRelated = async () => {
-            const { data } = await relatedPost(id, category);
+            const { data } = await relatedPost(id, category, 0, 4);
             setNews(data);
         };
         getNewsRelated();

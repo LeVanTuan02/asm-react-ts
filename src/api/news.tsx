@@ -48,7 +48,8 @@ export const update = (news: NewsType, { token, user } = isAuthenticate()) => {
     });
 }
 
-export const relatedPost = (id: string | undefined, cateId: string | undefined) => {
-    const url = `/${DB_NAME}/?category=${cateId}&_id_ne=${id}`;
+export const relatedPost = (id: string | undefined, cateId: string | undefined, start = 0, limit = 0) => {
+    let url = `/${DB_NAME}/?category=${cateId}&_id_ne=${id}&_sort=createdAt&_order=desc`;
+    if (limit) url += `&_start=${start}&_limit=${limit}`;  
     return instance.get(url);
 }
