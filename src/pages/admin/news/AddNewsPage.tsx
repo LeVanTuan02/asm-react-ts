@@ -8,6 +8,8 @@ import { uploadFile } from "../../../utils";
 import { add } from "../../../api/news";
 import { CategoryNewsType } from "../../../types/categoryNews";
 import { getAll } from "../../../api/categoryNews";
+import { useDispatch } from "react-redux";
+import { addNews } from "../../../redux/newsSlice";
 
 type InputsType = {
     title: string,
@@ -40,6 +42,7 @@ const schema = yup.object().shape({
 });
 
 const AddNewsPage = () => {
+    const dispatch = useDispatch();
     const [preview, setPreview] = useState<string>();
     const [categories, setCategories] = useState<CategoryNewsType[]>();
 
@@ -62,12 +65,14 @@ const AddNewsPage = () => {
         try {
             // upload image
             dataInput.thumbnail = await uploadFile(dataInput.thumbnail[0]);
-            await add(dataInput)
+
+            dispatch(addNews(dataInput));
+
             toastr.success("Thêm bài viết thành công")
             reset();
             setPreview("");
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

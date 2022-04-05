@@ -1,32 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { getAll, remove } from "../../api/news";
+import { deleteNews, getNews, selectNews } from "../../redux/newsSlice";
 import { NewsType } from "../../types/news";
 import { formatDate } from "../../utils";
 
 type NewsListProps = {
-    onSetTotal: (total: number) => void,
     start: number,
     limit: number,
 }
 
-const NewsList = ({ onSetTotal, start, limit }: NewsListProps) => {
-    const [news, setNews] = useState<NewsType[]>();
+const NewsList = ({ start, limit }: NewsListProps) => {
+    const dispatch = useDispatch();
+
+    const news: NewsType[] = useSelector(selectNews);
 
     useEffect(() => {
-        // get data
-        const getNews = async () => {
-            const { data } = await getAll();
-            onSetTotal(data.length);
-
-            const { data: newsList } = await getAll(start, limit);
-            setNews(newsList);
-        };
-        getNews();
+        dispatch(getNews({ start, limit }));
     }, [start]);
 
-    const handleRemove = async (id: string) => {
+    const handleRemove = async (id?: string) => {
         Swal.fire({
             title: 'Bạn có chắc chắn muốn xóa không?',
             text: "Bạn không thể hoàn tác sau khi xóa!",
@@ -37,15 +31,12 @@ const NewsList = ({ onSetTotal, start, limit }: NewsListProps) => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                remove(id)
-                    .then(() => {
-                        Swal.fire(
-                            'Thành công!',
-                            'Đã xóa thành công.',
-                            'success'
-                        )
-                    })
-                    .then(() => setNews(news?.filter(item => item._id !== id)));
+                dispatch(deleteNews(id));
+                Swal.fire(
+                    'Thành công!',
+                    'Đã xóa thành công.',
+                    'success'
+                )
             }
         })
     }
@@ -68,9 +59,9 @@ const NewsList = ({ onSetTotal, start, limit }: NewsListProps) => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{++index + start}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item._id}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            <a href="/#/news/${post.id}" className="hover:underline">{item.title}</a>
+                            <Link to={`/bai-viet/${item.slug}`} className="hover:underline">{item.title}</Link>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">{formatDate(item.createdAt)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-500">{formatDate(item.createdAt || "")}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${item.status ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>{item.status ? "Hiển thị": "Ẩn"}</span>
                         </td>

@@ -8,6 +8,8 @@ import { CategoryNewsType } from "../../../types/categoryNews";
 import { uploadFile } from "../../../utils";
 import { get, update } from "../../../api/news";
 import { getAll } from "../../../api/categoryNews";
+import { useDispatch } from "react-redux";
+import { updateNews } from "../../../redux/newsSlice";
 
 type InputsType = {
     title: string,
@@ -37,6 +39,7 @@ const schema = yup.object().shape({
 });
 
 const EditNewsPage = () => {
+    const dispatch = useDispatch();
     const [preview, setPreview] = useState<string>();
     const [categories, setCategories] = useState<CategoryNewsType[]>();
 
@@ -57,7 +60,8 @@ const EditNewsPage = () => {
                 data.thumbnail = await uploadFile(data.thumbnail[0]);
             }
 
-            await update(data);
+            dispatch(updateNews(data));
+
             toastr.success("Cập nhật bài viết thành công");
             navigate("/admin/news");
         } catch (error: any) {
