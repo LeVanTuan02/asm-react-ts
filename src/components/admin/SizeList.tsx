@@ -1,22 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { getAll, remove } from "../../api/size";
+import { deleteSize, getSizes, selectSize } from "../../redux/sizeSlice";
 import { SizeType } from "../../types/size";
 import { formatCurrency } from "../../utils";
 
 const SizeList = () => {
-    const [sizes, setSizes] = useState<SizeType[]>();
+    const dispatch = useDispatch();
+
+    const sizeList: SizeType[] = useSelector(selectSize);
 
     useEffect(() => {
-        const getSizes = async () => {
-            const { data } = await getAll();
-            setSizes(data);
-        };
-        getSizes();
+        dispatch(getSizes());
     }, []);
 
-    const handleRemove = async (id: string) => {
+    const handleRemove = async (id?: string) => {
         Swal.fire({
             title: 'Bạn có chắc chắn muốn xóa không?',
             text: "Bạn không thể hoàn tác sau khi xóa!",
@@ -27,15 +26,12 @@ const SizeList = () => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                remove(id)
-                    .then(() => {
-                        Swal.fire(
-                            'Thành công!',
-                            'Đã xóa thành công.',
-                            'success'
-                        )
-                    })
-                    .then(() => setSizes(sizes?.filter(item => item._id !== id)));
+                dispatch(deleteSize(id));
+                Swal.fire(
+                    'Thành công!',
+                    'Đã xóa thành công.',
+                    'success'
+                )
             }
         })
     }
@@ -52,7 +48,7 @@ const SizeList = () => {
                 </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-                {sizes?.map((item, index) => (
+                {sizeList?.map((item, index) => (
                     <tr key={index}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item._id}</td>
