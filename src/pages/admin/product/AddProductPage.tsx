@@ -8,6 +8,9 @@ import { CategoryType } from "../../../types/category";
 import { getAll } from "../../../api/category";
 import { uploadFile } from "../../../utils";
 import { add } from "../../../api/product";
+import { useDispatch, useSelector } from "react-redux";
+import { getCates, selectCatesProduct } from "../../../redux/categoryProductSlice";
+import { addProduct } from "../../../redux/productSlice";
 
 type InputsType = {
     name: string,
@@ -23,9 +26,9 @@ const schema = yup.object().shape({
         .string()
         .required("Vui lòng nhập tên sản phẩm"),
     price: yup
-        .number()
+        .string()
         .required("Vui lòng nhập giá sản phẩm")
-        .min(0, "Vui lòng nhập lại giá SP"),
+        .test("min", "Vui lòng nhập lại giá SP", (value) => Number(value) >= 0),
     description: yup
         .string()
         .required("Vui lòng nhập mô tả SP"),
@@ -41,15 +44,12 @@ const schema = yup.object().shape({
 })
 
 const AddProductPage = () => {
-    const [categories, setCategories] = useState<CategoryType[]>();
+    const dispatch = useDispatch();
+    const categories: CategoryType[] = useSelector(selectCatesProduct);
     const [preview, setPreview] = useState<string>();
 
     useEffect(() => {
-        // get categories
-        (async () => {
-            const { data } = await getAll();
-            setCategories(data);
-        })();
+        dispatch(getCates());
     }, []);
 
     const handlePreview = (e: any) => {
@@ -66,12 +66,14 @@ const AddProductPage = () => {
     const onSubmit: SubmitHandler<InputsType> = async data => {
         try {
             const url = await uploadFile(data.image[0]);
-            await add({ ...data, image: url, price: +data.price, status: +data.status });
+
+            dispatch(addProduct({ ...data, image: url, price: +data.price, status: +data.status }));
+
             toastr.success("Thêm sản phẩm thành công")
             setPreview("");
             reset();
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 
