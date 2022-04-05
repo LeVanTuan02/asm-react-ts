@@ -3,9 +3,10 @@ import toastr from "toastr";
 import * as yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { get, update } from "../../../api/voucher";
+import { get } from "../../../api/voucher";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { formatDate } from "../../../utils";
+import { useDispatch } from "react-redux";
+import { updateVoucher } from "../../../redux/voucherSlice";
 
 type InputsType = {
     code: string,
@@ -53,6 +54,8 @@ const schema = yup.object().shape({
 })
 
 const EditVoucherPage = () => {
+    const dispatch = useDispatch();
+
     const { id } = useParams();
 
     const formatTime = (dateString: string) => {
@@ -77,11 +80,12 @@ const EditVoucherPage = () => {
 
     const onSubmit: SubmitHandler<InputsType> = async data => {
         try {
-            await update(data);
+            dispatch(updateVoucher(data));
+
             toastr.success("Cập nhật voucher thành công");
             navigate("/admin/voucher");
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

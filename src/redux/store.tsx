@@ -8,6 +8,7 @@ import sliderReducer from "./sliderSlice";
 import productReducer from "./productSlice";
 import storeReducer from "./storeSlice";
 import toppingReducer from "./toppingSlice";
+import voucherReducer from "./voucherSlice";
 
 const store = configureStore({
     reducer: {
@@ -19,7 +20,8 @@ const store = configureStore({
         slider: sliderReducer,
         product: productReducer,
         store: storeReducer,
-        topping: toppingReducer
+        topping: toppingReducer,
+        voucher: voucherReducer
     }
 })
 
