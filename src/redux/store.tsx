@@ -7,6 +7,7 @@ import contactReducer from "./contactSlice";
 import sliderReducer from "./sliderSlice";
 import productReducer from "./productSlice";
 import storeReducer from "./storeSlice";
+import toppingReducer from "./toppingSlice";
 
 const store = configureStore({
     reducer: {
@@ -17,7 +18,8 @@ const store = configureStore({
         contact: contactReducer,
         slider: sliderReducer,
         product: productReducer,
-        store: storeReducer
+        store: storeReducer,
+        topping: toppingReducer
     }
 })
 
