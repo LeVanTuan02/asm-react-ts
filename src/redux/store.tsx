@@ -9,6 +9,7 @@ import productReducer from "./productSlice";
 import storeReducer from "./storeSlice";
 import toppingReducer from "./toppingSlice";
 import voucherReducer from "./voucherSlice";
+import userReducer from "./userSlice";
 
 const store = configureStore({
     reducer: {
@@ -21,7 +22,8 @@ const store = configureStore({
         product: productReducer,
         store: storeReducer,
         topping: toppingReducer,
-        voucher: voucherReducer
+        voucher: voucherReducer,
+        user: userReducer
     }
 })
 
