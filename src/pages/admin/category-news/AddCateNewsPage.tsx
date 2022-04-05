@@ -3,7 +3,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toastr from "toastr";
 import { Link } from "react-router-dom";
-import { add } from "../../../api/categoryNews";
+import { useDispatch } from "react-redux";
+import { addCateNews } from "../../../redux/cateNewsSlice";
 
 type InputsType = {
     name: string,
@@ -16,6 +17,8 @@ const schema = yup.object().shape({
 });
 
 const AddCateNewsPage = () => {
+    const dispatch = useDispatch();
+
     const {
         register,
         handleSubmit,
@@ -25,11 +28,12 @@ const AddCateNewsPage = () => {
 
     const onSubmit: SubmitHandler<InputsType> = async dataInput => {
         try {
-            await add(dataInput)
+            dispatch(addCateNews(dataInput));
+
             toastr.success("Thêm danh mục thành công")
             reset();
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 
