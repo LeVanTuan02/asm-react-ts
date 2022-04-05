@@ -3,8 +3,10 @@ import toastr from "toastr";
 import * as yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { get, update } from "../../../api/size";
+import { get } from "../../../api/size";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { updateSize } from "../../../redux/sizeSlice";
 
 type InputsType = {
     name: string,
@@ -22,6 +24,8 @@ const schema = yup.object().shape({
 })
 
 const EditSizePage = () => {
+    const dispatch = useDispatch();
+
     const { id } = useParams();
 
     const {
@@ -35,11 +39,12 @@ const EditSizePage = () => {
 
     const onSubmit: SubmitHandler<InputsType> = async data => {
         try {
-            await update(data);
+            dispatch(updateSize(data));
+
             toastr.success("Cập nhật size thành công");
             navigate("/admin/size");
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 
