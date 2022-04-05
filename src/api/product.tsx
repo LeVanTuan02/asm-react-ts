@@ -67,7 +67,7 @@ export const update = (product: ProductType, { token, user } = isAuthenticate())
 
 export const clientUpdate = (product: ProductType) => {
     const url = `/${DB_NAME}/userUpdate/${product._id}`;
-    return instance.put(url, product);
+    return instance.patch(url, product);
 }
 
 export const getFavorites = () => {
