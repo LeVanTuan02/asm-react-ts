@@ -5,7 +5,8 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { uploadFile } from "../../../utils";
-import { add } from "../../../api/slider";
+import { useDispatch } from "react-redux";
+import { addSlider } from "../../../redux/sliderSlice";
 
 type InputsType = {
     title: string,
@@ -30,6 +31,8 @@ const schema = yup.object().shape({
 })
 
 const AddSlidePage = () => {
+    const dispatch = useDispatch();
+
     const [preview, setPreview] = useState<string>();
 
     const handlePreview = (e: any) => {
@@ -46,12 +49,14 @@ const AddSlidePage = () => {
     const onSubmit: SubmitHandler<InputsType> = async data => {
         try {
             const url = await uploadFile(data.image[0]);
-            await add({ ...data, image: url });
-            toastr.success("Thêm slide thành công")
+
+            dispatch(addSlider({ ...data, image: url }));
+
+            toastr.success("Thêm slide thành công");
             setPreview("");
             reset();
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
     

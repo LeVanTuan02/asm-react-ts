@@ -1,21 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { getAll, remove } from "../../api/slider";
+import { remove } from "../../api/slider";
+import { deleteSlider, getSliders, selectSlider } from "../../redux/sliderSlice";
 import { SliderType } from "../../types/slider";
 
 const ListSlider = () => {
-    const [sliders, setSliders] = useState<SliderType[]>();
+    const dispatch = useDispatch();
+    const sliders: SliderType[] = useSelector(selectSlider);
 
     useEffect(() => {
-        // get sliders
-        (async () => {
-            const { data } = await getAll();
-            setSliders(data);
-        })();
+       dispatch(getSliders());
     }, []);
 
-    const handleRemove = async (id: string) => {
+    const handleRemove = async (id?: string) => {
         Swal.fire({
             title: 'Bạn có chắc chắn muốn xóa không?',
             text: "Bạn không thể hoàn tác sau khi xóa!",
@@ -26,15 +25,12 @@ const ListSlider = () => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                remove(id)
-                    .then(() => {
-                        Swal.fire(
-                            'Thành công!',
-                            'Đã xóa thành công.',
-                            'success'
-                        )
-                    })
-                    .then(() => setSliders(sliders?.filter(item => item._id !== id)));
+                dispatch(deleteSlider(id));
+                Swal.fire(
+                    'Thành công!',
+                    'Đã xóa thành công.',
+                    'success'
+                )
             }
         })
     }
