@@ -6,6 +6,7 @@ import cateNewsReducer from "./cateNewsSlice";
 import contactReducer from "./contactSlice";
 import sliderReducer from "./sliderSlice";
 import productReducer from "./productSlice";
+import storeReducer from "./storeSlice";
 
 const store = configureStore({
     reducer: {
@@ -15,7 +16,8 @@ const store = configureStore({
         cateNews: cateNewsReducer,
         contact: contactReducer,
         slider: sliderReducer,
-        product: productReducer
+        product: productReducer,
+        store: storeReducer
     }
 })
 

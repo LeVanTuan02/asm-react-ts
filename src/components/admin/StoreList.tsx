@@ -1,30 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect} from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { getAll, remove } from "../../api/store";
+import { remove } from "../../api/store";
+import { deleteStore, getStores, selectStores } from "../../redux/storeSlice";
 import { StoreType } from "../../types/store";
 
 type StoreListProps = {
-    onSetTotal: (total: number) => void,
     start: number,
     limit: number,
 }
 
-const StoreList = ({ onSetTotal, start, limit }: StoreListProps) => {
-    const [stores, setStores] = useState<StoreType[]>();
+const StoreList = ({ start, limit }: StoreListProps) => {
+    const dispatch = useDispatch();
+    const stores: StoreType[] = useSelector(selectStores);
 
     useEffect(() => {
-        // get sliders
-        (async () => {
-            const { data } = await getAll();
-            onSetTotal(data.length);
-            
-            const { data: listStore } = await getAll(start, limit);
-            setStores(listStore);
-        })();
+        dispatch(getStores({ start, limit }));
     }, [start]);
 
-    const handleRemove = async (id: string) => {
+    const handleRemove = async (id?: string) => {
         Swal.fire({
             title: 'Bạn có chắc chắn muốn xóa không?',
             text: "Bạn không thể hoàn tác sau khi xóa!",
@@ -35,15 +30,12 @@ const StoreList = ({ onSetTotal, start, limit }: StoreListProps) => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                remove(id)
-                    .then(() => {
-                        Swal.fire(
-                            'Thành công!',
-                            'Đã xóa thành công.',
-                            'success'
-                        )
-                    })
-                    .then(() => setStores(stores?.filter(item => item._id !== id)));
+                dispatch(deleteStore(id));
+                Swal.fire(
+                    'Thành công!',
+                    'Đã xóa thành công.',
+                    'success'
+                )
             }
         })
     }
