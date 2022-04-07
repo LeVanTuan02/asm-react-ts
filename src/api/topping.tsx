@@ -10,7 +10,7 @@ export const getAll = (start = 0, limit = 0) => {
     return instance.get(url);
 };
 
-export const get = (id: string) => {
+export const get = (id?: string) => {
     const url = `/${DB_NAME}/${id}`;
     return instance.get(url);
 }
@@ -24,7 +24,7 @@ export const add = (topping: ToppingType, { token, user } = isAuthenticate()) =>
     });
 };
 
-export const remove = (id: string, { token, user } = isAuthenticate()) => {
+export const remove = (id?: string, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
     return instance.delete(url, {
         headers: {

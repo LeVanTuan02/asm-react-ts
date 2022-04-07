@@ -2,10 +2,12 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import toastr from "toastr";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { get, update } from "../../../api/category";
+import { get } from "../../../api/category";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { uploadFile } from "../../../utils";
+import { useDispatch } from "react-redux";
+import { updateCate } from "../../../redux/categoryProductSlice";
 
 const schema = yup.object().shape({
     name: yup
@@ -19,6 +21,8 @@ type InputsType = {
 }
 
 const EditCategoryPage = () => {
+    const dispatch = useDispatch();
+    
     const [preview, setPreview] = useState<string>();
 
     const {
@@ -31,12 +35,12 @@ const EditCategoryPage = () => {
     const { slug } = useParams();
 
     useEffect(() => {
-        // get category
-        (async () => {
+        const getCates = async () => {
             const { data } = await get(slug);
             setPreview(data.image);
             reset(data);
-        })();
+        };
+        getCates();
     }, []);
 
     const navigate = useNavigate();
@@ -46,11 +50,13 @@ const EditCategoryPage = () => {
             if (typeof data.image === "object" && data.image.length) {
                 data.image = await uploadFile(data.image[0]);
             }
-            await update(data)
+            
+            dispatch(updateCate(data));
+
             toastr.success("Cập nhật thành công");
             navigate("/admin/category");
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

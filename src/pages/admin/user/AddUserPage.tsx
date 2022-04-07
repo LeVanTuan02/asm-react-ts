@@ -7,7 +7,8 @@ import { useEffect, useState } from "react";
 import { getAllProvince, getDistrictByProvince, getWardByDistrict } from "../../../api/location";
 import { LocationType } from "../../../types/location";
 import { uploadFile } from "../../../utils";
-import { add } from "../../../api/user";
+import { useDispatch } from "react-redux";
+import { addUser } from "../../../redux/userSlice";
 
 type InputsType = {
     email: string,
@@ -75,6 +76,8 @@ const schema = yup.object().shape({
 });
 
 const AddUserPage = () => {
+    const dispatch = useDispatch();
+
     const [preview, setPreview] = useState<string>("");
     const [provinces, setProvinces] = useState<LocationType[]>();
     const [districts, setDistricts] = useState<LocationType[]>();
@@ -96,11 +99,17 @@ const AddUserPage = () => {
     } = useForm<InputsType>({ resolver: yupResolver(schema) });
 
     const onSubmit: SubmitHandler<InputsType> = async data => {
-        const url = await uploadFile(data.avatar[0]);
-        await add({ ...data, avatar: url });
-        toastr.success("Thêm tài khoản thành công");
-        reset();
-        setPreview("");
+        try {
+            const url = await uploadFile(data.avatar[0]);
+
+            dispatch(addUser({ ...data, avatar: url }))
+            
+            toastr.success("Thêm tài khoản thành công");
+            reset();
+            setPreview("");
+        } catch (error) {
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+        }
     }
 
     const handleChangeProvince = async (e: any) => {

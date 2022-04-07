@@ -23,7 +23,7 @@ export const add = (category: CategoryNewsType, { token, user } = isAuthenticate
     });
 };
 
-export const remove = (id: string, { token, user } = isAuthenticate()) => {
+export const remove = (id?: string, { token, user } = isAuthenticate()) => {
     const url = `/${DB_NAME}/${id}/${user._id}`;
     return instance.delete(url, {
         headers: {

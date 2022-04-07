@@ -6,6 +6,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { add } from "../../../api/category";
 import { uploadFile } from "../../../utils";
+import { useDispatch } from "react-redux";
+import { addCate } from "../../../redux/categoryProductSlice";
 
 type InputsType = {
     name: string,
@@ -22,6 +24,7 @@ const schema = yup.object().shape({
 });
 
 const AddCategoryPage = () => {
+    const dispatch = useDispatch();
     const [preview, setPreview] = useState<string>();
 
     const {
@@ -35,7 +38,7 @@ const AddCategoryPage = () => {
         try {
             // upload image
             dataInput.image = await uploadFile(dataInput.image[0]);
-            await add(dataInput)
+            dispatch(addCate(dataInput));
             toastr.success("Thêm danh mục thành công")
             reset();
             setPreview("");

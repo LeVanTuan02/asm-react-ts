@@ -1,22 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { getAll, remove } from "../../api/categoryNews";
+import { remove } from "../../api/categoryNews";
+import { deleteCateNews, getCateNews, selectCateNews } from "../../redux/cateNewsSlice";
 import { CategoryNewsType } from "../../types/categoryNews";
 
 const CateNewsList = () => {
-    const [categories, setCategories] = useState<CategoryNewsType[]>();
+    const dispatch = useDispatch();
+    const categories: CategoryNewsType[] = useSelector(selectCateNews);
 
     useEffect(() => {
-        // get data
-        const getCate = async () => {
-            const { data } = await getAll();
-            setCategories(data);
-        };
-        getCate();
+        dispatch(getCateNews());
     }, []);
 
-    const handleRemove = async (id: string) => {
+    const handleRemove = async (id?: string) => {
         Swal.fire({
             title: 'Bạn có chắc chắn muốn xóa không?',
             text: "Bạn không thể hoàn tác sau khi xóa!",
@@ -27,15 +25,12 @@ const CateNewsList = () => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                remove(id)
-                    .then(() => {
-                        Swal.fire(
-                            'Thành công!',
-                            'Đã xóa thành công.',
-                            'success'
-                        )
-                    })
-                    .then(() => setCategories(categories?.filter(item => item._id !== id)));
+                dispatch(deleteCateNews(id));
+                Swal.fire(
+                    'Thành công!',
+                    'Đã xóa thành công.',
+                    'success'
+                )
             }
         })
     }

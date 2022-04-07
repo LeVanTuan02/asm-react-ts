@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import AdminPagination from "../../../components/admin/AdminPagination";
 import NewsList from "../../../components/admin/NewsList";
+import { selectTotalNews } from "../../../redux/newsSlice";
 
 const NewsListPage = () => {
-    const [totalItem, setTotalItem] = useState(0);
+    const totalItem = useSelector(selectTotalNews);
 
     const { page } = useParams();
 
@@ -46,7 +47,7 @@ const NewsListPage = () => {
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                <NewsList onSetTotal={setTotalItem} start={start} limit={limit} />
+                                <NewsList start={start} limit={limit} />
 
                                 <AdminPagination page={currentPage} totalPage={totalPage} url="news" />
                             </div>

@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import AdminPagination from "../../../components/admin/AdminPagination";
 import ToppingList from "../../../components/admin/ToppingList";
+import { selectTotalTopping } from "../../../redux/toppingSlice";
 
 const ToppingListPage = () => {
-    const [totalItem, setTotalItem] = useState(0);
+    const totalItem = useSelector(selectTotalTopping);
 
     const { page } = useParams();
 
@@ -35,7 +36,7 @@ const ToppingListPage = () => {
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                <ToppingList onSetTotal={setTotalItem} start={start} limit={limit} />
+                                <ToppingList start={start} limit={limit} />
 
                                 <AdminPagination page={currentPage} totalPage={totalPage} url="topping" />
                             </div>

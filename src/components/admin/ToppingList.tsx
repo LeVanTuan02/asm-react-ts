@@ -1,28 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { getAll, remove } from "../../api/topping";
+import { deleteTopping, getToppings, selectTopping } from "../../redux/toppingSlice";
 import { ToppingType } from "../../types/topping";
 import { formatCurrency } from "../../utils";
 
 type ToppingListProps = {
-    onSetTotal: (total: number) => void,
     start: number,
     limit: number,
 }
 
-const ToppingList = ({ onSetTotal, start, limit }: ToppingListProps) => {
-    const [toppings, setToppings] = useState<ToppingType[]>();
+const ToppingList = ({ start, limit }: ToppingListProps) => {
+    const dispatch = useDispatch();
+    const toppings: ToppingType[] = useSelector(selectTopping);
 
     useEffect(() => {
-        const getToppings = async () => {
-            const { data } = await getAll();
-            onSetTotal(data.length);
-
-            const { data: ToppingList } = await getAll(start, limit);
-            setToppings(ToppingList);
-        };
-        getToppings();
+        dispatch(getToppings({ start, limit }));
     }, [start]);
 
     const handleRemove = async (id: string) => {
@@ -36,15 +30,12 @@ const ToppingList = ({ onSetTotal, start, limit }: ToppingListProps) => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                remove(id)
-                    .then(() => {
-                        Swal.fire(
-                            'Thành công!',
-                            'Đã xóa thành công.',
-                            'success'
-                        )
-                    })
-                    .then(() => setToppings(toppings?.filter(item => item._id !== id)));
+                dispatch(deleteTopping(id));
+                Swal.fire(
+                    'Thành công!',
+                    'Đã xóa thành công.',
+                    'success'
+                )
             }
         })
     }

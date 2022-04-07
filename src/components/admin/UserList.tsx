@@ -1,31 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { getAll, remove } from "../../api/user";
+import { remove } from "../../api/user";
+import { deleteUser, getUsers, selectUsers } from "../../redux/userSlice";
 import { UserType } from "../../types/user";
 import { formatDate } from "../../utils";
 
 type UserListProps = {
-    onSetTotal: (total: number) => void,
     start: number,
     limit: number,
 }
 
-const UserList = ({ onSetTotal, start, limit }: UserListProps) => {
-    const [users, setUsers] = useState<UserType[]>();
+const UserList = ({ start, limit }: UserListProps) => {
+    const dispatch = useDispatch();
+
+    const users: UserType[] = useSelector(selectUsers);
 
     useEffect(() => {
-        const getUsers = async () => {
-            const { data } = await getAll();
-            onSetTotal(data.length);
-            
-            const { data: userList } = await getAll(start, limit);
-            setUsers(userList);
-        };
-        getUsers();
+        dispatch(getUsers({ start, limit }));
     }, [start]);
 
-    const handleRemove = async (id: string) => {
+    const handleRemove = async (id?: string) => {
         Swal.fire({
             title: 'Bạn có chắc chắn muốn xóa không?',
             text: "Bạn không thể hoàn tác sau khi xóa!",
@@ -36,15 +32,12 @@ const UserList = ({ onSetTotal, start, limit }: UserListProps) => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                remove(id)
-                    .then(() => {
-                        Swal.fire(
-                            'Thành công!',
-                            'Đã xóa thành công.',
-                            'success'
-                        )
-                    })
-                    .then(() => setUsers(users?.filter(item => item._id !== id)));
+                dispatch(deleteUser(id));
+                Swal.fire(
+                    'Thành công!',
+                    'Đã xóa thành công.',
+                    'success'
+                )
             }
         })
     }

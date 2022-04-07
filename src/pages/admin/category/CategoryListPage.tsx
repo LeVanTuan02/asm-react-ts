@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getAll, remove } from "../../../api/category";
+import { remove } from "../../../api/category";
 import { CategoryType } from "../../../types/category";
 import Swal from "sweetalert2";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteCate, getCates, selectCatesProduct } from "../../../redux/categoryProductSlice";
 
 const CategoryListPage = () => {
-    const [category, setCategory] = useState<CategoryType[]>();
+    const cateList: CategoryType[] = useSelector(selectCatesProduct);
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        // get category
-        (async () => {
-            const { data } = await getAll();
-            setCategory(data);
-        })();
+        dispatch(getCates());
     }, []);
 
-    const handleRemove = async (id: string) => {
+    const handleRemove = async (id?: string) => {
         Swal.fire({
             title: 'Bạn có chắc chắn muốn xóa không?',
             text: "Bạn không thể hoàn tác sau khi xóa!",
@@ -26,15 +26,12 @@ const CategoryListPage = () => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                remove(id)
-                    .then(() => {
-                        Swal.fire(
-                            'Thành công!',
-                            'Đã xóa thành công.',
-                            'success'
-                        )
-                    })
-                    .then(() => setCategory(category?.filter(item => item._id !== id)));
+                dispatch(deleteCate(id));
+                Swal.fire(
+                    'Thành công!',
+                    'Đã xóa thành công.',
+                    'success'
+                );
             }
         })
     }
@@ -70,7 +67,7 @@ const CategoryListPage = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {category?.map((cate, index) => (
+                                        {cateList?.map((cate, index) => (
                                             <tr key={index} className="cate__list-item-${cate.id}">
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{index + 1}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{cate._id}</td>

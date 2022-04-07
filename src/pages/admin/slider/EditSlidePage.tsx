@@ -4,8 +4,10 @@ import * as yup from "yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { get, update } from "../../../api/slider";
+import { get } from "../../../api/slider";
 import { uploadFile } from "../../../utils";
+import { useDispatch } from "react-redux";
+import { updateSlider } from "../../../redux/sliderSlice";
 
 type InputsType = {
     title: string,
@@ -27,6 +29,7 @@ const schema = yup.object().shape({
 })
 
 const EditSlidePage = () => {
+    const dispatch = useDispatch();
     const [preview, setPreview] = useState<string>();
 
     const { id } = useParams();
@@ -46,11 +49,12 @@ const EditSlidePage = () => {
                 data.image = await uploadFile(data.image[0]);
             }
 
-            await update(data);
+            dispatch(updateSlider(data));
+
             toastr.success("Cập nhật slide thành công");
             navigate("/admin/slider");
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 
