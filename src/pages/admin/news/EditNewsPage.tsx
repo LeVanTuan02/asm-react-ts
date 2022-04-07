@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CategoryNewsType } from "../../../types/categoryNews";
 import { uploadFile } from "../../../utils";
-import { get, update } from "../../../api/news";
-import { getAll } from "../../../api/categoryNews";
+import { get } from "../../../api/news";
+import { useDispatch, useSelector } from "react-redux";
+import { updateNews } from "../../../redux/newsSlice";
+import { getCateNews, selectCateNews } from "../../../redux/cateNewsSlice";
 
 type InputsType = {
     title: string,
@@ -37,8 +39,10 @@ const schema = yup.object().shape({
 });
 
 const EditNewsPage = () => {
+    const dispatch = useDispatch();
+
     const [preview, setPreview] = useState<string>();
-    const [categories, setCategories] = useState<CategoryNewsType[]>();
+    const categories: CategoryNewsType[] = useSelector(selectCateNews);
 
     const { slug } = useParams();
 
@@ -57,7 +61,8 @@ const EditNewsPage = () => {
                 data.thumbnail = await uploadFile(data.thumbnail[0]);
             }
 
-            await update(data);
+            dispatch(updateNews(data));
+
             toastr.success("Cập nhật bài viết thành công");
             navigate("/admin/news");
         } catch (error: any) {
@@ -70,12 +75,7 @@ const EditNewsPage = () => {
     }
 
     useEffect(() => {
-        // get categories
-        const getCates = async () => {
-            const { data } = await getAll();
-            setCategories(data);
-        };
-        getCates();
+        dispatch(getCateNews());
 
         const getNews = async () => {
             const { data } = await get(slug);

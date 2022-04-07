@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import AdminPagination from "../../../components/admin/AdminPagination";
 import ContactList from "../../../components/admin/ContactList";
+import { selectTotalContact } from "../../../redux/contactSlice";
 
 const ContactListPage = () => {
-    const [totalItem, setTotalItem] = useState(0);
+    const totalItem = useSelector(selectTotalContact);
 
     const { page } = useParams();
 
@@ -33,7 +34,7 @@ const ContactListPage = () => {
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                <ContactList onSetTotal={setTotalItem} start={start} limit={limit} />
+                                <ContactList start={start} limit={limit} />
 
                                 <AdminPagination page={currentPage} totalPage={totalPage} url="contact" />
                             </div>

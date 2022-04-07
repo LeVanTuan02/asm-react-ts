@@ -1,12 +1,13 @@
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import AdminPagination from "../../../components/admin/AdminPagination";
 import UserList from "../../../components/admin/UserList";
+import { selectTotalUser } from "../../../redux/userSlice";
 
 const AdminUserList = () => {
-    const [totalItem, setTotalItem] = useState(0);
+    const totalItem = useSelector(selectTotalUser);
 
     const { page } = useParams();
 
@@ -48,7 +49,7 @@ const AdminUserList = () => {
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                <UserList onSetTotal={setTotalItem} start={start} limit={limit} />
+                                <UserList start={start} limit={limit} />
                                 
                                 <AdminPagination page={currentPage} totalPage={totalPage} url="user" />
                             </div>

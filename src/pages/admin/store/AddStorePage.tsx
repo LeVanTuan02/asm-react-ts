@@ -5,7 +5,8 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { uploadFile } from "../../../utils";
-import { add } from "../../../api/store";
+import { useDispatch } from "react-redux";
+import { addStore } from "../../../redux/storeSlice";
 
 type InputsType = {
     name: string,
@@ -43,6 +44,7 @@ const schema = yup.object().shape({
 })
 
 const AddStorePage = () => {
+    const dispatch = useDispatch();
     const [preview, setPreview] = useState<string>();
 
     const handlePreview = (e: any) => {
@@ -59,12 +61,14 @@ const AddStorePage = () => {
     const onSubmit: SubmitHandler<InputsType> = async data => {
         try {
             const url = await uploadFile(data.image[0]);
-            await add({ ...data, image: url });
+
+            dispatch(addStore({ ...data, image: url }));
+
             toastr.success("Thêm chi nhánh thành công")
             setPreview("");
             reset();
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
     

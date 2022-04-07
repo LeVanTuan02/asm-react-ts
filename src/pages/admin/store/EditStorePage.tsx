@@ -5,7 +5,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { uploadFile } from "../../../utils";
-import { get, update } from "../../../api/store";
+import { get } from "../../../api/store";
+import { useDispatch } from "react-redux";
+import { updateStore } from "../../../redux/storeSlice";
 
 type InputsType = {
     name: string,
@@ -40,6 +42,8 @@ const schema = yup.object().shape({
 })
 
 const EditStorePage = () => {
+    const dispatch = useDispatch();
+
     const [preview, setPreview] = useState<string>();
 
     const { id } = useParams();
@@ -59,11 +63,12 @@ const EditStorePage = () => {
                 data.image = await uploadFile(data.image[0]);
             }
 
-            await update(data);
+            dispatch(updateStore(data));
+
             toastr.success("Cập nhật chi nhánh thành công");
             navigate("/admin/store");
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

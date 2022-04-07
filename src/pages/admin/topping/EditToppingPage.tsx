@@ -3,8 +3,10 @@ import toastr from "toastr";
 import * as yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { get, update } from "../../../api/topping";
+import { get } from "../../../api/topping";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { updateTopping } from "../../../redux/toppingSlice";
 
 type InputsType = {
     name: string,
@@ -22,6 +24,8 @@ const schema = yup.object().shape({
 })
 
 const EditToppingPage = () => {
+    const dispatch = useDispatch();
+
     const { id } = useParams();
 
     const {
@@ -35,11 +39,12 @@ const EditToppingPage = () => {
 
     const onSubmit: SubmitHandler<InputsType> = async data => {
         try {
-            await update(data);
+            dispatch(updateTopping(data));
+
             toastr.success("Cập nhật topping thành công");
             navigate("/admin/topping");
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

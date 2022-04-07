@@ -3,7 +3,8 @@ import toastr from "toastr";
 import * as yup from "yup";
 import { Link } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { add } from "../../../api/voucher";
+import { useDispatch } from "react-redux";
+import { addVoucher } from "../../../redux/voucherSlice";
 
 type InputsType = {
     code: string,
@@ -51,6 +52,8 @@ const schema = yup.object().shape({
 })
 
 const AddVoucherPage = () => {
+    const dispatch = useDispatch();
+
     const {
         register,
         handleSubmit,
@@ -60,11 +63,12 @@ const AddVoucherPage = () => {
 
     const onSubmit: SubmitHandler<InputsType> = async data => {
         try {
-            await add(data);
+            dispatch(addVoucher(data));
+
             toastr.success("Thêm Voucher thành công")
             reset();
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

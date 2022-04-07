@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import toastr from "toastr";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { getAll } from "../../../api/category";
-import { get, update } from "../../../api/product";
+import { get } from "../../../api/product";
 import { CategoryType } from "../../../types/category";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { uploadFile } from "../../../utils";
+import { useDispatch, useSelector } from "react-redux";
+import { getCates, selectCatesProduct } from "../../../redux/categoryProductSlice";
+import { updateProduct } from "../../../redux/productSlice";
 
 type InputsType = {
     name: string,
@@ -23,9 +25,9 @@ const schema = yup.object().shape({
         .string()
         .required("Vui lòng nhập tên sản phẩm"),
     price: yup
-        .number()
+        .string()
         .required("Vui lòng nhập giá sản phẩm")
-        .min(0, "Vui lòng nhập lại giá SP"),
+        .test("min", "Vui lòng nhập lại giá SP", (value) => Number(value) >= 0),
     description: yup
         .string()
         .required("Vui lòng nhập mô tả SP"),
@@ -38,8 +40,9 @@ const schema = yup.object().shape({
 })
 
 const EditProductPage = () => {
+    const dispatch = useDispatch();
     const [preview, setPreview] = useState<string>();
-    const [categories, setCategories] = useState<CategoryType[]>();
+    const categories: CategoryType[] = useSelector(selectCatesProduct);
 
     const { slug } = useParams();
 
@@ -58,11 +61,12 @@ const EditProductPage = () => {
                 data.image = await uploadFile(data.image[0]);
             }
 
-            await update(data);
+            dispatch(updateProduct(data));
+
             toastr.success("Cập nhật SP thành công");
             navigate("/admin/product");
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 
@@ -71,14 +75,9 @@ const EditProductPage = () => {
     }
 
     useEffect(() => {
-        // get categories
-        const getCates = async () => {
-            const { data } = await getAll();
-            setCategories(data);
-        };
+       dispatch(getCates());
 
-        const start = async () => {
-            await getCates();
+        const getProduct = async () => {
             const { data } = await get(slug);
             setPreview(data.image);
             reset({
@@ -86,7 +85,7 @@ const EditProductPage = () => {
                 categoryId: data.categoryId._id
             });
         };
-        start();
+        getProduct();
     }, []);
 
     return (

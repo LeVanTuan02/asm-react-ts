@@ -3,11 +3,13 @@ import toastr from "toastr";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { get, update } from "../../../api/user";
+import { get } from "../../../api/user";
 import { useEffect, useState } from "react";
 import { LocationType } from "../../../types/location";
 import { getAllProvince, getDistrictByProvince, getWardByDistrict } from "../../../api/location";
 import { uploadFile } from "../../../utils";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../../../redux/userSlice";
 
 type InputsType = {
     email: string,
@@ -72,6 +74,8 @@ const schema = yup.object().shape({
 });
 
 const EditUserPage = () => {
+    const dispatch = useDispatch();
+
     const [preview, setPreview] = useState<string>("");
     const [provinces, setProvinces] = useState<LocationType[]>();
     const [districts, setDistricts] = useState<LocationType[]>();
@@ -99,7 +103,8 @@ const EditUserPage = () => {
                 delete data.password;
             }
 
-            await update(data);
+            dispatch(updateUser(data));
+
             toastr.success("Cập nhật user thành công");
             navigate("/admin/user");
         } catch (error: any) {

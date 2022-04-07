@@ -4,6 +4,8 @@ import * as yup from "yup";
 import { Link } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { add } from "../../../api/topping";
+import { useDispatch } from "react-redux";
+import { addTopping } from "../../../redux/toppingSlice";
 
 type InputsType = {
     name: string,
@@ -15,12 +17,14 @@ const schema = yup.object().shape({
         .string()
         .required("Vui lòng nhập tên Topping"),
     price: yup
-        .number()
-        .min(0, "Vui lòng nhập lại giá")
+        .string()
+        .test("min", "Vui lòng nhập lại giá", (value) => Number(value) >= 0)
         .required("Vui lòng nhập giá Topping")
 })
 
 const AddToppingPage = () => {
+    const dispatch = useDispatch();
+    
     const {
         register,
         handleSubmit,
@@ -31,10 +35,13 @@ const AddToppingPage = () => {
     const onSubmit: SubmitHandler<InputsType> = async data => {
         try {
             await add(data);
-            toastr.success("Thêm Topping thành công")
+            
+            dispatch(addTopping(data));
+
+            toastr.success("Thêm topping thành công");
             reset();
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
     

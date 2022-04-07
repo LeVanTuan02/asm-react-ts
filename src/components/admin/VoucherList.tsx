@@ -1,32 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { getAll, remove } from "../../api/voucher";
+import { remove } from "../../api/voucher";
+import { deleteVoucher, getVouchers, selectVouchers } from "../../redux/voucherSlice";
 import { VoucherType } from "../../types/voucher";
 import { formatCurrency, formatDate } from "../../utils";
 
 type VoucherListProps = {
-    onSetTotal: (total: number) => void,
     start: number,
     limit: number,
 }
 
-const VoucherList = ({ onSetTotal, start, limit }: VoucherListProps) => {
-    const [vouchers, setVouchers] = useState<VoucherType[]>();
+const VoucherList = ({ start, limit }: VoucherListProps) => {
+    const dispatch = useDispatch();
+    
+    const vouchers: VoucherType[] = useSelector(selectVouchers);
 
     useEffect(() => {
-        // get data
-        const getVouchers = async () => {
-            const { data } = await getAll();
-            onSetTotal(data.length);
-            
-            const { data: voucherList } = await getAll(start, limit);
-            setVouchers(voucherList);
-        }
-        getVouchers();
+        dispatch(getVouchers({ start, limit }));
     }, [start]);
 
-    const handleRemove = async (id: string) => {
+    const handleRemove = async (id?: string) => {
         Swal.fire({
             title: 'Bạn có chắc chắn muốn xóa không?',
             text: "Bạn không thể hoàn tác sau khi xóa!",
@@ -37,15 +32,12 @@ const VoucherList = ({ onSetTotal, start, limit }: VoucherListProps) => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                remove(id)
-                    .then(() => {
-                        Swal.fire(
-                            'Thành công!',
-                            'Đã xóa thành công.',
-                            'success'
-                        )
-                    })
-                    .then(() => setVouchers(vouchers?.filter(item => item._id !== id)));
+                dispatch(deleteVoucher(id));
+                Swal.fire(
+                    'Thành công!',
+                    'Đã xóa thành công.',
+                    'success'
+                )
             }
         })
     }

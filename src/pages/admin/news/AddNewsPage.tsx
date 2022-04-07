@@ -5,9 +5,10 @@ import toastr from "toastr";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { uploadFile } from "../../../utils";
-import { add } from "../../../api/news";
 import { CategoryNewsType } from "../../../types/categoryNews";
-import { getAll } from "../../../api/categoryNews";
+import { useDispatch, useSelector } from "react-redux";
+import { addNews } from "../../../redux/newsSlice";
+import { getCateNews, selectCateNews } from "../../../redux/cateNewsSlice";
 
 type InputsType = {
     title: string,
@@ -40,8 +41,10 @@ const schema = yup.object().shape({
 });
 
 const AddNewsPage = () => {
+    const dispatch = useDispatch();
+
     const [preview, setPreview] = useState<string>();
-    const [categories, setCategories] = useState<CategoryNewsType[]>();
+    const categories: CategoryNewsType[] = useSelector(selectCateNews);
 
     const {
         register,
@@ -51,23 +54,21 @@ const AddNewsPage = () => {
     } = useForm<InputsType>({ resolver: yupResolver(schema) });
 
     useEffect(() => {
-        async function getCateNews () {
-            const { data } = await getAll();
-            setCategories(data);
-        };
-        getCateNews();
+        dispatch(getCateNews());
     }, []);
 
     const onSubmit: SubmitHandler<InputsType> = async dataInput => {
         try {
             // upload image
             dataInput.thumbnail = await uploadFile(dataInput.thumbnail[0]);
-            await add(dataInput)
+
+            dispatch(addNews(dataInput));
+
             toastr.success("Thêm bài viết thành công")
             reset();
             setPreview("");
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

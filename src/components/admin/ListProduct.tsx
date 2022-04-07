@@ -1,30 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { getAll, remove } from "../../api/product";
+import { deleteProduct, getProducts, selectProducts } from "../../redux/productSlice";
 import { ProductType } from "../../types/product";
 
 type ListProductProps = {
-    onSetTotal: (total: number) => void,
     start: number,
     limit: number,
 }
 
-const ListProduct = ({ onSetTotal, start, limit }: ListProductProps) => {
-    const [products, setProducts] = useState<ProductType[]>();
+const ListProduct = ({ start, limit }: ListProductProps) => {
+    const dispatch = useDispatch();
+
+    const products: ProductType[] = useSelector(selectProducts);
 
     useEffect(() => {
-        // get products
-        (async () => {
-            const { data } = await getAll();
-            onSetTotal(data.length);
-
-            const { data: products } = await getAll(start, limit);
-            setProducts(products);
-        })();
+        dispatch(getProducts({ start, limit }));
     }, [start]);
 
-    const handleRemove = async (id: string) => {
+    const handleRemove = async (id?: string) => {
         Swal.fire({
             title: 'Bạn có chắc chắn muốn xóa không?',
             text: "Bạn không thể hoàn tác sau khi xóa!",
@@ -35,15 +30,12 @@ const ListProduct = ({ onSetTotal, start, limit }: ListProductProps) => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                remove(id)
-                    .then(() => {
-                        Swal.fire(
-                            'Thành công!',
-                            'Đã xóa thành công.',
-                            'success'
-                        )
-                    })
-                    .then(() => setProducts(products?.filter(item => item._id !== id)));
+                dispatch(deleteProduct(id));
+                Swal.fire(
+                    'Thành công!',
+                    'Đã xóa thành công.',
+                    'success'
+                )
             }
         })
     }
