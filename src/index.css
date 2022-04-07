@@ -271,3 +271,15 @@ input[name="star"]:checked ~ .star__item,
 .logs__inner-body-item-table tr:not(:last-child) {
     border-bottom: 1px solid #ececec;
 }
+
+.menu__item > .active {
+    @apply text-black;
+}
+
+.sidebar__item.active {
+    @apply text-gray-200 bg-gray-800;
+}
+
+.myAcc-nav__item > .active {
+    @apply text-black after:opacity-100;
+}

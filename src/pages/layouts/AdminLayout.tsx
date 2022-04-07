@@ -1,7 +1,7 @@
 import { faProductHunt } from "@fortawesome/free-brands-svg-icons";
 import { faCode, faComment, faNewspaper, faSearch, faShoppingCart, faSlidersH, faStore, faThList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { isAuthenticate } from "../../utils/localStorage";
 
 const AdminLayout = () => {
@@ -19,247 +19,127 @@ const AdminLayout = () => {
                 <nav className="dashboard__sidebar fixed top-0 left-0 z-20 h-full pb-10 overflow-x-hidden overflow-y-auto transition origin-left transform bg-gray-900 w-60 md:translate-x-0 -translate-x-full">
                     <Link to="/" className="flex items-center p-4 text-white font-bold text-3xl">Yotea</Link>
                     <nav className="text-sm font-medium text-gray-500" aria-label="Main Navigation">
-                        <Link to="/admin" className="text-gray-200 bg-gray-800 flex items-center px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                        <NavLink to="/admin/" className="sidebar__item flex items-center px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
                             <svg className="shrink-0 w-5 h-5 mr-2 text-gray-400 transition group-hover:text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
                                 <path d="M10.707 2.293a1 1 0 00-1.414.0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
                             </svg>
                             <span>Dashboard</span>
-                        </Link>
-                        <Link to="/admin/cart" className="flex items-center px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                        </NavLink>
+
+                        <NavLink to="/admin/cart" className="sidebar__item flex items-center px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
                             <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
                                 <FontAwesomeIcon icon={faShoppingCart} />
                             </div>
                             <span>Cart</span>
-                        </Link>
-                        <div>
-                            <div className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
-                                <div className="flex items-center">
-                                    <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
-                                        <FontAwesomeIcon icon={faNewspaper} />
-                                    </div>
-                                    <Link to="/admin/user">Users</Link>
+                        </NavLink>
+
+                        <NavLink to="/admin/user" className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                            <div className="flex items-center">
+                                <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
+                                    <FontAwesomeIcon icon={faNewspaper} />
                                 </div>
-                                <svg className="sidebar__item-icon--right shrink-0 w-4 h-4 ml-2 transition transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
-                                <svg className="sidebar__item-icon--down hidden shrink-0 w-4 h-4 ml-2 transition transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
+                                <span>Users</span>
                             </div>
-                            <div className="mb-4 hidden sidebar__submenu">
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/news">Danh sách</Link>
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/news/add">Thêm mới</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
-                                <div className="flex items-center">
-                                    <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
-                                        <FontAwesomeIcon icon={faNewspaper} />
-                                    </div>
-                                    <Link to="/admin/news">News</Link>
+                        </NavLink>
+
+                        <NavLink to="/admin/news" className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                            <div className="flex items-center">
+                                <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
+                                    <FontAwesomeIcon icon={faNewspaper} />
                                 </div>
-                                <svg className="sidebar__item-icon--right shrink-0 w-4 h-4 ml-2 transition transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
-                                <svg className="sidebar__item-icon--down hidden shrink-0 w-4 h-4 ml-2 transition transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
+                                <span>News</span>
                             </div>
-                            <div className="mb-4 hidden sidebar__submenu">
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/news">Danh sách</Link>
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/news/add">Thêm mới</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
-                                <div className="flex items-center">
-                                    <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
-                                        <FontAwesomeIcon icon={faThList} />
-                                    </div>
-                                    <Link to="/admin/category-news">Categories News</Link>
+                        </NavLink>
+
+                        <NavLink to="/admin/category-news" className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                            <div className="flex items-center">
+                                <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
+                                    <FontAwesomeIcon icon={faThList} />
                                 </div>
-                                <svg className="sidebar__item-icon--right shrink-0 w-4 h-4 ml-2 transition transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
-                                <svg className="sidebar__item-icon--down hidden shrink-0 w-4 h-4 ml-2 transition transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
+                                <span>Categories News</span>
                             </div>
-                            <div className="mb-4 hidden sidebar__submenu">
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/category-news">Danh sách</Link>
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/category-news/add">Thêm mới</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
-                                <div className="flex items-center">
-                                    <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
-                                        <FontAwesomeIcon icon={faProductHunt} />
-                                    </div>
-                                    <Link to="/admin/product">Products</Link>
+                        </NavLink>
+
+                        <NavLink to="/admin/product" className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                            <div className="flex items-center">
+                                <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
+                                    <FontAwesomeIcon icon={faProductHunt} />
                                 </div>
-                                <svg className="sidebar__item-icon--right shrink-0 w-4 h-4 ml-2 transition transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
-                                <svg className="sidebar__item-icon--down hidden shrink-0 w-4 h-4 ml-2 transition transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
+                                <span>Products</span>
                             </div>
-                            <div className="mb-4 hidden sidebar__submenu">
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/product">Danh sách</Link>
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/product/add">Thêm mới</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
-                                <div className="flex items-center">
-                                    <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
-                                        <FontAwesomeIcon icon={faThList} />
-                                    </div>
-                                    <Link to="/admin/comment">Comment</Link>
+                        </NavLink>
+
+                        <NavLink to="/admin/comment" className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                            <div className="flex items-center">
+                                <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
+                                    <FontAwesomeIcon icon={faThList} />
                                 </div>
-                                <svg className="sidebar__item-icon--right shrink-0 w-4 h-4 ml-2 transition transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
-                                <svg className="sidebar__item-icon--down hidden shrink-0 w-4 h-4 ml-2 transition transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
+                                <span>Comment</span>
                             </div>
-                            <div className="mb-4 hidden sidebar__submenu">
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/comment">Danh sách</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
-                                <div className="flex items-center">
-                                    <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
-                                        <FontAwesomeIcon icon={faThList} />
-                                    </div>
-                                    <Link to="/admin/category">Categories Products</Link>
+                        </NavLink>
+
+                        <NavLink to="/admin/category" className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                            <div className="flex items-center">
+                                <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
+                                    <FontAwesomeIcon icon={faThList} />
                                 </div>
-                                <svg className="sidebar__item-icon--right shrink-0 w-4 h-4 ml-2 transition transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
-                                <svg className="sidebar__item-icon--down hidden shrink-0 w-4 h-4 ml-2 transition transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
+                                <span>Categories Products</span>
                             </div>
-                            <div className="mb-4 hidden sidebar__submenu">
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/category">Danh sách</Link>
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/category/add">Thêm mới</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
-                                <div className="flex items-center">
-                                    <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
-                                        <FontAwesomeIcon icon={faSlidersH} />
-                                    </div>
-                                    <Link to="/admin/slider">Slider</Link>
+                        </NavLink>
+
+                        <NavLink to="/admin/slider" className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                            <div className="flex items-center">
+                                <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
+                                    <FontAwesomeIcon icon={faSlidersH} />
                                 </div>
-                                <svg className="sidebar__item-icon--right shrink-0 w-4 h-4 ml-2 transition transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
-                                <svg className="sidebar__item-icon--down hidden shrink-0 w-4 h-4 ml-2 transition transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
+                                <span>Slider</span>
                             </div>
-                            <div className="mb-4 hidden sidebar__submenu">
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/slider">Danh sách</Link>
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/slider/add">Thêm mới</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
-                                <div className="flex items-center">
-                                    <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
-                                        <FontAwesomeIcon icon={faThList} />
-                                    </div>
-                                    <Link to="/admin/size">Size</Link>
+                        </NavLink>
+
+                        <NavLink to="/admin/size" className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                            <div className="flex items-center">
+                                <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
+                                    <FontAwesomeIcon icon={faThList} />
                                 </div>
-                                <svg className="sidebar__item-icon--right shrink-0 w-4 h-4 ml-2 transition transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
-                                <svg className="sidebar__item-icon--down hidden shrink-0 w-4 h-4 ml-2 transition transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
+                                <span>Size</span>
                             </div>
-                            <div className="mb-4 hidden sidebar__submenu">
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/size">Danh sách</Link>
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/size/add">Thêm mới</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
-                                <div className="flex items-center">
-                                    <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
-                                        <FontAwesomeIcon icon={faThList} />
-                                    </div>
-                                    <Link to="/admin/topping">Toppings</Link>
+                        </NavLink>
+
+                        <NavLink to="/admin/topping" className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                            <div className="flex items-center">
+                                <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
+                                    <FontAwesomeIcon icon={faThList} />
                                 </div>
-                                <svg className="sidebar__item-icon--right shrink-0 w-4 h-4 ml-2 transition transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
-                                <svg className="sidebar__item-icon--down hidden shrink-0 w-4 h-4 ml-2 transition transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
+                                <span>Toppings</span>
                             </div>
-                            <div className="mb-4 hidden sidebar__submenu">
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/topping">Danh sách</Link>
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/topping/add">Thêm mới</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
-                                <div className="flex items-center">
-                                    <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
-                                        <FontAwesomeIcon icon={faCode} />
-                                    </div>
-                                    <Link to="/admin/voucher">Voucher</Link>
+                        </NavLink>
+
+                        <NavLink to="/admin/voucher" className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                            <div className="flex items-center">
+                                <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
+                                    <FontAwesomeIcon icon={faCode} />
                                 </div>
-                                <svg className="sidebar__item-icon--right shrink-0 w-4 h-4 ml-2 transition transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
-                                <svg className="sidebar__item-icon--down hidden shrink-0 w-4 h-4 ml-2 transition transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
+                                <span>Voucher</span>
                             </div>
-                            <div className="mb-4 hidden sidebar__submenu">
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/voucher">Danh sách</Link>
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/voucher/add">Thêm mới</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
-                                <div className="flex items-center">
-                                    <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
-                                        <FontAwesomeIcon icon={faStore} />
-                                    </div>
-                                    <Link to="/admin/store">Store</Link>
+                        </NavLink>
+
+                        <NavLink to="/admin/store" className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                            <div className="flex items-center">
+                                <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
+                                    <FontAwesomeIcon icon={faStore} />
                                 </div>
-                                <svg className="sidebar__item-icon--right shrink-0 w-4 h-4 ml-2 transition transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
-                                <svg className="sidebar__item-icon--down hidden shrink-0 w-4 h-4 ml-2 transition transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentcolor">
-                                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414.0z" clipRule="evenodd" />
-                                </svg>
+                                <span>Store</span>
                             </div>
-                            <div className="mb-4 hidden sidebar__submenu">
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/store">Danh sách</Link>
-                                <Link className="flex items-center py-2 pl-12 pr-4 transition cursor-pointer hover:bg-gray-800 hover:text-gray-200" to="/admin/store/add">Thêm mới</Link>
-                            </div>
-                        </div>
-                        <div>
-                            <div className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
-                                <div className="flex items-center">
-                                    <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
-                                        <FontAwesomeIcon icon={faComment} />
-                                    </div>
-                                    <Link to="/admin/contact">Contact</Link>
+                        </NavLink>
+
+                        <NavLink to="/admin/contact" className="sidebar__item flex items-center justify-between px-4 py-3 transition cursor-pointer group hover:bg-gray-800 hover:text-gray-200">
+                            <div className="flex items-center">
+                                <div className="shrink-0 w-5 h-5 mr-2 text-gray-300 transition group-hover:text-gray-300">
+                                    <FontAwesomeIcon icon={faComment} />
                                 </div>
+                                <span>Contact</span>
                             </div>
-                        </div>
+                        </NavLink>
                     </nav>
                 </nav>
                 <div className="ml-0 transition md:ml-60">

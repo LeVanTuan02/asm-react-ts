@@ -1,4 +1,4 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { isAuthenticate } from "../../utils/localStorage";
 
 type PropsType = {
@@ -37,19 +37,19 @@ const MyAccountLayout = ({ onLogout }: PropsType) => {
                         </div>
                     </header>
                     <ul className="mt-2 grid grid-cols-1 divide-y">
-                        <li>
-                            <Link to="/my-account" className="py-2 uppercase font-semibold text-sm text-gray-400 block transition ease-linear duration-200 hover:text-gray-700 relative hover:after:opacity-100 after:transition after:opacity-0 after:content-[''] after:absolute after:right-0 after:w-[3px] after:h-full after:bg-blue-500 after:top-1/2 after:-translate-y-1/2">Thông tin tài khoản</Link>
+                        <li className="myAcc-nav__item">
+                            <NavLink to="/my-account/" className="py-2 uppercase font-semibold text-sm text-gray-400 block transition ease-linear duration-200 hover:text-gray-700 relative hover:after:opacity-100 after:transition after:opacity-0 after:content-[''] after:absolute after:right-0 after:w-[3px] after:h-full after:bg-blue-500 after:top-1/2 after:-translate-y-1/2">Thông tin tài khoản</NavLink>
                         </li>
-                        <li>
-                            <Link to="/my-account/update-password" className="py-2 uppercase font-semibold text-sm text-gray-400 block transition ease-linear duration-200 hover:text-gray-700 relative hover:after:opacity-100 after:transition after:opacity-0 after:content-[''] after:absolute after:right-0 after:w-[3px] after:h-full after:bg-blue-500 after:top-1/2 after:-translate-y-1/2">Đổi mật khẩu</Link>
+                        <li className="myAcc-nav__item">
+                            <NavLink to="/my-account/update-password" className="py-2 uppercase font-semibold text-sm text-gray-400 block transition ease-linear duration-200 hover:text-gray-700 relative hover:after:opacity-100 after:transition after:opacity-0 after:content-[''] after:absolute after:right-0 after:w-[3px] after:h-full after:bg-blue-500 after:top-1/2 after:-translate-y-1/2">Đổi mật khẩu</NavLink>
                         </li>
-                        <li>
-                            <Link to="/my-account/cart" className="py-2 uppercase font-semibold text-sm text-gray-400 block transition ease-linear duration-200 hover:text-gray-700 relative hover:after:opacity-100 after:transition after:opacity-0 after:content-[''] after:absolute after:right-0 after:w-[3px] after:h-full after:bg-blue-500 after:top-1/2 after:-translate-y-1/2">Đơn hàng</Link>
+                        <li className="myAcc-nav__item">
+                            <NavLink to="/my-account/cart" className="py-2 uppercase font-semibold text-sm text-gray-400 block transition ease-linear duration-200 hover:text-gray-700 relative hover:after:opacity-100 after:transition after:opacity-0 after:content-[''] after:absolute after:right-0 after:w-[3px] after:h-full after:bg-blue-500 after:top-1/2 after:-translate-y-1/2">Đơn hàng</NavLink>
                         </li>
-                        <li>
-                            <Link to="/my-account/address" className="text-black after:opacity-100 py-2 uppercase font-semibold text-sm block transition ease-linear duration-200 hover:text-gray-700 relative hover:after:opacity-100 after:transition after:content-[''] after:absolute after:right-0 after:w-[3px] after:h-full after:bg-blue-500 after:top-1/2 after:-translate-y-1/2">Thông tin thanh toán</Link>
+                        <li className="myAcc-nav__item">
+                            <NavLink to="/my-account/address" className="py-2 uppercase font-semibold text-sm text-gray-400 block transition ease-linear duration-200 hover:text-gray-700 relative hover:after:opacity-100 after:transition after:opacity-0 after:content-[''] after:absolute after:right-0 after:w-[3px] after:h-full after:bg-blue-500 after:top-1/2 after:-translate-y-1/2">Thông tin thanh toán</NavLink>
                         </li>
-                        <li>
+                        <li className="myAcc-nav__item">
                             <div
                                 className="cursor-pointer py-2 uppercase font-semibold text-sm text-gray-400 block transition ease-linear duration-200 hover:text-gray-700 relative hover:after:opacity-100 after:transition after:opacity-0 after:content-[''] after:absolute after:right-0 after:w-[3px] after:h-full after:bg-blue-500 after:top-1/2 after:-translate-y-1/2"
                                 onClick={() => handleLogout()}

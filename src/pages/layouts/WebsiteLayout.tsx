@@ -3,7 +3,7 @@ import { faBars, faChevronUp, faClock, faEnvelope, faHeart, faHome, faPhoneAlt, 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import toastr from "toastr";
 import { useEffect, useState } from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { search } from "../../api/product";
 import { FavoritesProductType, ProductType } from "../../types/product";
 import { formatCurrency, formatDate } from "../../utils";
@@ -141,7 +141,7 @@ const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps
 
                             {auth && (
                                 <li className="relative after:content-[''] after:absolute after:w-[1px] after:h-3.5 after:bg-gray-50 after:left-3 after:top-1/2 after:-translate-y-1/2 uppercase text-sm pl-6 text-gray-50 font-light opacity-80 transition ease-linear duration-200 hover:text-white hover:opacity-100">
-                                    <Link to={auth.user.role ? '/admin' : '/my-account'}>Hello, {auth.user.fullName}</Link>
+                                    <Link to={auth.user.role ? '/admin/' : '/my-account/'}>Hello, {auth.user.fullName}</Link>
                                 </li>
                             )}
 
@@ -181,13 +181,13 @@ const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps
                                 </button>
                             </div>
                             <ul className="flex-1 items-center hidden md:flex">
-                                <li className="pr-4 font-semibold text-gray-500 transition ease-linear duration-200 hover:text-black">
-                                    <Link to="/">Trang chủ</Link>
+                                <li className="menu__item pr-4 font-semibold text-gray-500 transition ease-linear duration-200 hover:text-black">
+                                    <NavLink to="/">Trang chủ</NavLink>
                                 </li>
-                                <li className="pr-4 font-semibold text-gray-500 transition ease-linear duration-200 hover:text-black">
-                                    <Link to="/gioi-thieu">Giới thiệu</Link>
+                                <li className="menu__item pr-4 font-semibold text-gray-500 transition ease-linear duration-200 hover:text-black">
+                                    <NavLink to="/gioi-thieu">Giới thiệu</NavLink>
                                 </li>
-                                <li className="relative pr-4 font-semibold text-gray-500 transition ease-linear duration-200 hover:text-black group">
+                                <li className="menu__item relative pr-4 font-semibold text-gray-500 transition ease-linear duration-200 hover:text-black group">
                                     <Link to="/thuc-don" className="flex items-center">
                                         Sản phẩm
                                         <div className="pl-1 -mt-1">
@@ -209,14 +209,14 @@ const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps
                                 </Link>
                             </div>
                             <ul className="flex-1 justify-end hidden md:flex">
-                                <li className="pl-4 font-semibold text-gray-500 transition ease-linear duration-200 hover:text-black">
-                                    <Link to="/tin-tuc">Tin tức</Link>
+                                <li className="menu__item pl-4 font-semibold text-gray-500 transition ease-linear duration-200 hover:text-black">
+                                    <NavLink to="/tin-tuc">Tin tức</NavLink>
                                 </li>
-                                <li className="pl-4 font-semibold text-gray-500 transition ease-linear duration-200 hover:text-black">
-                                    <Link to="/lien-he">Liên hệ</Link>
+                                <li className="menu__item pl-4 font-semibold text-gray-500 transition ease-linear duration-200 hover:text-black">
+                                    <NavLink to="/lien-he">Liên hệ</NavLink>
                                 </li>
-                                <li className="pl-4 font-semibold text-gray-500 transition ease-linear duration-200 hover:text-black">
-                                    <Link to="/cua-hang">Cửa hàng</Link>
+                                <li className="menu__item pl-4 font-semibold text-gray-500 transition ease-linear duration-200 hover:text-black">
+                                    <NavLink to="/cua-hang">Cửa hàng</NavLink>
                                 </li>
                             </ul>
                             <ul className="flex flex-1 justify-end md:hidden">
@@ -247,22 +247,22 @@ const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps
                         </form>
                         <ul className="grid grid-cols-1 divide-y mt-5">
                             <li>
-                                <Link to="/" className="px-3 py-3.5 transition ease-linear duration-200 hover:bg-gray-200 text-sm font-semibold text-gray-500 hover:text-black uppercase block">Trang chủ</Link>
+                                <NavLink to="/" className="px-3 py-3.5 transition ease-linear duration-200 hover:bg-gray-200 text-sm font-semibold text-gray-500 hover:text-black uppercase block">Trang chủ</NavLink>
                             </li>
                             <li>
-                                <Link to="/gioi-thieu" className="px-3 py-3.5 transition ease-linear duration-200 hover:bg-gray-200 text-sm font-semibold text-gray-500 hover:text-black uppercase block">Giới thiệu</Link>
+                                <NavLink to="/gioi-thieu" className="px-3 py-3.5 transition ease-linear duration-200 hover:bg-gray-200 text-sm font-semibold text-gray-500 hover:text-black uppercase block">Giới thiệu</NavLink>
                             </li>
                             <li>
-                                <Link to="/thuc-don" className="px-3 py-3.5 transition ease-linear duration-200 hover:bg-gray-200 text-sm font-semibold text-gray-500 hover:text-black uppercase block">Sản phẩm</Link>
+                                <NavLink to="/thuc-don" className="px-3 py-3.5 transition ease-linear duration-200 hover:bg-gray-200 text-sm font-semibold text-gray-500 hover:text-black uppercase block">Sản phẩm</NavLink>
                             </li>
                             <li>
-                                <Link to="/tin-tuc" className="px-3 py-3.5 transition ease-linear duration-200 hover:bg-gray-200 text-sm font-semibold text-gray-500 hover:text-black uppercase block">Tin tức</Link>
+                                <NavLink to="/tin-tuc" className="px-3 py-3.5 transition ease-linear duration-200 hover:bg-gray-200 text-sm font-semibold text-gray-500 hover:text-black uppercase block">Tin tức</NavLink>
                             </li>
                             <li>
-                                <Link to="/lien-he" className="px-3 py-3.5 transition ease-linear duration-200 hover:bg-gray-200 text-sm font-semibold text-gray-500 hover:text-black uppercase block">Liên hệ</Link>
+                                <NavLink to="/lien-he" className="px-3 py-3.5 transition ease-linear duration-200 hover:bg-gray-200 text-sm font-semibold text-gray-500 hover:text-black uppercase block">Liên hệ</NavLink>
                             </li>
                             <li>
-                                <Link to="/cua-hang" className="px-3 py-3.5 transition ease-linear duration-200 hover:bg-gray-200 text-sm font-semibold text-gray-500 hover:text-black uppercase block">Cửa hàng</Link>
+                                <NavLink to="/cua-hang" className="px-3 py-3.5 transition ease-linear duration-200 hover:bg-gray-200 text-sm font-semibold text-gray-500 hover:text-black uppercase block">Cửa hàng</NavLink>
                             </li>
                         </ul>
                     </nav>
