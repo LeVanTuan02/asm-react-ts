@@ -9,6 +9,8 @@ export type ProductType = {
     favorites?: number,
     categoryId: string,
     slug?: string,
+    ratingNumber?: number,
+    totalRating?: number,
 }
 
 export type FavoritesProductType = {

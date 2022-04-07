@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getProductsRelated } from "../../api/product";
+import { getAvgStar, getTotalRating } from "../../api/rating";
 import { ProductType } from "../../types/product";
 import { formatCurrency } from "../../utils";
 
@@ -18,10 +19,42 @@ const ProductRelated = ({ id, cateId, onHandleFavorites }: ProductRelatedProps) 
     useEffect(() => {
         const getProducts = async () => {
             const { data } = await getProductsRelated(0, 4, id, cateId);
-            setProducts(data);
+
+            const listProduct = [];
+            for await (let product of data ) {
+                const ratingNumber = await getAvgStar(product._id);
+                listProduct.push({
+                    ...product,
+                    ratingNumber
+                });
+            }
+            
+            setProducts(listProduct);
         };
         getProducts();
     }, [id]);
+
+    // render star
+    const renderStar = (ratingNumber?: number) => {
+        const ratingArr = [];
+        for (let i = 0; i < ratingNumber; i++) {
+            ratingArr.push((
+                <div className="text-yellow-400" key={i}>
+                    <FontAwesomeIcon icon={faStar} />
+                </div>
+            ))
+        }
+
+        for (let i = 0; i < 5 - ratingNumber; i++) {
+            ratingArr.push((
+                <div className="text-gray-300" key={i + 5}>
+                    <FontAwesomeIcon icon={faStar} />
+                </div>
+            ))
+        }
+
+        return ratingArr;
+    };
 
     return (
         <section className="container max-w-6xl px-3 mx-auto my-6">
@@ -41,21 +74,7 @@ const ProductRelated = ({ id, cateId, onHandleFavorites }: ProductRelatedProps) 
                                 <p className="uppercase text-xs text-gray-400">{item.categoryId.name}</p>
                                 <Link to={`/san-pham/${item.slug}`} className="block font-semibold text-lg">{item.name}</Link>
                                 <ul className="flex text-yellow-500 text-xs justify-center pt-1">
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
+                                    {renderStar(item.ratingNumber)}
                                 </ul>
                                 <div className="text-sm pt-1">{formatCurrency(item.price)}</div>
                             </div>

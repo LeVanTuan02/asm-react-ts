@@ -20,6 +20,7 @@ import { addToCart, isAuthenticate } from "../../utils/localStorage";
 import CommentProduct from "../../components/user/CommentProduct";
 import CommentList from "../../components/user/CommentList";
 import { add, checkUserHeart } from "../../api/favorites";
+import { getAvgStar, getTotalRating } from "../../api/rating";
 
 type InputsType = {
     ice: number,
@@ -108,10 +109,16 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
         const getProduct = async () => {
             const { data } = await get(slug);
             data.view++;
-
             await clientUpdate(data);
+
+            const { data: totalRating } = await getTotalRating(data._id);
+
             onUpdateTitle(`${data.name} - Trà sữa Yotea`);
-            setProduct(data);
+            setProduct({
+                ...data,
+                ratingNumber: await getAvgStar(data._id),
+                totalRating: totalRating.length
+            });
         };
         getProduct();
 
@@ -176,6 +183,28 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
         }
     }
 
+    // render star
+    const renderStar = (ratingNumber?: number) => {
+        const ratingArr = [];
+        for (let i = 0; i < ratingNumber; i++) {
+            ratingArr.push((
+                <div className="text-yellow-400" key={i}>
+                    <FontAwesomeIcon icon={faStar} />
+                </div>
+            ))
+        }
+
+        for (let i = 0; i < 5 - ratingNumber; i++) {
+            ratingArr.push((
+                <div className="text-gray-300" key={i + 5}>
+                    <FontAwesomeIcon icon={faStar} />
+                </div>
+            ))
+        }
+
+        return ratingArr;
+    };
+
     return (
         <>
             <section className="container max-w-6xl mx-auto px-3 grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 pb-8">
@@ -201,23 +230,9 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
                             <h1 className="font-semibold text-[28px] text-gray-800 pb-1 mb-3 relative after:content-[''] after:absolute after:top-[100%] after:left-0 after:w-8 after:h-1 after:bg-gray-300">{product?.name}</h1>
                             <ul className="flex items-center mt-4">
                                 <li className="flex text-yellow-400 text-xs pr-4 relative after:content-[''] after:absolute after:right-2 after:top-1/2 after:-translate-y-1/2 after:w-[1px] after:bg-gray-300 after:h-4">
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
-                                    <div className="text-gray-300">
-                                        <FontAwesomeIcon icon={faStar} />
-                                    </div>
+                                    {renderStar(product?.ratingNumber)}
                                 </li>
-                                <li className="pr-4 relative after:content-[''] after:absolute after:right-2 after:top-1/2 after:-translate-y-1/2 after:w-[1px] after:bg-gray-300 after:h-4">10 Đánh giá</li>
+                                <li className="pr-4 relative after:content-[''] after:absolute after:right-2 after:top-1/2 after:-translate-y-1/2 after:w-[1px] after:bg-gray-300 after:h-4">{product?.totalRating} Đánh giá</li>
                                 <li>10 Đã bán</li>
                             </ul>
                             <div className="mt-1 my-2">

@@ -11,6 +11,7 @@ import { isAuthenticate } from "../../utils/localStorage";
 import FilterProduct from "./FilterProduct";
 import Pagination from "./Pagination";
 import toastr from "toastr";
+import { getAvgStar, getTotalRating } from "../../api/rating";
 
 type ProductContentProps = {
     url: string,
@@ -44,7 +45,19 @@ const ProductContent = ({ url, page, getProducts, parameter, onSetShowWishlist }
     useEffect(() => {
         const getData = async () => {
             const { data } = await getProducts(start, limit, filter.sort, filter.order, parameter);
-            setProducts(data);
+
+            const listProduct = [];
+            for await (let product of data ) {
+                const ratingNumber = await getAvgStar(product._id);
+                const { data: totalRating } = await getTotalRating(product._id);
+                listProduct.push({
+                    ...product,
+                    ratingNumber,
+                    totalRating: totalRating.length
+                });
+            }
+
+            setProducts(listProduct);
         };
         getData();
 
@@ -87,6 +100,28 @@ const ProductContent = ({ url, page, getProducts, parameter, onSetShowWishlist }
         }
     }
 
+    // render star
+    const renderStar = (ratingNumber?: number) => {
+        const ratingArr = [];
+        for (let i = 0; i < ratingNumber; i++) {
+            ratingArr.push((
+                <div className="text-yellow-400" key={i}>
+                    <FontAwesomeIcon icon={faStar} />
+                </div>
+            ))
+        }
+
+        for (let i = 0; i < 5 - ratingNumber; i++) {
+            ratingArr.push((
+                <div className="text-gray-300" key={i + 5}>
+                    <FontAwesomeIcon icon={faStar} />
+                </div>
+            ))
+        }
+
+        return ratingArr;
+    };
+
     return (
         <>
             {emptyProduct ? (
@@ -115,23 +150,9 @@ const ProductContent = ({ url, page, getProducts, parameter, onSetShowWishlist }
                                         </h3>
                                         <ul className="flex items-center mt-4">
                                             <li className="flex text-yellow-400 text-xs pr-6 relative after:content-[''] after:absolute after:right-3 after:top-1/2 after:-translate-y-1/2 after:w-[1px] after:bg-gray-300 after:h-4">
-                                                <div className="text-gray-300">
-                                                    <FontAwesomeIcon icon={faStar} />
-                                                </div>
-                                                <div className="text-gray-300">
-                                                    <FontAwesomeIcon icon={faStar} />
-                                                </div>
-                                                <div className="text-gray-300">
-                                                    <FontAwesomeIcon icon={faStar} />
-                                                </div>
-                                                <div className="text-gray-300">
-                                                    <FontAwesomeIcon icon={faStar} />
-                                                </div>
-                                                <div className="text-gray-300">
-                                                    <FontAwesomeIcon icon={faStar} />
-                                                </div>
+                                                {renderStar(item.ratingNumber)}
                                             </li>
-                                            <li className="pr-6 relative after:content-[''] after:absolute after:right-3 after:top-1/2 after:-translate-y-1/2 after:w-[1px] after:bg-gray-300 after:h-4">1 Đánh giá</li>
+                                            <li className="pr-6 relative after:content-[''] after:absolute after:right-3 after:top-1/2 after:-translate-y-1/2 after:w-[1px] after:bg-gray-300 after:h-4">{item.totalRating} Đánh giá</li>
                                             <li>10 Đã bán</li>
                                         </ul>
                                         <div className="mt-1 mb-2">
@@ -163,21 +184,7 @@ const ProductContent = ({ url, page, getProducts, parameter, onSetShowWishlist }
                                         <p className="uppercase text-xs text-gray-400">{item.categoryId.name}</p>
                                         <Link to={`/san-pham/${item.slug}`} className="block font-semibold text-lg">{item.name}</Link>
                                         <ul className="flex text-yellow-500 text-xs justify-center pt-1">
-                                            <div className="text-gray-300">
-                                                <FontAwesomeIcon icon={faStar} />
-                                            </div>
-                                            <div className="text-gray-300">
-                                                <FontAwesomeIcon icon={faStar} />
-                                            </div>
-                                            <div className="text-gray-300">
-                                                <FontAwesomeIcon icon={faStar} />
-                                            </div>
-                                            <div className="text-gray-300">
-                                                <FontAwesomeIcon icon={faStar} />
-                                            </div>
-                                            <div className="text-gray-300">
-                                                <FontAwesomeIcon icon={faStar} />
-                                            </div>
+                                            {renderStar(item.ratingNumber)}
                                         </ul>
                                         <div className="text-sm pt-1">{formatCurrency(item.price)}</div>
                                     </div>

@@ -31,3 +31,15 @@ export const get = (productId?: string) => {
     const url = `/${DB_NAME}/?productId=${productId}&_sort=createdAt&_order=desc`;
     return instance.get(url);
 }
+
+export const getAvgStar = async (productId: string) => {
+    const url = `/${DB_NAME}/?productId=${productId}`;
+    const { data }: { data: RatingType[] } = await instance.get(url);
+    const totalRating = data.reduce((total, item) => total + item.ratingNumber, 0);
+    return Math.ceil(totalRating / data.length) || 0;
+}
+
+export const getTotalRating = (productId: string) => {
+    const url = `/${DB_NAME}/?productId=${productId}`;
+    return instance.get(url);
+}
