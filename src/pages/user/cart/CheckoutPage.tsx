@@ -20,6 +20,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { add as addLogs } from "../../../api/orderLogs";
 import { OrderLogsType } from "../../../types/orderLogs";
+import { sendMailOrder, sendMailOrderToAdmin } from "../../../api/sendMail";
 
 type InputsType = {
     fullName: string,
@@ -101,7 +102,8 @@ const CheckoutPage = () => {
             priceDecrease: totalPriceVoucher,
             message: dataInput.message
         }
-        const { data: { _id: orderId } } = await addOrder(orderData);
+        const { data } = await addOrder(orderData);
+        const orderId = data._id;
         
         // save order detail
         cart.forEach(async ({ productId, productPrice, sizeId, sizePrice, quantity, ice, sugar, toppingId, toppingPrice}) => {
@@ -158,6 +160,22 @@ const CheckoutPage = () => {
         }
         if (user) orderLogs.userId = user._id;
         await addLogs(orderLogs);
+
+        // send mail
+        const orderInfo = {
+            name: dataInput.fullName,
+            phone: dataInput.phone,
+            email: dataInput.email,
+            address,
+            message: dataInput.message,
+            createdAt: data.createdAt
+        };
+        try {
+            await sendMailOrder(cart, vouchers, orderInfo);
+            await sendMailOrderToAdmin(cart, vouchers, orderInfo);
+        } catch (error) {
+            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+        }
 
         finishOrder(() => {
             toastr.success("Đặt hàng thành công");

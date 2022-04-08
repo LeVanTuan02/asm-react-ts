@@ -13,5 +13,5 @@ export type CartType = {
     sugar: number,
     toppingId: string,
     toppingName: string,
-    toppingPrice: number
+    toppingPrice: number,
 }

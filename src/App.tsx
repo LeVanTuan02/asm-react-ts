@@ -1,6 +1,6 @@
 import "toastr/build/toastr.css";
 import 'sweetalert2/dist/sweetalert2.css';
-// Import css files
+import "react-toastify/dist/ReactToastify.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -73,6 +73,7 @@ import NewsDetail from "./pages/user/NewsDetail";
 import ProductSearchPage from "./pages/user/ProductSearchPage";
 import ProductByCate from "./pages/user/ProductByCate";
 import NewsByCatePage from "./pages/user/NewsByCatePage";
+import { ToastContainer } from 'react-toastify';
 
 const App = () => {
     const [logged, setLogged] = useState(false);
@@ -87,137 +88,141 @@ const App = () => {
     const handleLogin = () => setLogged(!logged);
 
     return (
-        <Routes>
-            <Route path="/" element={<WebsiteLayout isShowWishlist={showWishList} onSetShowWishlist={setShowWishList} />}>
-                <Route index element={<HomePage onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
-                <Route path="gioi-thieu" element={<AboutPage onUpdateTitle={setTitle} />} />
-                <Route path="thuc-don" element={<ProductPage onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
-                <Route path="thuc-don/page/:page" element={<ProductPage onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
-                <Route path="danh-muc/:slug" element={<ProductByCate onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
-                <Route path="danh-muc/:slug/page/:page" element={<ProductByCate onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
-                <Route path="tim-kiem/:keyword" element={<ProductSearchPage onSetShowWishlist={setShowWishList} />} />
-                <Route path="tim-kiem/:keyword/page/:page" element={<ProductSearchPage onSetShowWishlist={setShowWishList} />} />
-                <Route path="san-pham/:slug" element={<ProductDetailPage onUpdateTitle={setTitle} onRenderCart={setRenderCart} onSetShowWishlist={setShowWishList} />} />
-                <Route path="san-pham/:slug/page/:page" element={<ProductDetailPage onUpdateTitle={setTitle} onRenderCart={setRenderCart} onSetShowWishlist={setShowWishList} />} />
-                <Route path="tin-tuc" element={<NewsPage onUpdateTitle={setTitle} />} />
-                <Route path="tin-tuc/:slug" element={<NewsByCatePage />} />
-                <Route path="tin-tuc/:slug/page/:page" element={<NewsByCatePage />} />
-                <Route path="tin-tuc/page/:page" element={<NewsPage onUpdateTitle={setTitle} />} />
-                <Route path="bai-viet/:slug" element={<NewsDetail />} />
-                <Route path="lien-he" element={<ContactPage />} />
-                <Route path="cua-hang" element={<StorePage />} />
-                <Route path="login" element={<LoginPage onLogin={handleLogin} />} />
-                <Route path="register" element={<RegisterPage />} />
-                <Route path="forgot" element={<ForgotPage />} />
-                <Route path="cart" element={<CartPage onRenderCart={setRenderCart} />} />
-                <Route path="checkout" element={<CheckoutPage />} />
-                <Route path="thank-you" element={<ThankPage />} />
-                <Route path="my-account" element={<PrivateRouter page="user"><MyAccountLayout onLogout={handleLogin} /></PrivateRouter>}>
-                    <Route index element={<UpdateInfoPage />} />
-                    <Route path="update-password" element={<UpdatePasswordPage />} />
-                    <Route path="cart" element={<MyCartPage />} />
-                    <Route path="cart/page/:page" element={<MyCartPage />} />
-                    <Route path="cart/:id" element={<MyCartDetailPage />} />
-                    <Route path="address" element={<AddressPage />} />
-                    <Route path="address/page/:page" element={<AddressPage />} />
-                    <Route path="address/:id" element={<AddressDetailPage />} />
-                </Route>
-            </Route>
-
-            <Route path="/admin" element={<PrivateRouter page="admin"><AdminLayout /></PrivateRouter>}>
-                <Route index element={<Dashboard />} />
-                <Route path="user">
-                    <Route index element={<AdminUserList />} />
-                    <Route path="page/:page" element={<AdminUserList />} />
-                    <Route path="add" element={<AddUserPage />} />
-                    <Route path=":id/edit" element={<EditUserPage />} />
+        <>
+            <Routes>
+                <Route path="/" element={<WebsiteLayout isShowWishlist={showWishList} onSetShowWishlist={setShowWishList} />}>
+                    <Route index element={<HomePage onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
+                    <Route path="gioi-thieu" element={<AboutPage onUpdateTitle={setTitle} />} />
+                    <Route path="thuc-don" element={<ProductPage onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
+                    <Route path="thuc-don/page/:page" element={<ProductPage onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
+                    <Route path="danh-muc/:slug" element={<ProductByCate onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
+                    <Route path="danh-muc/:slug/page/:page" element={<ProductByCate onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
+                    <Route path="tim-kiem/:keyword" element={<ProductSearchPage onSetShowWishlist={setShowWishList} />} />
+                    <Route path="tim-kiem/:keyword/page/:page" element={<ProductSearchPage onSetShowWishlist={setShowWishList} />} />
+                    <Route path="san-pham/:slug" element={<ProductDetailPage onUpdateTitle={setTitle} onRenderCart={setRenderCart} onSetShowWishlist={setShowWishList} />} />
+                    <Route path="san-pham/:slug/page/:page" element={<ProductDetailPage onUpdateTitle={setTitle} onRenderCart={setRenderCart} onSetShowWishlist={setShowWishList} />} />
+                    <Route path="tin-tuc" element={<NewsPage onUpdateTitle={setTitle} />} />
+                    <Route path="tin-tuc/:slug" element={<NewsByCatePage />} />
+                    <Route path="tin-tuc/:slug/page/:page" element={<NewsByCatePage />} />
+                    <Route path="tin-tuc/page/:page" element={<NewsPage onUpdateTitle={setTitle} />} />
+                    <Route path="bai-viet/:slug" element={<NewsDetail />} />
+                    <Route path="lien-he" element={<ContactPage />} />
+                    <Route path="cua-hang" element={<StorePage />} />
+                    <Route path="login" element={<LoginPage onLogin={handleLogin} />} />
+                    <Route path="register" element={<RegisterPage />} />
+                    <Route path="forgot" element={<ForgotPage />} />
+                    <Route path="cart" element={<CartPage onRenderCart={setRenderCart} />} />
+                    <Route path="checkout" element={<CheckoutPage />} />
+                    <Route path="thank-you" element={<ThankPage />} />
+                    <Route path="my-account" element={<PrivateRouter page="user"><MyAccountLayout onLogout={handleLogin} /></PrivateRouter>}>
+                        <Route index element={<UpdateInfoPage />} />
+                        <Route path="update-password" element={<UpdatePasswordPage />} />
+                        <Route path="cart" element={<MyCartPage />} />
+                        <Route path="cart/page/:page" element={<MyCartPage />} />
+                        <Route path="cart/:id" element={<MyCartDetailPage />} />
+                        <Route path="address" element={<AddressPage />} />
+                        <Route path="address/page/:page" element={<AddressPage />} />
+                        <Route path="address/:id" element={<AddressDetailPage />} />
+                    </Route>
                 </Route>
 
-                <Route path="news">
-                    <Route index element={<NewsListPage />} />
-                    <Route path="page/:page" element={<NewsListPage />} />
-                    <Route path="add" element={<AddNewsPage />} />
-                    <Route path=":slug/edit" element={<EditNewsPage />} />
+                <Route path="/admin" element={<PrivateRouter page="admin"><AdminLayout /></PrivateRouter>}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="user">
+                        <Route index element={<AdminUserList />} />
+                        <Route path="page/:page" element={<AdminUserList />} />
+                        <Route path="add" element={<AddUserPage />} />
+                        <Route path=":id/edit" element={<EditUserPage />} />
+                    </Route>
+
+                    <Route path="news">
+                        <Route index element={<NewsListPage />} />
+                        <Route path="page/:page" element={<NewsListPage />} />
+                        <Route path="add" element={<AddNewsPage />} />
+                        <Route path=":slug/edit" element={<EditNewsPage />} />
+                    </Route>
+
+                    <Route path="category-news">
+                        <Route index element={<CateNewsListPage />} />
+                        <Route path="add" element={<AddCateNewsPage />} />
+                        <Route path=":slug/edit" element={<EditCateNewsPage />} />
+                    </Route>
+
+                    <Route path="product">
+                        <Route index element={<ProductListPage />} />
+                        <Route path="page/:page" element={<ProductListPage />} />
+                        <Route path="add" element={<AddProductPage />} />
+                        <Route path=":slug/edit" element={<EditProductPage />} />
+                    </Route>
+
+                    <Route path="size">
+                        <Route index element={<SizeListPage />} />
+                        <Route path="add" element={<AddSizePage />} />
+                        <Route path=":id/edit" element={<EditSizePage />} />
+                    </Route>
+
+                    <Route path="slider">
+                        <Route index element={<SliderListPage />} />
+                        <Route path="add" element={<AddSlidePage />} />
+                        <Route path=":id/edit" element={<EditSlidePage />} />
+                    </Route>
+
+                    <Route path="topping">
+                        <Route index element={<ToppingListPage />} />
+                        <Route path="page/:page" element={<ToppingListPage />} />
+                        <Route path="add" element={<AddToppingPage />} />
+                        <Route path=":id/edit" element={<EditToppingPage />} />
+                    </Route>
+
+                    <Route path="store">
+                        <Route index element={<StoreListPage />} />
+                        <Route path="page/:page" element={<StoreListPage />} />
+                        <Route path="add" element={<AddStorePage />} />
+                        <Route path=":id/edit" element={<EditStorePage />} />
+                    </Route>
+
+                    <Route path="voucher">
+                        <Route index element={<VoucherListPage />} />
+                        <Route path="page/:page" element={<VoucherListPage />} />
+                        <Route path="add" element={<AddVoucherPage />} />
+                        <Route path=":id/edit" element={<EditVoucherPage />} />
+                    </Route>
+
+                    <Route path="category">
+                        <Route index element={<CategoryListPage />} />
+                        <Route path="add" element={<AddCategoryPage />} />
+                        <Route path=":slug/edit" element={<EditCategoryPage />} />
+                    </Route>
+
+                    <Route path="contact">
+                        <Route index element={<ContactListPage />} />
+                        <Route path="page/:page" element={<ContactListPage />} />
+                        <Route path=":id/detail" element={<ContactDetailPage />} />
+                    </Route>
+
+                    <Route path="comment">
+                        <Route index element={<CommentListPage />} />
+                        <Route path=":id/detail" element={<CommentDetailPage />} />
+                        <Route path=":id/detail/page/:page" element={<CommentDetailPage />} />
+                    </Route>
+
+                    <Route path="cart">
+                        <Route index element={<CartListPage />} />
+                        <Route path="page/:page" element={<CartListPage />} />
+                        <Route path=":id/detail" element={<CartDetailPage />} />
+                    </Route>
+
+                    <Route path="profile">
+                        <Route index element={<AdminUpdateInfoPage />} />
+                        <Route path="change-password" element={<AdminUpdatePassword />} />
+                    </Route>
                 </Route>
 
-                <Route path="category-news">
-                    <Route index element={<CateNewsListPage />} />
-                    <Route path="add" element={<AddCateNewsPage />} />
-                    <Route path=":slug/edit" element={<EditCateNewsPage />} />
-                </Route>
+                <Route path="*" element={<NotFound />} />
+            </Routes>
 
-                <Route path="product">
-                    <Route index element={<ProductListPage />} />
-                    <Route path="page/:page" element={<ProductListPage />} />
-                    <Route path="add" element={<AddProductPage />} />
-                    <Route path=":slug/edit" element={<EditProductPage />} />
-                </Route>
-
-                <Route path="size">
-                    <Route index element={<SizeListPage />} />
-                    <Route path="add" element={<AddSizePage />} />
-                    <Route path=":id/edit" element={<EditSizePage />} />
-                </Route>
-
-                <Route path="slider">
-                    <Route index element={<SliderListPage />} />
-                    <Route path="add" element={<AddSlidePage />} />
-                    <Route path=":id/edit" element={<EditSlidePage />} />
-                </Route>
-
-                <Route path="topping">
-                    <Route index element={<ToppingListPage />} />
-                    <Route path="page/:page" element={<ToppingListPage />} />
-                    <Route path="add" element={<AddToppingPage />} />
-                    <Route path=":id/edit" element={<EditToppingPage />} />
-                </Route>
-
-                <Route path="store">
-                    <Route index element={<StoreListPage />} />
-                    <Route path="page/:page" element={<StoreListPage />} />
-                    <Route path="add" element={<AddStorePage />} />
-                    <Route path=":id/edit" element={<EditStorePage />} />
-                </Route>
-
-                <Route path="voucher">
-                    <Route index element={<VoucherListPage />} />
-                    <Route path="page/:page" element={<VoucherListPage />} />
-                    <Route path="add" element={<AddVoucherPage />} />
-                    <Route path=":id/edit" element={<EditVoucherPage />} />
-                </Route>
-
-                <Route path="category">
-                    <Route index element={<CategoryListPage />} />
-                    <Route path="add" element={<AddCategoryPage />} />
-                    <Route path=":slug/edit" element={<EditCategoryPage />} />
-                </Route>
-
-                <Route path="contact">
-                    <Route index element={<ContactListPage />} />
-                    <Route path="page/:page" element={<ContactListPage />} />
-                    <Route path=":id/detail" element={<ContactDetailPage />} />
-                </Route>
-
-                <Route path="comment">
-                    <Route index element={<CommentListPage />} />
-                    <Route path=":id/detail" element={<CommentDetailPage />} />
-                    <Route path=":id/detail/page/:page" element={<CommentDetailPage />} />
-                </Route>
-
-                <Route path="cart">
-                    <Route index element={<CartListPage />} />
-                    <Route path="page/:page" element={<CartListPage />} />
-                    <Route path=":id/detail" element={<CartDetailPage />} />
-                </Route>
-
-                <Route path="profile">
-                    <Route index element={<AdminUpdateInfoPage />} />
-                    <Route path="change-password" element={<AdminUpdatePassword />} />
-                </Route>
-            </Route>
-
-            <Route path="*" element={<NotFound />} />
-        </Routes>
+            <ToastContainer />
+        </>
     )
 }
 

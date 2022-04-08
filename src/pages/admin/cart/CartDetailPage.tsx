@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import OrderLogs from "../../../components/OrderLogs";
 import { add } from "../../../api/orderLogs";
 import { isAuthenticate } from "../../../utils/localStorage";
+import { sendMailCancelCart, sendMailOrderSuccess } from "../../../api/sendMail";
 
 const CartDetailPage = () => {
     const [order, setOrder] = useState<OrderType>({});
@@ -73,6 +74,15 @@ const CartDetailPage = () => {
                     status,
                     orderId: id
                 })
+
+                // gửi mail thông báo hủy đh
+                if (status === 4) {
+                    await sendMailCancelCart(orderDetail, voucherText, data);
+                }
+                
+                if (status === 3) {
+                    await sendMailOrderSuccess(orderDetail, voucherText, data);
+                }
                 
                 Swal.fire(
                     'Thành công!',
