@@ -1,5 +1,4 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import * as yup from "yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -8,6 +7,7 @@ import { get } from "../../../api/slider";
 import { uploadFile } from "../../../utils";
 import { useDispatch } from "react-redux";
 import { updateSlider } from "../../../redux/sliderSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     title: string,
@@ -51,10 +51,10 @@ const EditSlidePage = () => {
 
             dispatch(updateSlider(data));
 
-            toastr.success("Cập nhật slide thành công");
+            toast.success("Cập nhật slide thành công");
             navigate("/admin/slider");
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
-import toastr from "toastr";
 import { add as addComment, get } from "../../api/comment";
 import { isAuthenticate } from "../../utils/localStorage";
 import { checkUserRating, add as AddRating, update } from "../../api/rating";
 import { ProductType } from "../../types/product";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 type InputsType = {
     star: number,
@@ -62,11 +62,11 @@ const CommentProduct = ({ productId, onReRender, productData }: CommentProductPr
                 userId: user._id,
                 content
             })
-                .then(() => toastr.success("Bình luận thành công"))
+                .then(() => toast.success("Bình luận thành công"))
                 .then(() => reset())
                 .then(() => onReRender((prev: any) => !prev));
         } catch (error) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

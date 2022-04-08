@@ -1,10 +1,10 @@
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, SubmitHandler } from "react-hook-form";
-import toastr from "toastr";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addCateNews } from "../../../redux/cateNewsSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     name: string,
@@ -30,10 +30,10 @@ const AddCateNewsPage = () => {
         try {
             dispatch(addCateNews(dataInput));
 
-            toastr.success("Thêm danh mục thành công")
+            toast.success("Thêm danh mục thành công")
             reset();
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

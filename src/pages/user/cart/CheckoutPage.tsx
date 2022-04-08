@@ -1,5 +1,4 @@
 import * as yup from "yup";
-import toastr from "toastr";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -21,6 +20,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { add as addLogs } from "../../../api/orderLogs";
 import { OrderLogsType } from "../../../types/orderLogs";
 import { sendMailOrder, sendMailOrderToAdmin } from "../../../api/sendMail";
+import { toast } from "react-toastify";
 
 type InputsType = {
     fullName: string,
@@ -174,11 +174,11 @@ const CheckoutPage = () => {
             await sendMailOrder(cart, vouchers, orderInfo);
             await sendMailOrderToAdmin(cart, vouchers, orderInfo);
         } catch (error) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
 
         finishOrder(() => {
-            toastr.success("Đặt hàng thành công");
+            toast.success("Đặt hàng thành công");
             navigate("/thank-you");
         });
     }

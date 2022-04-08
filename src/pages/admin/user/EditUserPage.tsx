@@ -1,5 +1,4 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import toastr from "toastr";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -10,6 +9,7 @@ import { getAllProvince, getDistrictByProvince, getWardByDistrict } from "../../
 import { uploadFile } from "../../../utils";
 import { useDispatch } from "react-redux";
 import { updateUser } from "../../../redux/userSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     email: string,
@@ -105,10 +105,10 @@ const EditUserPage = () => {
 
             dispatch(updateUser(data));
 
-            toastr.success("Cập nhật user thành công");
+            toast.success("Cập nhật user thành công");
             navigate("/admin/user");
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

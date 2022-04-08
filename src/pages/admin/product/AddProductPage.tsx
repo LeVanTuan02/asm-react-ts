@@ -1,16 +1,14 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import * as yup from "yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CategoryType } from "../../../types/category";
-import { getAll } from "../../../api/category";
 import { uploadFile } from "../../../utils";
-import { add } from "../../../api/product";
 import { useDispatch, useSelector } from "react-redux";
 import { getCates, selectCatesProduct } from "../../../redux/categoryProductSlice";
 import { addProduct } from "../../../redux/productSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     name: string,
@@ -69,11 +67,11 @@ const AddProductPage = () => {
 
             dispatch(addProduct({ ...data, image: url, price: +data.price, status: +data.status }));
 
-            toastr.success("Thêm sản phẩm thành công")
+            toast.success("Thêm sản phẩm thành công")
             setPreview("");
             reset();
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

@@ -6,9 +6,9 @@ import { clientUpdate, getAll, getById as getProduct } from "../../../api/produc
 import { ProductType } from "../../../types/product";
 import { formatCurrency } from "../../../utils";
 import { isAuthenticate } from "../../../utils/localStorage";
-import toastr from "toastr";
 import { add, checkUserHeart } from "../../../api/favorites";
 import { getAvgStar } from "../../../api/rating";
+import { toast } from "react-toastify";
 
 type HomeProductsProps = {
     onSetShowWishlist: (args: any) => any
@@ -35,7 +35,7 @@ const HomeProducts = ({ onSetShowWishlist }: HomeProductsProps) => {
 
     const handleFavorites = async (productId: string, slug: string) => {
         if (!user) {
-            toastr.info("Vui lòng đăng nhập để yêu thích sản phẩm");
+            toast.info("Vui lòng đăng nhập để yêu thích sản phẩm");
         } else {
             const { data } = await checkUserHeart(user._id, productId);
 
@@ -50,10 +50,10 @@ const HomeProducts = ({ onSetShowWishlist }: HomeProductsProps) => {
                     userId: user._id,
                     productId
                 })
-                    .then(() => toastr.success("Đã thêm sản phẩm vào danh sách yêu thích"))
+                    .then(() => toast.success("Đã thêm sản phẩm vào danh sách yêu thích"))
                     .then(() => onSetShowWishlist((prev: any) => !prev));
             } else {
-                toastr.info("Sản phẩm đã tồn tại trong danh sách yêu thích");
+                toast.info("Sản phẩm đã tồn tại trong danh sách yêu thích");
             }
 
         }

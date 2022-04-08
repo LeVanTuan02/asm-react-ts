@@ -1,5 +1,4 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import * as yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -7,6 +6,7 @@ import { get } from "../../../api/size";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { updateSize } from "../../../redux/sizeSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     name: string,
@@ -41,10 +41,11 @@ const EditSizePage = () => {
         try {
             dispatch(updateSize(data));
 
-            toastr.success("Cập nhật size thành công");
+            toast.success("Cập nhật size thành công");
+
             navigate("/admin/size");
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

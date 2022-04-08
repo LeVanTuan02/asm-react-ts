@@ -1,5 +1,4 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import * as yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
@@ -7,6 +6,7 @@ import { get } from "../../../api/voucher";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { updateVoucher } from "../../../redux/voucherSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     code: string,
@@ -82,10 +82,10 @@ const EditVoucherPage = () => {
         try {
             dispatch(updateVoucher(data));
 
-            toastr.success("Cập nhật voucher thành công");
+            toast.success("Cập nhật voucher thành công");
             navigate("/admin/voucher");
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

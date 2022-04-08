@@ -1,4 +1,3 @@
-import "toastr/build/toastr.css";
 import 'sweetalert2/dist/sweetalert2.css';
 import "react-toastify/dist/ReactToastify.css";
 import "slick-carousel/slick/slick.css";

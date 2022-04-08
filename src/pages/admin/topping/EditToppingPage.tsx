@@ -1,5 +1,4 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import * as yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -7,6 +6,7 @@ import { get } from "../../../api/topping";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { updateTopping } from "../../../redux/toppingSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     name: string,
@@ -41,10 +41,10 @@ const EditToppingPage = () => {
         try {
             dispatch(updateTopping(data));
 
-            toastr.success("Cập nhật topping thành công");
+            toast.success("Cập nhật topping thành công");
             navigate("/admin/topping");
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

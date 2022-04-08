@@ -1,9 +1,9 @@
 import * as yup from "yup";
 import {  yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import { Link, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { signup } from "../../api/auth";
+import { toast } from "react-toastify";
 
 type InputsType = {
     username: string,
@@ -53,10 +53,10 @@ const RegisterPage = () => {
     const onSubmit: SubmitHandler<InputsType> = async dataInput => {
         try {
             await signup(dataInput);
-            toastr.success("Đăng ký tài khoản thành công");
+            toast.success("Đăng ký tài khoản thành công");
             navigate("/login");
         } catch (error: any) {
-            toastr.error(error.response.data.message);
+            toast.error(error.response.data.message);
         }
     }
 

@@ -1,5 +1,4 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import * as yup from "yup";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -7,6 +6,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { uploadFile } from "../../../utils";
 import { useDispatch } from "react-redux";
 import { addSlider } from "../../../redux/sliderSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     title: string,
@@ -52,11 +52,11 @@ const AddSlidePage = () => {
 
             dispatch(addSlider({ ...data, image: url }));
 
-            toastr.success("Thêm slide thành công");
+            toast.success("Thêm slide thành công");
             setPreview("");
             reset();
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
     

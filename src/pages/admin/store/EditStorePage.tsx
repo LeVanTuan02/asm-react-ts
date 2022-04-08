@@ -1,4 +1,3 @@
-import toastr from "toastr";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -8,6 +7,7 @@ import { uploadFile } from "../../../utils";
 import { get } from "../../../api/store";
 import { useDispatch } from "react-redux";
 import { updateStore } from "../../../redux/storeSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     name: string,
@@ -65,10 +65,10 @@ const EditStorePage = () => {
 
             dispatch(updateStore(data));
 
-            toastr.success("Cập nhật chi nhánh thành công");
+            toast.success("Cập nhật chi nhánh thành công");
             navigate("/admin/store");
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

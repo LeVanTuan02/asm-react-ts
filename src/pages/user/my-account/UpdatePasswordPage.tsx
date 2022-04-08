@@ -1,10 +1,10 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import toastr from "toastr";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { checkPassword } from "../../../api/auth";
 import { isAuthenticate } from "../../../utils/localStorage";
 import { updateMyInfo } from "../../../api/user";
+import { toast } from "react-toastify";
 
 type InputsType = {
     oldPassword: string,
@@ -54,10 +54,10 @@ const UpdatePasswordPage = () => {
     const onSubmit: SubmitHandler<InputsType> = async dataInput => {
         try {
             await updateMyInfo({ _id: user._id ,password: dataInput.newPassword });
-            toastr.success("Cập nhật mật khẩu thành công");
+            toast.success("Cập nhật mật khẩu thành công");
             reset();
         } catch (error) {
-            toastr.error("Đã có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Đã có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

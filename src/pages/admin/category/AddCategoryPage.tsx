@@ -1,13 +1,12 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import toastr from "toastr";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
-import { add } from "../../../api/category";
 import { uploadFile } from "../../../utils";
 import { useDispatch } from "react-redux";
 import { addCate } from "../../../redux/categoryProductSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     name: string,
@@ -39,11 +38,11 @@ const AddCategoryPage = () => {
             // upload image
             dataInput.image = await uploadFile(dataInput.image[0]);
             dispatch(addCate(dataInput));
-            toastr.success("Thêm danh mục thành công")
+            toast.success("Thêm danh mục thành công")
             reset();
             setPreview("");
         } catch (error: any) {
-            toastr.error(error.response.data.error.message || error.response.data.message);
+            toast.error(error.response.data.error.message || error.response.data.message);
         }
     }
 

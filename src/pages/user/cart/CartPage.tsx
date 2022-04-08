@@ -1,5 +1,4 @@
 import { faLongArrowAltLeft, faTag, faTimes } from "@fortawesome/free-solid-svg-icons";
-import toastr from "toastr";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -10,6 +9,7 @@ import Swal from "sweetalert2";
 import CartNav from "../../../components/user/CartNav";
 import { checkValidVoucher } from "../../../api/voucher";
 import { VoucherType } from "../../../types/voucher";
+import { toast } from "react-toastify";
 
 type CartPageProps = {
     onRenderCart: (args: any) => void
@@ -73,7 +73,7 @@ const CartPage = ({ onRenderCart }: CartPageProps) => {
 
         const qnt = +e.target.value;
         if (isNaN(qnt)) {
-            toastr.info("Vui lòng nhập số");
+            toast.info("Vui lòng nhập số");
         } else {
             setCartQnt(prev => {
                 return prev?.map(item => item.id === cartId ? {
@@ -109,7 +109,7 @@ const CartPage = ({ onRenderCart }: CartPageProps) => {
     const handleUpdateQnt = () => {
         if (!disableBtnUpdate) {
             updateQuantity(cartQnt, () => {
-                toastr.success("Cập nhật thành công");
+                toast.success("Cập nhật thành công");
                 setCart(JSON.parse(localStorage.getItem("cart") as string));
                 setDisableBtnUpdate(true);
             })
@@ -143,7 +143,7 @@ const CartPage = ({ onRenderCart }: CartPageProps) => {
 
     const handleRemoveVoucher = (id: string) => {
         removeVoucher(id, () => {
-            toastr.success("Đã xóa mã Voucher");
+            toast.success("Đã xóa mã Voucher");
             setVouchers(JSON.parse(localStorage.getItem("voucher") as string));
         });
     }
@@ -151,18 +151,18 @@ const CartPage = ({ onRenderCart }: CartPageProps) => {
     const handleAddVoucher = async (e: any) => {
         e.preventDefault();
         if (!user) {
-            toastr.info("Vui lòng đăng nhập để sử dụng Voucher");
+            toast.info("Vui lòng đăng nhập để sử dụng Voucher");
         } else {
             if (!voucher) {
-                toastr.info("Vui lòng nhập mã Voucher");
+                toast.info("Vui lòng nhập mã Voucher");
             } else {
                 const response: any = await checkValidVoucher(voucher, user._id);
                 
                 if (!response.success) {
-                    toastr.info(response.message);
+                    toast.info(response.message);
                 } else {
                     addVoucher(response.voucherData, () => {
-                        toastr.success("Áp mã giảm giá thành công");
+                        toast.success("Áp mã giảm giá thành công");
                         setVoucher("");
                         setVouchers(JSON.parse(localStorage.getItem("voucher") as string));
                     });

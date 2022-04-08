@@ -1,4 +1,3 @@
-import toastr from "toastr";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
@@ -9,6 +8,7 @@ import { LocationType } from "../../../types/location";
 import { uploadFile } from "../../../utils";
 import { useDispatch } from "react-redux";
 import { addUser } from "../../../redux/userSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     email: string,
@@ -104,11 +104,11 @@ const AddUserPage = () => {
 
             dispatch(addUser({ ...data, avatar: url }))
             
-            toastr.success("Thêm tài khoản thành công");
+            toast.success("Thêm tài khoản thành công");
             reset();
             setPreview("");
         } catch (error) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

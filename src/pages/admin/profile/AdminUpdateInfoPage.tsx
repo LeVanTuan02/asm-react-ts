@@ -3,12 +3,12 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import { isAuthenticate } from "../../../utils/localStorage";
 import { LocationType } from "../../../types/location";
 import { getAllProvince, getDistrictByProvince, getWardByDistrict } from "../../../api/location";
 import { uploadFile } from "../../../utils";
 import { get, update } from "../../../api/user";
+import { toast } from "react-toastify";
 
 type InputsType = {
     fullName: string,
@@ -77,9 +77,9 @@ const AdminUpdateInfoPage = () => {
                     const { data: { password, ...rest } } = await get(user._id);
                     localStorage.setItem("auth", JSON.stringify({ token, user: rest }));
                 })
-                .then(() => toastr.success("Cập nhật tài khoản thành công"));
+                .then(() => toast.success("Cập nhật tài khoản thành công"));
         } catch (error) {
-            toastr.error("Cập nhật tài khoản không thành công");
+            toast.error("Cập nhật tài khoản không thành công");
         }
     }
 

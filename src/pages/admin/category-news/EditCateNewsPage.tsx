@@ -1,5 +1,4 @@
 import * as yup from "yup";
-import toastr from "toastr";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -7,6 +6,7 @@ import { useEffect } from "react";
 import { get } from "../../../api/categoryNews";
 import { useDispatch } from "react-redux";
 import { updateCateNews } from "../../../redux/cateNewsSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     name: string,
@@ -45,10 +45,10 @@ const EditCateNewsPage = () => {
         try {
             dispatch(updateCateNews(data));
 
-            toastr.success("Cập nhật thành công");
+            toast.success("Cập nhật thành công");
             navigate("/admin/category-news");
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

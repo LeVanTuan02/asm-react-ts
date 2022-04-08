@@ -1,10 +1,10 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import * as yup from "yup";
 import { Link } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { addSize } from "../../../redux/sizeSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     name: string,
@@ -34,10 +34,12 @@ const AddSizePage = () => {
     const onSubmit: SubmitHandler<InputsType> = async data => {
         try {
             dispatch(addSize(data));
-            toastr.success("Thêm size thành công")
+
+            toast.success("Thêm size thành công");
+
             reset();
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
     

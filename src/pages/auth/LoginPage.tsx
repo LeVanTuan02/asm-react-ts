@@ -1,9 +1,9 @@
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import { Link, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { signin } from "../../api/auth";
+import { toast } from "react-toastify";
 
 type InputsType = {
     email: string
@@ -36,10 +36,10 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
         try {
             const { data } = await signin(dataInput);
             if (!data.user.active) {
-                toastr.info("Tài khoản của bạn đã bị khóa, vui lòng liên hệ QTV");
+                toast.info("Tài khoản của bạn đã bị khóa, vui lòng liên hệ QTV");
             } else {
                 localStorage.setItem("auth", JSON.stringify(data));
-                toastr.success("Đăng nhập thành công");
+                toast.success("Đăng nhập thành công");
 
                 if (data.user.role) {
                     navigate("/admin");
@@ -51,7 +51,7 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
             }
             
         } catch (error: any) {
-            toastr.error(error.response.data.message);
+            toast.error(error.response.data.message);
         }
     };
 

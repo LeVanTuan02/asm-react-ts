@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { uploadFile } from "../../../utils";
@@ -9,6 +8,7 @@ import { CategoryNewsType } from "../../../types/categoryNews";
 import { useDispatch, useSelector } from "react-redux";
 import { addNews } from "../../../redux/newsSlice";
 import { getCateNews, selectCateNews } from "../../../redux/cateNewsSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     title: string,
@@ -64,11 +64,11 @@ const AddNewsPage = () => {
 
             dispatch(addNews(dataInput));
 
-            toastr.success("Thêm bài viết thành công")
+            toast.success("Thêm bài viết thành công")
             reset();
             setPreview("");
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

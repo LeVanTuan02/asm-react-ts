@@ -1,7 +1,6 @@
 import { faFacebookF, faLinkedin, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { faAngleLeft, faAngleRight, faExpandArrowsAlt, faHeart, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import toastr from "toastr";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { clientUpdate, get } from "../../api/product";
@@ -21,6 +20,7 @@ import CommentProduct from "../../components/user/CommentProduct";
 import CommentList from "../../components/user/CommentList";
 import { add, checkUserHeart } from "../../api/favorites";
 import { getAvgStar, getTotalRating } from "../../api/rating";
+import { toast } from "react-toastify";
 
 type InputsType = {
     ice: number,
@@ -95,7 +95,7 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
 
         addToCart(cartData, () => {
             onRenderCart((prev: any) => !prev);
-            toastr.success(`Thêm ${product.name} vào giỏ hàng thành công`);
+            toast.success(`Thêm ${product.name} vào giỏ hàng thành công`);
             reset();
             setQuantity(1);
         });
@@ -150,7 +150,7 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
 
     const handleDecrease = () => {
         if (quantity === 1) {
-            toastr.info("Vui lòng chọn ít nhất 1 sản phẩm");
+            toast.info("Vui lòng chọn ít nhất 1 sản phẩm");
         } else {
             setQuantity(quantity - 1);
             // setShowBtnClear(true);
@@ -159,7 +159,7 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
 
     const handleFavorites = async (productId: string, slug: string) => {
         if (!user) {
-            toastr.info("Vui lòng đăng nhập để yêu thích sản phẩm");
+            toast.info("Vui lòng đăng nhập để yêu thích sản phẩm");
         } else {
             const { data } = await checkUserHeart(user._id, productId);
 
@@ -174,10 +174,10 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
                     userId: user._id,
                     productId
                 })
-                    .then(() => toastr.success("Đã thêm sản phẩm vào danh sách yêu thích"))
+                    .then(() => toast.success("Đã thêm sản phẩm vào danh sách yêu thích"))
                     .then(() => onSetShowWishlist((prev: any) => !prev));
             } else {
-                toastr.info("Sản phẩm đã tồn tại trong danh sách yêu thích");
+                toast.info("Sản phẩm đã tồn tại trong danh sách yêu thích");
             }
 
         }
@@ -347,7 +347,7 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
                                                 onChange={(e: any) => {
                                                     const qnt = e.target.value;
                                                     if (isNaN(qnt)) {
-                                                        toastr.info("Vui lòng nhập số");
+                                                        toast.info("Vui lòng nhập số");
                                                     } else {
                                                         setQuantity(+e.target.value)
                                                     }

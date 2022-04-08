@@ -1,7 +1,6 @@
 import { faFacebookF, faInstagram, faTiktok, faYoutube } from "@fortawesome/free-brands-svg-icons";
 import { faBars, faChevronUp, faClock, faEnvelope, faHeart, faHome, faPhoneAlt, faSearch, faShoppingCart, faSortDown, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import toastr from "toastr";
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { search } from "../../api/product";
@@ -11,6 +10,7 @@ import { isAuthenticate } from "../../utils/localStorage";
 import { CategoryType } from "../../types/category";
 import { getAll } from "../../api/category";
 import { getAll as getWishList, remove } from "../../api/favorites";
+import { toast } from "react-toastify";
 
 type WebsiteLayoutProps = {
     isShowWishlist: boolean,
@@ -70,7 +70,7 @@ const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps
     const handleSubmitFormSearch = (e:any) => {
         e.preventDefault();
         if (!keyword) {
-            toastr.error("Vui lòng nhập tên SP");
+            toast.error("Vui lòng nhập tên SP");
         } else {
             navigate(`/tim-kiem/${keyword}`);
         }

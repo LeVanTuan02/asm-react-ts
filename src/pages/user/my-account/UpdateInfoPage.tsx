@@ -6,8 +6,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { LocationType } from "../../../types/location";
 import { getAllProvince, getDistrictByProvince, getWardByDistrict } from "../../../api/location";
 import { uploadFile } from "../../../utils";
-import { update, updateMyInfo } from "../../../api/user";
-import toastr from "toastr";
+import { updateMyInfo } from "../../../api/user";
+import { toast } from "react-toastify";
 
 type InputsType = {
     fullName: string,
@@ -111,9 +111,9 @@ const UpdateInfoPage = () => {
     
             updateMyInfo(dataInput)
                 .then(() => localStorage.setItem("auth", JSON.stringify({ token, user: dataInput })))
-                .then(() => toastr.success("Cập nhật tài khoản thành công"));
+                .then(() => toast.success("Cập nhật tài khoản thành công"));
         } catch (error) {
-            toastr.error("Đã có lỗi xảy ra");
+            toast.error("Đã có lỗi xảy ra");
         }
     }
 

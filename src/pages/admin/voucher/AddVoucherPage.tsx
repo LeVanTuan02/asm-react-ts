@@ -1,10 +1,10 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import * as yup from "yup";
 import { Link } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { addVoucher } from "../../../redux/voucherSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     code: string,
@@ -65,10 +65,10 @@ const AddVoucherPage = () => {
         try {
             dispatch(addVoucher(data));
 
-            toastr.success("Thêm Voucher thành công")
+            toast.success("Thêm Voucher thành công")
             reset();
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

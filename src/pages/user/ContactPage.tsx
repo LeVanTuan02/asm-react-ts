@@ -1,11 +1,11 @@
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
 import { useEffect, useState } from "react";
 import { getAll } from "../../api/store";
 import { StoreType } from "../../types/store";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { add } from "../../api/contact";
+import { toast } from "react-toastify";
 
 type InputsType = {
     name: string,
@@ -52,10 +52,10 @@ const ContactPage = () => {
     const onSubmit: SubmitHandler<InputsType> = async ({ confirm, ...dataInput}) => {
         try {
             await add(dataInput);
-            toastr.success("Gửi liên hệ thành công");
+            toast.success("Gửi liên hệ thành công");
             reset();
         } catch (error) {
-            toastr.error("Đã có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Đã có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

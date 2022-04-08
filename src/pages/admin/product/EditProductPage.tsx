@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import toastr from "toastr";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { get } from "../../../api/product";
@@ -10,6 +9,7 @@ import { uploadFile } from "../../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { getCates, selectCatesProduct } from "../../../redux/categoryProductSlice";
 import { updateProduct } from "../../../redux/productSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     name: string,
@@ -63,10 +63,10 @@ const EditProductPage = () => {
 
             dispatch(updateProduct(data));
 
-            toastr.success("Cập nhật SP thành công");
+            toast.success("Cập nhật SP thành công");
             navigate("/admin/product");
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

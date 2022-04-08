@@ -1,5 +1,4 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import toastr from "toastr";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { get } from "../../../api/category";
@@ -8,6 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { uploadFile } from "../../../utils";
 import { useDispatch } from "react-redux";
 import { updateCate } from "../../../redux/categoryProductSlice";
+import { toast } from "react-toastify";
 
 const schema = yup.object().shape({
     name: yup
@@ -53,10 +53,10 @@ const EditCategoryPage = () => {
             
             dispatch(updateCate(data));
 
-            toastr.success("Cập nhật thành công");
+            toast.success("Cập nhật thành công");
             navigate("/admin/category");
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

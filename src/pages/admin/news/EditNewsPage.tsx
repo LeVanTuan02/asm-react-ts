@@ -1,5 +1,4 @@
 import * as yup from "yup";
-import toastr from "toastr";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -10,6 +9,7 @@ import { get } from "../../../api/news";
 import { useDispatch, useSelector } from "react-redux";
 import { updateNews } from "../../../redux/newsSlice";
 import { getCateNews, selectCateNews } from "../../../redux/cateNewsSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     title: string,
@@ -63,10 +63,10 @@ const EditNewsPage = () => {
 
             dispatch(updateNews(data));
 
-            toastr.success("Cập nhật bài viết thành công");
+            toast.success("Cập nhật bài viết thành công");
             navigate("/admin/news");
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

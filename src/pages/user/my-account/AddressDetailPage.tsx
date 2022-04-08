@@ -6,7 +6,7 @@ import { getAllProvince, getDistrictByProvince, getWardByDistrict } from "../../
 import { LocationType } from "../../../types/location";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 
 type InputsType = {
     fullName: string,
@@ -81,10 +81,10 @@ const AddressDetailPage = () => {
     const onSubmit: SubmitHandler<InputsType> = async (dataInput) => {
         try {
             update({ _id: id, ...dataInput })
-                .then(() => toastr.success("Cập nhật địa chỉ thành công"))
+                .then(() => toast.success("Cập nhật địa chỉ thành công"))
                 .then(() => navigate("/my-account/address"));
         } catch (error) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
 

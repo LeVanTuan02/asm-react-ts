@@ -10,8 +10,8 @@ import { formatCurrency } from "../../utils";
 import { isAuthenticate } from "../../utils/localStorage";
 import FilterProduct from "./FilterProduct";
 import Pagination from "./Pagination";
-import toastr from "toastr";
 import { getAvgStar, getTotalRating } from "../../api/rating";
+import { toast } from "react-toastify";
 
 type ProductContentProps = {
     url: string,
@@ -76,7 +76,7 @@ const ProductContent = ({ url, page, getProducts, parameter, onSetShowWishlist }
     const { user } = isAuthenticate();
     const handleFavorites = async (productId: string, slug: string) => {
         if (!user) {
-            toastr.info("Vui lòng đăng nhập để yêu thích sản phẩm");
+            toast.info("Vui lòng đăng nhập để yêu thích sản phẩm");
         } else {
             const { data } = await checkUserHeart(user._id, productId);
 
@@ -91,10 +91,10 @@ const ProductContent = ({ url, page, getProducts, parameter, onSetShowWishlist }
                     userId: user._id,
                     productId
                 })
-                    .then(() => toastr.success("Đã thêm sản phẩm vào danh sách yêu thích"))
+                    .then(() => toast.success("Đã thêm sản phẩm vào danh sách yêu thích"))
                     .then(() => onSetShowWishlist((prev: any) => !prev));
             } else {
-                toastr.info("Sản phẩm đã tồn tại trong danh sách yêu thích");
+                toast.info("Sản phẩm đã tồn tại trong danh sách yêu thích");
             }
 
         }

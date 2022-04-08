@@ -1,4 +1,3 @@
-import toastr from "toastr";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
@@ -7,6 +6,7 @@ import { Link } from "react-router-dom";
 import { uploadFile } from "../../../utils";
 import { useDispatch } from "react-redux";
 import { addStore } from "../../../redux/storeSlice";
+import { toast } from "react-toastify";
 
 type InputsType = {
     name: string,
@@ -64,11 +64,11 @@ const AddStorePage = () => {
 
             dispatch(addStore({ ...data, image: url }));
 
-            toastr.success("Thêm chi nhánh thành công")
+            toast.success("Thêm chi nhánh thành công")
             setPreview("");
             reset();
         } catch (error: any) {
-            toastr.error("Có lỗi xảy ra, vui lòng thử lại");
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
     
