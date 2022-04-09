@@ -14,6 +14,7 @@ export type ProductType = {
 }
 
 export type FavoritesProductType = {
+    _id?: string,
     userId: string,
     productId: string,
     createdAt?: Date

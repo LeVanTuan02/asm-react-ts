@@ -9,22 +9,21 @@ import { formatCurrency, formatDate } from "../../utils";
 import { isAuthenticate } from "../../utils/localStorage";
 import { CategoryType } from "../../types/category";
 import { getAll } from "../../api/category";
-import { getAll as getWishList, remove } from "../../api/favorites";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteWishlist, getWishlist, selectShowWishlist, selectWishlist, showWishlist } from "../../redux/wishlistSlice";
 
-type WebsiteLayoutProps = {
-    isShowWishlist: boolean,
-    onSetShowWishlist: (args: any) => void
-}
-
-const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps) => {
+const WebsiteLayout = () => {
+    const dispatch = useDispatch();
     const [visible, setVisible] = useState(false);
     const [headerFixed, setHeaderFixed] = useState<boolean>(false);
     const [productsSearch, setProductsSearch] = useState<ProductType[]>();
     const [isEmptyProduct, setIsEmptyProduct] = useState<boolean>(false);
     const [keyword, setKeyword] = useState<string>();
     const [categories, setCategories] = useState<CategoryType[]>();
-    const [wishList, setWishList] = useState<FavoritesProductType[]>([]);
+
+    const wishlist: FavoritesProductType[] = useSelector(selectWishlist);
+    const isShowWishlist = useSelector(selectShowWishlist);
 
     const auth = isAuthenticate();
 
@@ -42,13 +41,9 @@ const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps
         getCate();
 
         if (auth.user) {
-            const getAllWishList = async () => {
-                const { data } = await getWishList(auth.user._id);
-                setWishList(data);
-            };
-            getAllWishList();
+            dispatch(getWishlist(auth.user._id));
         }
-    }, [isShowWishlist]);
+    }, []);
 
     const handleScrollTop = () => {
         window.scrollTo({
@@ -77,10 +72,15 @@ const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps
     }
 
     const handleRemoveWishList = async (id: string) => {
-        const { data } = await remove(id);
-        setWishList((prev) => {
-            return prev?.filter((item: any) => item._id !== data._id);
-        });
+        dispatch(deleteWishlist(id));
+    }
+
+    const handleShowWishlist = () => {
+        if (!auth.user) {
+            toast.info("Vui lòng đăng nhập để xem danh sách yêu thích");
+        } else {
+            dispatch(showWishlist(true));
+        }
     }
 
     return (
@@ -155,9 +155,9 @@ const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps
                                     </li>
                                 </>
                             )}
-                            <li onClick={() => onSetShowWishlist((prev: any) => !prev)} className="header-icon-heart relative after:content-[''] after:absolute after:w-[1px] after:h-3.5 after:bg-gray-50 after:left-3 after:top-1/2 after:-translate-y-1/2 uppercase text-base cursor-pointer pl-6 text-gray-50 font-light opacity-80 transition ease-linear duration-200 hover:text-white hover:opacity-100">
+                            <li onClick={handleShowWishlist} className="header-icon-heart relative after:content-[''] after:absolute after:w-[1px] after:h-3.5 after:bg-gray-50 after:left-3 after:top-1/2 after:-translate-y-1/2 uppercase text-base cursor-pointer pl-6 text-gray-50 font-light opacity-80 transition ease-linear duration-200 hover:text-white hover:opacity-100">
                                 <div className="relative">
-                                    <label id="header-wishlist-label" className="absolute w-4 h-4 bg-green-700 text-xs text-center rounded-full -right-3 -top-1">{wishList.length}</label>
+                                    <label id="header-wishlist-label" className="absolute w-4 h-4 bg-green-700 text-xs text-center rounded-full -right-3 -top-1">{wishlist.length}</label>
                                     <FontAwesomeIcon icon={faHeart} />
                                 </div>
                             </li>
@@ -220,15 +220,17 @@ const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps
                                 </li>
                             </ul>
                             <ul className="flex flex-1 justify-end md:hidden">
-                                <li onClick={() => onSetShowWishlist((prev: any) => !prev)} className="uppercase text-base cursor-pointer pl-6 text-gray-600 font-light opacity-80 transition ease-linear duration-200 hover:text-black hover:opacity-100">
+                                <li onClick={handleShowWishlist} className="uppercase text-base cursor-pointer pl-6 text-gray-600 font-light opacity-80 transition ease-linear duration-200 hover:text-black hover:opacity-100">
                                     <div className="relative">
-                                        <label className="text-white absolute w-4 h-4 bg-green-700 text-xs text-center rounded-full -right-3 -top-1">{wishList.length}</label>
+                                        <label className="text-white absolute w-4 h-4 bg-green-700 text-xs text-center rounded-full -right-3 -top-1">{wishlist.length}</label>
                                         <FontAwesomeIcon icon={faHeart} />
                                     </div>
                                 </li>
                                 <li className="uppercase text-base pl-4 text-gray-600 font-light opacity-80 transition ease-linear duration-200 hover:text-black hover:opacity-100">
                                     <Link to="/gio-hang" className="relative">
-                                        <label className="text-white absolute w-4 h-4 bg-green-700 text-xs text-center rounded-full -right-3 -top-1">10</label>
+                                        <label className="text-white absolute w-4 h-4 bg-green-700 text-xs text-center rounded-full -right-3 -top-1">
+                                            {JSON.parse(localStorage.getItem("cart") as string)?.length || 0}
+                                        </label>
                                         <FontAwesomeIcon icon={faShoppingCart} />
                                     </Link>
                                 </li>
@@ -355,19 +357,19 @@ const WebsiteLayout = ({ isShowWishlist, onSetShowWishlist }: WebsiteLayoutProps
             </footer>
 
             <section id="wishlist" className={`${isShowWishlist && "active"} wishlist`}>
-                <div onClick={() => onSetShowWishlist((prev: any) => !prev)} className="wishlist__overlay invisible opacity-0 transition-all duration-400 ease-linear fixed top-0 right-0 bottom-0 left-0 bg-[rgba(0,0,0,0.6)] z-20"></div>
+                <div onClick={() => dispatch(showWishlist(false))} className="wishlist__overlay invisible opacity-0 transition-all duration-400 ease-linear fixed top-0 right-0 bottom-0 left-0 bg-[rgba(0,0,0,0.6)] z-20"></div>
 
                 <div className="wishlist__content transition duration-500 ease fixed top-0 right-0 bottom-0 min-w-[360px] bg-white shadow z-20 translate-x-full">
                     <header className="px-3 h-14 flex justify-between items-center border-b-2">
                         <h1 className="uppercase font-semibold text-lg">Danh sách yêu thích</h1>
-                        <button onClick={() => onSetShowWishlist((prev: any) => !prev)} className="py-2 font-semibold text-xl text-gray-500 transition duration-200 ease-linear hover:text-black">
+                        <button onClick={() => dispatch(showWishlist(false))} className="py-2 font-semibold text-xl text-gray-500 transition duration-200 ease-linear hover:text-black">
                             <FontAwesomeIcon icon={faTimes} />
                         </button>
                     </header>
 
                     <div className="h-[calc(100vh-56px)] overflow-y-auto">
                         <ul>
-                            {wishList?.map((item: any, index) => (
+                            {wishlist?.map((item: any, index) => (
                                 <li className="flex px-2 py-3 items-center" key={index}>
                                     <img src={item.productId.image} className="w-16 h-16 object-cover" alt="" />
 

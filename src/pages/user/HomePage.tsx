@@ -8,11 +8,7 @@ import HomeShow from "../../components/user/home/HomeShow";
 import HomeWhy from "../../components/user/home/HomeWhy";
 import { updateTitle } from "../../utils";
 
-type HomePageProps = {
-    onSetShowWishlist: (args: any) => any,
-}
-
-const HomePage = ({ onSetShowWishlist }: HomePageProps) => {
+const HomePage = () => {
     useEffect(() => {
         updateTitle("Trang chủ");
     }, []);
@@ -22,7 +18,7 @@ const HomePage = ({ onSetShowWishlist }: HomePageProps) => {
             <HomeBanner />
             <HomeCategory />
             <HomeWhy />
-            <HomeProducts onSetShowWishlist={onSetShowWishlist} />
+            <HomeProducts />
             <HomeNews />
             <HomeFeedback />
             <HomeShow />

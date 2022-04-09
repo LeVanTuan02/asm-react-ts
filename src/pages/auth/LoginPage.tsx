@@ -6,6 +6,8 @@ import { signin } from "../../api/auth";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import { updateTitle } from "../../utils";
+import { getWishlist } from "../../redux/wishlistSlice";
+import { useDispatch } from "react-redux";
 
 type InputsType = {
     email: string
@@ -27,6 +29,8 @@ type LoginPageProps = {
 }
 
 const LoginPage = ({ onLogin }: LoginPageProps) => {
+    const dispatch = useDispatch();
+
     const {
         register,
         handleSubmit,
@@ -48,6 +52,8 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
                 } else {
                     navigate("/");
                 }
+
+                dispatch(getWishlist(data.user._id));
                 
                 onLogin();
             }

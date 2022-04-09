@@ -5,11 +5,7 @@ import NavProduct from "../../components/user/NavProduct";
 import ProductContent from "../../components/user/ProductContent";
 import { updateTitle } from "../../utils";
 
-type ProductSearchPageProps = {
-    onSetShowWishlist: (args: any) => void
-}
-
-const ProductSearchPage = ({ onSetShowWishlist }: ProductSearchPageProps) => {
+const ProductSearchPage = () => {
     const { keyword, page } = useParams();
 
     useEffect(() => {
@@ -29,7 +25,7 @@ const ProductSearchPage = ({ onSetShowWishlist }: ProductSearchPageProps) => {
             <section className="container max-w-6xl mx-auto px-3 grid grid-cols-12 gap-6 mb-8">
                 <NavProduct />
 
-                <ProductContent onSetShowWishlist={onSetShowWishlist} url={`tim-kiem/${keyword}`} getProducts={search} parameter={keyword} page={Number(page) || 0} />
+                <ProductContent url={`tim-kiem/${keyword}`} getProducts={search} parameter={keyword} page={Number(page) || 0} />
             </section>
         </>
     )

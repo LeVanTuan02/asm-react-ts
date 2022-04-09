@@ -6,15 +6,13 @@ import { clientUpdate, getAll, getById as getProduct } from "../../../api/produc
 import { ProductType } from "../../../types/product";
 import { formatCurrency } from "../../../utils";
 import { isAuthenticate } from "../../../utils/localStorage";
-import { add, checkUserHeart } from "../../../api/favorites";
+import { checkUserHeart } from "../../../api/favorites";
 import { getAvgStar } from "../../../api/rating";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { addWishlist } from "../../../redux/wishlistSlice";
 
-type HomeProductsProps = {
-    onSetShowWishlist: (args: any) => any
-}
-
-const HomeProducts = ({ onSetShowWishlist }: HomeProductsProps) => {
+const HomeProducts = () => {
     const [products, setProducts] = useState<ProductType[]>();
     const { user } = isAuthenticate();
 
@@ -33,6 +31,7 @@ const HomeProducts = ({ onSetShowWishlist }: HomeProductsProps) => {
         getProducts();
     }, []);
 
+    const dispatch = useDispatch();
     const handleFavorites = async (productId: string, slug: string) => {
         if (!user) {
             toast.info("Vui lòng đăng nhập để yêu thích sản phẩm");
@@ -46,12 +45,13 @@ const HomeProducts = ({ onSetShowWishlist }: HomeProductsProps) => {
 
                 clientUpdate(product);
 
-                add({
+                dispatch(addWishlist({
                     userId: user._id,
                     productId
-                })
-                    .then(() => toast.success("Đã thêm sản phẩm vào danh sách yêu thích"))
-                    .then(() => onSetShowWishlist((prev: any) => !prev));
+                }))
+                toast.success("Đã thêm sản phẩm vào danh sách yêu thích", {
+                    position: "top-left"
+                });
             } else {
                 toast.info("Sản phẩm đã tồn tại trong danh sách yêu thích");
             }

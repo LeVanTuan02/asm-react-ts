@@ -5,11 +5,7 @@ import NavProduct from "../../components/user/NavProduct";
 import ProductContent from "../../components/user/ProductContent";
 import { updateTitle } from "../../utils";
 
-type ProductPageProps = {
-    onSetShowWishlist: (args: any) => void,
-}
-
-const ProductPage = ({ onSetShowWishlist }: ProductPageProps) => {
+const ProductPage = () => {
     const { page } = useParams();
 
     useEffect(() => {
@@ -29,7 +25,7 @@ const ProductPage = ({ onSetShowWishlist }: ProductPageProps) => {
             <section className="container max-w-6xl mx-auto px-3 grid grid-cols-12 gap-6 mb-8">
                 <NavProduct />
 
-                <ProductContent onSetShowWishlist={onSetShowWishlist} getProducts={getAll} page={Number(page) || 1} url="thuc-don" />
+                <ProductContent getProducts={getAll} page={Number(page) || 1} url="thuc-don" />
             </section>
         </>
     )

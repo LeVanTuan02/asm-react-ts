@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { checkUserHeart } from "../../api/favorites";
 import { clientUpdate, get as getProduct } from "../../api/product";
-import { add } from "../../api/favorites";
 import { ProductType } from "../../types/product";
 import { formatCurrency } from "../../utils";
 import { isAuthenticate } from "../../utils/localStorage";
@@ -12,12 +11,13 @@ import FilterProduct from "./FilterProduct";
 import Pagination from "./Pagination";
 import { getAvgStar, getTotalRating } from "../../api/rating";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { addWishlist } from "../../redux/wishlistSlice";
 
 type ProductContentProps = {
     url: string,
     page: number,
     parameter?: string,
-    onSetShowWishlist: (args: any) => void
     getProducts: (start?: number, limit?: number, sort?: string, order?: string, parameter?: string) => any
 };
 
@@ -27,7 +27,7 @@ type FilterType = {
     order: string,
 }
 
-const ProductContent = ({ url, page, getProducts, parameter, onSetShowWishlist }: ProductContentProps) => {
+const ProductContent = ({ url, page, getProducts, parameter }: ProductContentProps) => {
     const [emptyProduct, setEmptyProduct] = useState<boolean>(false);
     const [totalProduct, setTotalProduct] = useState<number>(0);
     const [products, setProducts] = useState<ProductType[]>([]);
@@ -74,6 +74,7 @@ const ProductContent = ({ url, page, getProducts, parameter, onSetShowWishlist }
     }
 
     const { user } = isAuthenticate();
+    const dispatch = useDispatch();
     const handleFavorites = async (productId: string, slug: string) => {
         if (!user) {
             toast.info("Vui lòng đăng nhập để yêu thích sản phẩm");
@@ -87,12 +88,13 @@ const ProductContent = ({ url, page, getProducts, parameter, onSetShowWishlist }
 
                 clientUpdate(product);
 
-                add({
+                dispatch(addWishlist({
                     userId: user._id,
                     productId
-                })
-                    .then(() => toast.success("Đã thêm sản phẩm vào danh sách yêu thích"))
-                    .then(() => onSetShowWishlist((prev: any) => !prev));
+                }))
+                toast.success("Đã thêm sản phẩm vào danh sách yêu thích", {
+                    position: "top-left"
+                });
             } else {
                 toast.info("Sản phẩm đã tồn tại trong danh sách yêu thích");
             }

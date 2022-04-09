@@ -6,11 +6,7 @@ import NavProduct from "../../components/user/NavProduct";
 import ProductContent from "../../components/user/ProductContent";
 import { updateTitle } from "../../utils";
 
-type ProductByCateProps = {
-    onSetShowWishlist: (args: any) => void,
-}
-
-const ProductByCate = ({ onSetShowWishlist }: ProductByCateProps) => {
+const ProductByCate = () => {
     const { slug, page } = useParams();
     const [cateId, setCateId] = useState<string>()
 
@@ -36,7 +32,7 @@ const ProductByCate = ({ onSetShowWishlist }: ProductByCateProps) => {
             <section className="container max-w-6xl mx-auto px-3 grid grid-cols-12 gap-6 mb-8">
                 <NavProduct cateId={cateId} />
 
-                <ProductContent onSetShowWishlist={onSetShowWishlist} url={`danh-muc/${slug}`} getProducts={getProductByCate} page={Number(page) || 0} parameter={cateId} />
+                <ProductContent url={`danh-muc/${slug}`} getProducts={getProductByCate} page={Number(page) || 0} parameter={cateId} />
             </section>
         </>
     )

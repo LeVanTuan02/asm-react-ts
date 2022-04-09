@@ -18,9 +18,11 @@ import { v4 as uuidv4 } from "uuid";
 import { addToCart, isAuthenticate } from "../../utils/localStorage";
 import CommentProduct from "../../components/user/CommentProduct";
 import CommentList from "../../components/user/CommentList";
-import { add, checkUserHeart } from "../../api/favorites";
+import { checkUserHeart } from "../../api/favorites";
 import { getAvgStar, getTotalRating } from "../../api/rating";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { addWishlist } from "../../redux/wishlistSlice";
 
 type InputsType = {
     ice: number,
@@ -30,11 +32,10 @@ type InputsType = {
 }
 
 type ProductDetailPageProps = {
-    onSetShowWishlist: (args: any) => void,
     onRenderCart: (args: any) => void,
 }
 
-const ProductDetailPage = ({ onSetShowWishlist, onRenderCart }: ProductDetailPageProps) => {
+const ProductDetailPage = ({ onRenderCart }: ProductDetailPageProps) => {
     const { user } = isAuthenticate();
     const [product, setProduct] = useState<ProductType>();
     const [quantity, setQuantity] = useState<number>(1);
@@ -155,7 +156,8 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart }: ProductDetailPag
             // setShowBtnClear(true);
         }
     }
-
+    
+    const dispatch = useDispatch();
     const handleFavorites = async (productId: string, slug: string) => {
         if (!user) {
             toast.info("Vui lòng đăng nhập để yêu thích sản phẩm");
@@ -169,12 +171,13 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart }: ProductDetailPag
 
                 clientUpdate(product);
 
-                add({
+                dispatch(addWishlist({
                     userId: user._id,
                     productId
-                })
-                    .then(() => toast.success("Đã thêm sản phẩm vào danh sách yêu thích"))
-                    .then(() => onSetShowWishlist((prev: any) => !prev));
+                }))
+                toast.success("Đã thêm sản phẩm vào danh sách yêu thích", {
+                    position: "top-left"
+                });
             } else {
                 toast.info("Sản phẩm đã tồn tại trong danh sách yêu thích");
             }
