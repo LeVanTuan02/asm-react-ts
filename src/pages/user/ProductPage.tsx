@@ -3,17 +3,17 @@ import { Link, useParams } from "react-router-dom";
 import { getAll } from "../../api/product";
 import NavProduct from "../../components/user/NavProduct";
 import ProductContent from "../../components/user/ProductContent";
+import { updateTitle } from "../../utils";
 
 type ProductPageProps = {
     onSetShowWishlist: (args: any) => void,
-    onUpdateTitle: (title: string) => void
 }
 
-const ProductPage = ({ onSetShowWishlist, onUpdateTitle }: ProductPageProps) => {
+const ProductPage = ({ onSetShowWishlist }: ProductPageProps) => {
     const { page } = useParams();
 
     useEffect(() => {
-        onUpdateTitle("Thực đơn - Trà sữa Yotea");
+        updateTitle("Thực đơn");
     }, []);
 
     return (

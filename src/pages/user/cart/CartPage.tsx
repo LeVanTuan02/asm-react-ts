@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CartType } from "../../../types/cart";
-import { formatCurrency } from "../../../utils";
+import { formatCurrency, updateTitle } from "../../../utils";
 import { addVoucher, isAuthenticate, removeItemCart, removeVoucher, updateQuantity } from "../../../utils/localStorage";
 import Swal from "sweetalert2";
 import CartNav from "../../../components/user/CartNav";
@@ -65,6 +65,10 @@ const CartPage = ({ onRenderCart }: CartPageProps) => {
         };
         getPriceDecrease();
     }, [cart, totalPrice, vouchers]);
+
+    useEffect(() => {
+        updateTitle("Giỏ hàng");
+    }, []);
 
     const { user } = isAuthenticate();
 

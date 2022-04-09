@@ -78,11 +78,6 @@ const App = () => {
     const [logged, setLogged] = useState(false);
     const [showWishList, setShowWishList] = useState(false);
     const [renderCart, setRenderCart] = useState(false);
-    const [title, setTitle] = useState<string>("Trà sữa Yotea");
-
-    useEffect(() => {
-        document.title = title;
-    }, [title])
 
     const handleLogin = () => setLogged(!logged);
 
@@ -90,20 +85,20 @@ const App = () => {
         <>
             <Routes>
                 <Route path="/" element={<WebsiteLayout isShowWishlist={showWishList} onSetShowWishlist={setShowWishList} />}>
-                    <Route index element={<HomePage onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
-                    <Route path="gioi-thieu" element={<AboutPage onUpdateTitle={setTitle} />} />
-                    <Route path="thuc-don" element={<ProductPage onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
-                    <Route path="thuc-don/page/:page" element={<ProductPage onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
-                    <Route path="danh-muc/:slug" element={<ProductByCate onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
-                    <Route path="danh-muc/:slug/page/:page" element={<ProductByCate onUpdateTitle={setTitle} onSetShowWishlist={setShowWishList} />} />
+                    <Route index element={<HomePage onSetShowWishlist={setShowWishList} />} />
+                    <Route path="gioi-thieu" element={<AboutPage />} />
+                    <Route path="thuc-don" element={<ProductPage onSetShowWishlist={setShowWishList} />} />
+                    <Route path="thuc-don/page/:page" element={<ProductPage onSetShowWishlist={setShowWishList} />} />
+                    <Route path="danh-muc/:slug" element={<ProductByCate onSetShowWishlist={setShowWishList} />} />
+                    <Route path="danh-muc/:slug/page/:page" element={<ProductByCate onSetShowWishlist={setShowWishList} />} />
                     <Route path="tim-kiem/:keyword" element={<ProductSearchPage onSetShowWishlist={setShowWishList} />} />
                     <Route path="tim-kiem/:keyword/page/:page" element={<ProductSearchPage onSetShowWishlist={setShowWishList} />} />
-                    <Route path="san-pham/:slug" element={<ProductDetailPage onUpdateTitle={setTitle} onRenderCart={setRenderCart} onSetShowWishlist={setShowWishList} />} />
-                    <Route path="san-pham/:slug/page/:page" element={<ProductDetailPage onUpdateTitle={setTitle} onRenderCart={setRenderCart} onSetShowWishlist={setShowWishList} />} />
-                    <Route path="tin-tuc" element={<NewsPage onUpdateTitle={setTitle} />} />
+                    <Route path="san-pham/:slug" element={<ProductDetailPage onRenderCart={setRenderCart} onSetShowWishlist={setShowWishList} />} />
+                    <Route path="san-pham/:slug/page/:page" element={<ProductDetailPage onRenderCart={setRenderCart} onSetShowWishlist={setShowWishList} />} />
+                    <Route path="tin-tuc" element={<NewsPage />} />
                     <Route path="tin-tuc/:slug" element={<NewsByCatePage />} />
                     <Route path="tin-tuc/:slug/page/:page" element={<NewsByCatePage />} />
-                    <Route path="tin-tuc/page/:page" element={<NewsPage onUpdateTitle={setTitle} />} />
+                    <Route path="tin-tuc/page/:page" element={<NewsPage />} />
                     <Route path="bai-viet/:slug" element={<NewsDetail />} />
                     <Route path="lien-he" element={<ContactPage />} />
                     <Route path="cua-hang" element={<StorePage />} />

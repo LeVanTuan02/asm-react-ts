@@ -6,6 +6,7 @@ import { StoreType } from "../../types/store";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { add } from "../../api/contact";
 import { toast } from "react-toastify";
+import { updateTitle } from "../../utils";
 
 type InputsType = {
     name: string,
@@ -65,6 +66,7 @@ const ContactPage = () => {
             setStores(data);
         };
         getStores();
+        updateTitle("Liên hệ");
     }, []);
 
     return (

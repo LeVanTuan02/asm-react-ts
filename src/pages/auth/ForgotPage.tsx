@@ -1,4 +1,11 @@
+import { useEffect } from "react";
+import { updateTitle } from "../../utils";
+
 const ForgotPage = () => {
+    useEffect(() => {
+        updateTitle("Quên mật khẩu");
+    }, []);
+
     return (
         <section className="container max-w-6xl mx-auto px-3 min-h-[calc(100vh-478px)]">
             <p className="mt-8 text-gray-600">Quên mật khẩu? Vui lòng nhập địa chỉ email. Bạn sẽ nhận được một liên kết tạo mật khẩu mới qua email.</p>

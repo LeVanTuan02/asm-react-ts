@@ -28,3 +28,7 @@ export const formatDateNews = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.getDate()} Tháng ${date.getMonth() + 1}, ${date.getFullYear()}`;
 }
+
+export const updateTitle = (title: string) => {
+    document.title = `${title} - Trà sữa Yotea`;
+}

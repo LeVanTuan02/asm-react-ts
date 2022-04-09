@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { signup } from "../../api/auth";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { updateTitle } from "../../utils";
 
 type InputsType = {
     username: string,
@@ -59,6 +61,10 @@ const RegisterPage = () => {
             toast.error(error.response.data.message);
         }
     }
+
+    useEffect(() => {
+        updateTitle("Đăng ký");
+    }, []);
 
     return (
         <section className="container max-w-6xl mx-auto px-3">

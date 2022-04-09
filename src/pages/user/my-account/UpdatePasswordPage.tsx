@@ -5,6 +5,8 @@ import { checkPassword } from "../../../api/auth";
 import { isAuthenticate } from "../../../utils/localStorage";
 import { updateMyInfo } from "../../../api/user";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { updateTitle } from "../../../utils";
 
 type InputsType = {
     oldPassword: string,
@@ -60,6 +62,10 @@ const UpdatePasswordPage = () => {
             toast.error("Đã có lỗi xảy ra, vui lòng thử lại");
         }
     }
+
+    useEffect(() => {
+        updateTitle("Đổi mật khẩu");
+    }, []);
 
     return (
         <>

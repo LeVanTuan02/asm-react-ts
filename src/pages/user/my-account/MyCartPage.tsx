@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { getByUserId } from "../../../api/order";
 import Pagination from "../../../components/user/Pagination";
 import { OrderType } from "../../../types/order";
-import { formatCurrency, formatDate } from "../../../utils";
+import { formatCurrency, formatDate, updateTitle } from "../../../utils";
 import { isAuthenticate } from "../../../utils/localStorage";
 
 const MyCartPage = () => {
@@ -28,6 +28,10 @@ const MyCartPage = () => {
         };
         getOrders();
     }, [currentPage]);
+
+    useEffect(() => {
+        updateTitle("Đơn hàng của tôi");
+    }, []);
 
     return (
         <>

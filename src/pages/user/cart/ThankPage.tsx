@@ -1,9 +1,15 @@
 import { faLongArrowAltLeft, faLongArrowAltRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import CartNav from "../../../components/user/CartNav";
+import { updateTitle } from "../../../utils";
 
 const ThankPage = () => {
+    useEffect(() => {
+        updateTitle("Đặt hàng thành công");
+    }, [])
+
     return (
         <div className="mb-32">
             <CartNav page="thank-you" />

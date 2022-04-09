@@ -4,13 +4,13 @@ import { get } from "../../api/category";
 import { getProductByCate } from "../../api/product";
 import NavProduct from "../../components/user/NavProduct";
 import ProductContent from "../../components/user/ProductContent";
+import { updateTitle } from "../../utils";
 
 type ProductByCateProps = {
     onSetShowWishlist: (args: any) => void,
-    onUpdateTitle: (args: any) => void
 }
 
-const ProductByCate = ({ onSetShowWishlist, onUpdateTitle }: ProductByCateProps) => {
+const ProductByCate = ({ onSetShowWishlist }: ProductByCateProps) => {
     const { slug, page } = useParams();
     const [cateId, setCateId] = useState<string>()
 
@@ -18,7 +18,7 @@ const ProductByCate = ({ onSetShowWishlist, onUpdateTitle }: ProductByCateProps)
         const getIdCate = async () => {
             const { data } = await get(slug);
             setCateId(data._id)
-            onUpdateTitle(`${data.name} - Trà sữa Yotea`);
+            updateTitle(`${data.name}`);
         };
         getIdCate();
     }, [slug]);

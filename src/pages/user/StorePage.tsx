@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { get, getAll, search } from "../../api/store";
 import Iframe from "../../components/user/Iframe";
 import { StoreType } from "../../types/store";
+import { updateTitle } from "../../utils";
 
 const StorePage = () => {
     const [stores, setStores] = useState<StoreType[]>();
@@ -19,6 +20,7 @@ const StorePage = () => {
             setStores(data);
         };
         getStores();
+        updateTitle("Cửa hàng");
     }, []);
 
     const handleClickStore = async (id: string) => {

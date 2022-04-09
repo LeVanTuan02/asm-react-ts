@@ -3,7 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CartType } from "../../../types/cart";
-import { formatCurrency } from "../../../utils";
+import { formatCurrency, updateTitle } from "../../../utils";
 import { finishOrder, getListIdVoucher, isAuthenticate } from "../../../utils/localStorage";
 import { LocationType } from "../../../types/location";
 import { getAllProvince, getDistrictById, getDistrictByProvince, getProvinceById, getWardByDistrict, getWardById } from "../../../api/location";
@@ -244,6 +244,8 @@ const CheckoutPage = () => {
             };
             getListAdd();
         }
+
+        updateTitle("Thanh toán");
     }, []);
 
     useEffect(() => {

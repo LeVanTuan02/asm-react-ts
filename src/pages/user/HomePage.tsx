@@ -6,15 +6,15 @@ import HomeNews from "../../components/user/home/HomeNews";
 import HomeProducts from "../../components/user/home/HomeProducts";
 import HomeShow from "../../components/user/home/HomeShow";
 import HomeWhy from "../../components/user/home/HomeWhy";
+import { updateTitle } from "../../utils";
 
 type HomePageProps = {
     onSetShowWishlist: (args: any) => any,
-    onUpdateTitle: (title: string) => void
 }
 
-const HomePage = ({ onSetShowWishlist, onUpdateTitle }: HomePageProps) => {
+const HomePage = ({ onSetShowWishlist }: HomePageProps) => {
     useEffect(() => {
-        onUpdateTitle("Trang chủ - Trà sữa Yotea");
+        updateTitle("Trang chủ");
     }, []);
 
     return (

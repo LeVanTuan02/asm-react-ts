@@ -7,7 +7,7 @@ import { clientUpdate, get } from "../../api/product";
 import { get as getSize } from "../../api/size";
 import { get as getTopping } from "../../api/topping";
 import { ProductType } from "../../types/product";
-import { formatCurrency } from "../../utils";
+import { formatCurrency, updateTitle } from "../../utils";
 import { ToppingType } from "../../types/topping";
 import { SizeType } from "../../types/size";
 import { getAll } from "../../api/topping";
@@ -32,10 +32,9 @@ type InputsType = {
 type ProductDetailPageProps = {
     onSetShowWishlist: (args: any) => void,
     onRenderCart: (args: any) => void,
-    onUpdateTitle: (title: string) => void
 }
 
-const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: ProductDetailPageProps) => {
+const ProductDetailPage = ({ onSetShowWishlist, onRenderCart }: ProductDetailPageProps) => {
     const { user } = isAuthenticate();
     const [product, setProduct] = useState<ProductType>();
     const [quantity, setQuantity] = useState<number>(1);
@@ -113,7 +112,7 @@ const ProductDetailPage = ({ onSetShowWishlist, onRenderCart, onUpdateTitle }: P
 
             const { data: totalRating } = await getTotalRating(data._id);
 
-            onUpdateTitle(`${data.name} - Trà sữa Yotea`);
+            updateTitle(`${data.name}`);
             setProduct({
                 ...data,
                 ratingNumber: await getAvgStar(data._id),

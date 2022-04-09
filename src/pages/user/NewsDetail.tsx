@@ -6,7 +6,7 @@ import { get } from "../../api/news";
 import NewsRelated from "../../components/user/NewsRelated";
 import SidebarNews from "../../components/user/SidebarNews";
 import { NewsType } from "../../types/news";
-import { formatDate } from "../../utils";
+import { formatDate, updateTitle } from "../../utils";
 
 const NewsDetail = () => {
     const [news, setNews] = useState<NewsType>();
@@ -17,6 +17,7 @@ const NewsDetail = () => {
         const getNews = async () => {
             const { data } = await get(slug);
             setNews(data);
+            updateTitle(`${data.title}`)
         };
         getNews();
     }, [slug]);

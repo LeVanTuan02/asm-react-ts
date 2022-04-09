@@ -1,14 +1,11 @@
 import { faHandshake, faMedal, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect } from "react";
+import { updateTitle } from "../../utils";
 
-type AboutPageProps = {
-    onUpdateTitle: (title: string) => void
-}
-
-const AboutPage = ({ onUpdateTitle }: AboutPageProps) => {
+const AboutPage = () => {
     useEffect(() => {
-        onUpdateTitle("Về chúng tôi - Trà sữa Yotea")
+        updateTitle("Về chúng tôi")
     }, []);
 
     return (

@@ -4,6 +4,7 @@ import { get } from "../../api/categoryNews";
 import { getNewsById } from "../../api/news";
 import NavNews from "../../components/user/NavNews";
 import NewsContent from "../../components/user/NewsContent";
+import { updateTitle } from "../../utils";
 
 const NewsByCatePage = () => {
     const { slug, page } = useParams();
@@ -13,8 +14,10 @@ const NewsByCatePage = () => {
         const getCateId = async () => {
             const { data } = await get(slug);
             setCateId(data._id);
+            updateTitle(`${data.name}`);
         };
         getCateId();
+
     }, [slug]);
 
     return (

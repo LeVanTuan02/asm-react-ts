@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { search } from "../../api/product";
 import NavProduct from "../../components/user/NavProduct";
 import ProductContent from "../../components/user/ProductContent";
+import { updateTitle } from "../../utils";
 
 type ProductSearchPageProps = {
     onSetShowWishlist: (args: any) => void
@@ -9,6 +11,10 @@ type ProductSearchPageProps = {
 
 const ProductSearchPage = ({ onSetShowWishlist }: ProductSearchPageProps) => {
     const { keyword, page } = useParams();
+
+    useEffect(() => {
+        updateTitle(`Kết quả tìm kiếm cho "${keyword}"`);
+    }, []);
 
     return (
         <>

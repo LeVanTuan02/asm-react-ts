@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LocationType } from "../../../types/location";
 import { getAllProvince, getDistrictByProvince, getWardByDistrict } from "../../../api/location";
-import { uploadFile } from "../../../utils";
+import { updateTitle, uploadFile } from "../../../utils";
 import { updateMyInfo } from "../../../api/user";
 import { toast } from "react-toastify";
 import Loading from "../../../components/Loading";
@@ -57,6 +57,7 @@ const UpdateInfoPage = () => {
     const { token, user } = isAuthenticate();
 
     useEffect(() => {
+        updateTitle("Cập nhật tài khoản");
         const start = async () => {
             setLoading(true);
 

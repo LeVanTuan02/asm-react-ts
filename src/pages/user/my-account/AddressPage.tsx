@@ -6,6 +6,7 @@ import { getDistrictById, getProvinceById, getWardById } from "../../../api/loca
 import Loading from "../../../components/Loading";
 import Pagination from "../../../components/user/Pagination";
 import { AddressType } from "../../../types/address";
+import { updateTitle } from "../../../utils";
 import { isAuthenticate } from "../../../utils/localStorage";
 
 const AddressPage = () => {
@@ -49,6 +50,10 @@ const AddressPage = () => {
         };
         getAddress();
     }, [currentPage])
+
+    useEffect(() => {
+        updateTitle("Thông tin thanh toán");
+    }, []);
 
     const handleRemoveAddress = async (id: string) => {
         Swal.fire({

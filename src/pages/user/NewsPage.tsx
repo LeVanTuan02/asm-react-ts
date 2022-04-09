@@ -3,16 +3,13 @@ import { useParams } from "react-router-dom";
 import { getAll } from "../../api/news";
 import NavNews from "../../components/user/NavNews";
 import NewsContent from "../../components/user/NewsContent";
+import { updateTitle } from "../../utils";
 
-type NewsPageProps = {
-    onUpdateTitle: (title: string) => void
-}
-
-const NewsPage = ({ onUpdateTitle }: NewsPageProps) => {
+const NewsPage = () => {
     const { page } = useParams();
 
     useEffect(() => {
-        onUpdateTitle("Tin tức - Trà sữa Yotea");
+        updateTitle("Tin tức");
     }, []);
 
     return (
