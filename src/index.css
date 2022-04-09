@@ -71,10 +71,12 @@ select.disabled {
     @apply opacity-60
 }
 
+#loading.active,
 #modal.active {
     @apply visible;
 }
 
+#loading.active > #loading__overlay,
 #modal.active #modal__overlay {
     @apply opacity-100
 }

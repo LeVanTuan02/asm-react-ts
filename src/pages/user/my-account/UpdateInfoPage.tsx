@@ -8,6 +8,7 @@ import { getAllProvince, getDistrictByProvince, getWardByDistrict } from "../../
 import { uploadFile } from "../../../utils";
 import { updateMyInfo } from "../../../api/user";
 import { toast } from "react-toastify";
+import Loading from "../../../components/Loading";
 
 type InputsType = {
     fullName: string,
@@ -47,6 +48,7 @@ const schema = yup.object().shape({
 });
 
 const UpdateInfoPage = () => {
+    const [loading, setLoading] = useState(false);
     const [preview, setPreview] = useState<string>("https://res.cloudinary.com/levantuan/image/upload/v1644302455/assignment-js/thumbnail-image-vector-graphic-vector-id1147544807_ochvyr.jpg");
     const [provinces, setProvinces] = useState<LocationType[]>();
     const [districts, setDistricts] = useState<LocationType[]>();
@@ -56,6 +58,8 @@ const UpdateInfoPage = () => {
 
     useEffect(() => {
         const start = async () => {
+            setLoading(true);
+
             if (user.provinceCode) {
                 const { data } = await getAllProvince();
                 setProvinces(data);
@@ -78,6 +82,7 @@ const UpdateInfoPage = () => {
                 districtCode: user.districtCode || "",
                 wardsCode: user.wardsCode || "",
             });
+            setLoading(false);
         };
         start();
     }, []);
@@ -228,6 +233,8 @@ const UpdateInfoPage = () => {
                 </div>
                 <button className="mt-4 px-3 py-2 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Cập nhật</button>
             </form>
+
+            <Loading active={loading} />
         </>
     )
 }

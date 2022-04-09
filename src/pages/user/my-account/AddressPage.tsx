@@ -3,11 +3,13 @@ import { Link, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { getByUserId, remove } from "../../../api/address";
 import { getDistrictById, getProvinceById, getWardById } from "../../../api/location";
+import Loading from "../../../components/Loading";
 import Pagination from "../../../components/user/Pagination";
 import { AddressType } from "../../../types/address";
 import { isAuthenticate } from "../../../utils/localStorage";
 
 const AddressPage = () => {
+    const [loading, setLoading] = useState(false);
     const [address, setAddress] = useState<AddressType[]>();
     const [totalAddress, setTotalAddress] = useState(0);
     const { user } = isAuthenticate();
@@ -29,6 +31,7 @@ const AddressPage = () => {
 
     useEffect(() => {
         const getAddress = async () => {
+            setLoading(true);
             const { data } = await getByUserId(user._id);
             setTotalAddress(data.length);
             
@@ -42,6 +45,7 @@ const AddressPage = () => {
                 })
             }
             setAddress(listAddress);
+            setLoading(false);
         };
         getAddress();
     }, [currentPage])
@@ -104,6 +108,7 @@ const AddressPage = () => {
             </table>
             
             <Pagination page={currentPage} totalPage={totalPage} url="my-account/address" />
+            <Loading active={loading} />
         </>
     )
 }

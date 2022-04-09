@@ -9,6 +9,7 @@ import { uploadFile } from "../../../utils";
 import { useDispatch } from "react-redux";
 import { addUser } from "../../../redux/userSlice";
 import { toast } from "react-toastify";
+import Loading from "../../../components/Loading";
 
 type InputsType = {
     email: string,
@@ -78,6 +79,7 @@ const schema = yup.object().shape({
 const AddUserPage = () => {
     const dispatch = useDispatch();
 
+    const [loading, setLoading] = useState(false);
     const [preview, setPreview] = useState<string>("");
     const [provinces, setProvinces] = useState<LocationType[]>();
     const [districts, setDistricts] = useState<LocationType[]>();
@@ -99,15 +101,19 @@ const AddUserPage = () => {
     } = useForm<InputsType>({ resolver: yupResolver(schema) });
 
     const onSubmit: SubmitHandler<InputsType> = async data => {
+        setLoading(true);
+
         try {
             const url = await uploadFile(data.avatar[0]);
 
             dispatch(addUser({ ...data, avatar: url }))
             
+            setLoading(false);
             toast.success("Thêm tài khoản thành công");
             reset();
             setPreview("");
         } catch (error) {
+            setLoading(false);
             toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     }
@@ -342,6 +348,8 @@ const AddUserPage = () => {
                     </div>
                 </form>
             </div>
+
+            <Loading active={loading} />
         </>
     )
 }

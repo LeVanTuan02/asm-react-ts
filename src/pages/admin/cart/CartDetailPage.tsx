@@ -10,8 +10,11 @@ import OrderLogs from "../../../components/OrderLogs";
 import { add } from "../../../api/orderLogs";
 import { isAuthenticate } from "../../../utils/localStorage";
 import { sendMailCancelCart, sendMailOrderSuccess } from "../../../api/sendMail";
+import Loading from "../../../components/Loading";
+import axios from "axios";
 
 const CartDetailPage = () => {
+    const [loading, setLoading] = useState(false);
     const [order, setOrder] = useState<OrderType>({});
     const [orderDetail, setOrderDetail] = useState<OrderDetailType[]>();
     const [voucherText, setVoucherText] = useState<string>();
@@ -63,6 +66,8 @@ const CartDetailPage = () => {
             confirmButtonText: 'Yes!'
         }).then(async (result) => {
             if (result.isConfirmed) {
+                setLoading(true);
+
                 const { data } = await update({
                     ...order,
                     status
@@ -77,11 +82,18 @@ const CartDetailPage = () => {
 
                 // gửi mail thông báo hủy đh
                 if (status === 4) {
-                    await sendMailCancelCart(orderDetail, voucherText, data);
+                    try {
+                        await sendMailCancelCart(orderDetail, voucherText, data);
+                    } catch (error) {
+                    }
                 }
                 
                 if (status === 3) {
-                    await sendMailOrderSuccess(orderDetail, voucherText, data);
+                    try {
+                        await sendMailOrderSuccess(orderDetail, voucherText, data);
+                    } catch (error) {
+                        
+                    }
                 }
                 
                 Swal.fire(
@@ -90,6 +102,7 @@ const CartDetailPage = () => {
                     'success'
                 )
                 setOrder(data);
+                setLoading(false);
             }
         })
     }
@@ -236,6 +249,7 @@ const CartDetailPage = () => {
             </div>
 
             <OrderLogs isShow={showCartLog} orderId={order._id} order={order} onHandleShow={setShowCartLog} />
+            <Loading active={loading} />
         </>
     )
 }

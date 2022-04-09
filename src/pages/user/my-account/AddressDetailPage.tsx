@@ -7,6 +7,7 @@ import { LocationType } from "../../../types/location";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
+import Loading from "../../../components/Loading";
 
 type InputsType = {
     fullName: string,
@@ -45,6 +46,7 @@ const schema = yup.object().shape({
 })
 
 const AddressDetailPage = () => {
+    const [loading, setLoading] = useState(false);
     const [provinces, setProvinces] = useState<LocationType[]>();
     const [districts, setDistricts] = useState<LocationType[]>();
     const [wards, setWards] = useState<LocationType[]>();
@@ -53,6 +55,7 @@ const AddressDetailPage = () => {
 
     useEffect(() => {
         const start = async () => {
+            setLoading(true);
             // address detail
             const { data: address } = await get(id);
 
@@ -66,6 +69,7 @@ const AddressDetailPage = () => {
             setWards(wards);
 
             reset(address);
+            setLoading(false);
         };
         start();
     }, []);
@@ -195,6 +199,8 @@ const AddressDetailPage = () => {
                 </div>
                 <button className="mt-4 px-3 py-2 bg-orange-400 font-semibold uppercase text-white text-sm transition ease-linear duration-300 hover:shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">Cập nhật</button>
             </form>
+
+            <Loading active={loading} />
         </>
     )
 }

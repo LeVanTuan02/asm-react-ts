@@ -10,6 +10,7 @@ import { uploadFile } from "../../../utils";
 import { useDispatch } from "react-redux";
 import { updateUser } from "../../../redux/userSlice";
 import { toast } from "react-toastify";
+import Loading from "../../../components/Loading";
 
 type InputsType = {
     email: string,
@@ -76,6 +77,7 @@ const schema = yup.object().shape({
 const EditUserPage = () => {
     const dispatch = useDispatch();
 
+    const [loading, setLoading] = useState(false);
     const [preview, setPreview] = useState<string>("");
     const [provinces, setProvinces] = useState<LocationType[]>();
     const [districts, setDistricts] = useState<LocationType[]>();
@@ -113,6 +115,8 @@ const EditUserPage = () => {
     }
 
     useEffect(() => {
+        setLoading(true);
+
         const getProvinces = async () => {
             const { data } = await getAllProvince();
             setProvinces(data);
@@ -141,6 +145,7 @@ const EditUserPage = () => {
                 districtCode: data.districtCode || "",
                 wardsCode: data.wardsCode || "",
             });
+            setLoading(false);
         };
 
         (async () => {
@@ -372,6 +377,8 @@ const EditUserPage = () => {
                     </div>
                 </form>
             </div>
+
+            <Loading active={loading} />
         </>
     )
 }

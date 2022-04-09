@@ -21,6 +21,7 @@ import { add as addLogs } from "../../../api/orderLogs";
 import { OrderLogsType } from "../../../types/orderLogs";
 import { sendMailOrder, sendMailOrderToAdmin } from "../../../api/sendMail";
 import { toast } from "react-toastify";
+import Loading from "../../../components/Loading";
 
 type InputsType = {
     fullName: string,
@@ -62,6 +63,7 @@ const schema = yup.object().shape({
 
 const CheckoutPage = () => {
     const { user } = isAuthenticate();
+    const [loading, setLoading] = useState(false);
     const cart: CartType[] = JSON.parse(localStorage.getItem("cart") as string) || [];
     const [provinces, setProvinces] = useState<LocationType[]>();
     const [districts, setDistricts] = useState<LocationType[]>();
@@ -88,6 +90,8 @@ const CheckoutPage = () => {
 
     const navigate = useNavigate();
     const onSubmit: SubmitHandler<InputsType> = async dataInput => {
+        setLoading(true);
+
         const listIdVoucher = getListIdVoucher();
         const address = await getAddress(dataInput.address, dataInput.wardsCode, dataInput.districtCode, dataInput.provinceCode);
         // save order
@@ -174,16 +178,20 @@ const CheckoutPage = () => {
             await sendMailOrder(cart, vouchers, orderInfo);
             await sendMailOrderToAdmin(cart, vouchers, orderInfo);
         } catch (error) {
+            setLoading(false);
             toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
 
         finishOrder(() => {
+            setLoading(false);
             toast.success("Đặt hàng thành công");
             navigate("/thank-you");
         });
     }
 
     useEffect(() => {
+        setLoading(true);
+
         const callApiLocation = async () => {
             const { data: province } = await getAllProvince();
             setProvinces(province);
@@ -216,6 +224,7 @@ const CheckoutPage = () => {
                 districtCode: user && user.districtCode || 0,
                 wardsCode: user && user.wardsCode || 0,
             });
+            setLoading(false);
         };
         start();
 
@@ -235,7 +244,6 @@ const CheckoutPage = () => {
             };
             getListAdd();
         }
-
     }, []);
 
     useEffect(() => {
@@ -501,6 +509,8 @@ const CheckoutPage = () => {
             ) : (
                 navigate("/cart")
             )}
+
+            <Loading active={loading} />
         </>
     )
 }

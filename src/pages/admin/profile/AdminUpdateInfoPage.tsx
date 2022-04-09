@@ -9,6 +9,7 @@ import { getAllProvince, getDistrictByProvince, getWardByDistrict } from "../../
 import { uploadFile } from "../../../utils";
 import { get, update } from "../../../api/user";
 import { toast } from "react-toastify";
+import Loading from "../../../components/Loading";
 
 type InputsType = {
     fullName: string,
@@ -52,6 +53,8 @@ const schema = yup.object().shape({
 });
 
 const AdminUpdateInfoPage = () => {
+    const [loading, setLoading] = useState(false);
+
     const [preview, setPreview] = useState<string>();
     const [provinces, setProvinces] = useState<LocationType[]>();
     const [districts, setDistricts] = useState<LocationType[]>();
@@ -84,6 +87,7 @@ const AdminUpdateInfoPage = () => {
     }
 
     useEffect(() => {
+        setLoading(true);
         setPreview(user.avatar);
 
         const startCallApi = async () => {
@@ -106,6 +110,7 @@ const AdminUpdateInfoPage = () => {
                 districtCode: user.districtCode || "",
                 wardsCode: user.wardsCode || "",
             });
+            setLoading(false);
         };
         startCallApi();
 
@@ -283,6 +288,8 @@ const AdminUpdateInfoPage = () => {
                     </div>
                 </form>
             </div>
+
+            <Loading active={loading} />
         </>
     )
 }
