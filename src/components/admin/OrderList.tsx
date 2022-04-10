@@ -47,7 +47,7 @@ const OrderList = ({ onSetTotal, start, limit }: OrderListProps) => {
                             <div className="text-sm font-medium text-gray-900">{item.customerName}</div>
                             <div className="text-sm text-gray-500">{item.phone}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatCurrency(item.totalPrice - item.priceDecrease)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatCurrency((item.totalPrice - item.priceDecrease) > 0 ? item.totalPrice - item.priceDecrease : 0)}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                             <span
                                 className={`${item.status !== 4 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"} px-2 inline-flex text-xs leading-5 font-semibold rounded-full`}

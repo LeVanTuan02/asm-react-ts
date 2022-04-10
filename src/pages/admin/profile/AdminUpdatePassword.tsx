@@ -14,37 +14,36 @@ type InputsType = {
     confirmPassword: string,
 }
 
-const schema = yup.object().shape({
-    oldPassword: yup
-        .string()
-        .required("Vui lòng nhập mật khẩu hiện tại")
-        .test("is_confirm", "Mật khẩu hiện tại không chính xác", async function (value: string) {
-            const { user } = useSelector(selectAuth);
-            try {
-                const { data } = await checkPassword({ _id: user._id, password: value });
-                if (data.success) return 1;
-            } catch (error: any) {
-                console.log({ error });
-            }
-
-            return 0;
-        }),
-    newPassword: yup
-        .string()
-        .required("Vui lòng nhập mật khẩu mới")
-        .min(4, "Vui lòng nhập mật khẩu tối thiểu 4 ký tự"),
-    confirmPassword: yup
-        .string()
-        .required("Vui lòng xác nhận mật khẩu")
-        .test("is_confirm", "Mật khẩu xác nhận không chính xác", function (value) {
-            const { newPassword } = this.parent;
-
-            return newPassword === value;
-        })
-});
-
 const AdminUpdatePassword = () => {
     const { user } = useSelector(selectAuth);
+
+    const schema = yup.object().shape({
+        oldPassword: yup
+            .string()
+            .required("Vui lòng nhập mật khẩu hiện tại")
+            .test("is_confirm", "Mật khẩu hiện tại không chính xác", async function (value: string) {
+                try {
+                    const { data } = await checkPassword({ _id: user._id, password: value });
+                    if (data.success) return 1;
+                } catch (error: any) {
+                    console.log({ error });
+                }
+    
+                return 0;
+            }),
+        newPassword: yup
+            .string()
+            .required("Vui lòng nhập mật khẩu mới")
+            .min(4, "Vui lòng nhập mật khẩu tối thiểu 4 ký tự"),
+        confirmPassword: yup
+            .string()
+            .required("Vui lòng xác nhận mật khẩu")
+            .test("is_confirm", "Mật khẩu xác nhận không chính xác", function (value) {
+                const { newPassword } = this.parent;
+    
+                return newPassword === value;
+            })
+    });
 
     const {
         register,

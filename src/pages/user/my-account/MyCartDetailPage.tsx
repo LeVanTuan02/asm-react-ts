@@ -156,7 +156,7 @@ const MyCartDetailPage = () => {
                         </tr>
                         <tr>
                             <td className="py-1.5 font-medium">Tổng tiền:</td>
-                            <td className="py-1.5 text-right">{formatCurrency(order?.totalPrice - order?.priceDecrease)}</td>
+                            <td className="py-1.5 text-right">{formatCurrency((order?.totalPrice - order?.priceDecrease) > 0 ? order?.totalPrice - order?.priceDecrease : 0)}</td>
                         </tr>
                     </tbody>
                 </table>

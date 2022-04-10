@@ -64,7 +64,7 @@ const MyCartPage = () => {
                             <td>{++index + start}</td>
                             <td className="py-2">{item.customerName}</td>
                             <td className="py-2">{formatDate(item.createdAt || "")}</td>
-                            <td className="py-2">{formatCurrency(item.totalPrice - item.priceDecrease)}</td>
+                            <td className="py-2">{formatCurrency((item.totalPrice - item.priceDecrease) > 0 ? item.totalPrice - item.priceDecrease : 0)}</td>
                             <td className="py-2">
                                 <label
                                     className={`${item.status !== 4 ? "bg-[#E1F0FF] text-[#3699FF]" : "bg-[#FFE2E5] text-[#F64E60]"} px-1 py-0.5 text-sm rounded-[4px] font-medium`}
