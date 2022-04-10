@@ -4,11 +4,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { add as addComment, get } from "../../api/comment";
-import { isAuthenticate } from "../../utils/localStorage";
 import { checkUserRating, add as AddRating, update } from "../../api/rating";
 import { ProductType } from "../../types/product";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../redux/authSlice";
 
 type InputsType = {
     star: number,
@@ -31,7 +32,7 @@ type CommentProductProps = {
 };
 
 const CommentProduct = ({ productId, onReRender, productData }: CommentProductProps) => {
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
     const [emptyCmt, setEmptyCmt] = useState<boolean>(false);
     const {
         register,

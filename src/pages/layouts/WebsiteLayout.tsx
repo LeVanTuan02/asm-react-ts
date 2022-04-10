@@ -6,12 +6,12 @@ import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { search } from "../../api/product";
 import { FavoritesProductType, ProductType } from "../../types/product";
 import { formatCurrency, formatDate } from "../../utils";
-import { isAuthenticate } from "../../utils/localStorage";
 import { CategoryType } from "../../types/category";
-import { getAll } from "../../api/category";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteWishlist, getWishlist, selectShowWishlist, selectWishlist, showWishlist } from "../../redux/wishlistSlice";
+import { selectAuth, selectStatusLoggin } from "../../redux/authSlice";
+import { getCates, selectCatesProduct } from "../../redux/categoryProductSlice";
 
 const WebsiteLayout = () => {
     const dispatch = useDispatch();
@@ -20,12 +20,13 @@ const WebsiteLayout = () => {
     const [productsSearch, setProductsSearch] = useState<ProductType[]>();
     const [isEmptyProduct, setIsEmptyProduct] = useState<boolean>(false);
     const [keyword, setKeyword] = useState<string>();
-    const [categories, setCategories] = useState<CategoryType[]>();
+    const categories: CategoryType[] = useSelector(selectCatesProduct);
 
     const wishlist: FavoritesProductType[] = useSelector(selectWishlist);
     const isShowWishlist = useSelector(selectShowWishlist);
 
-    const auth = isAuthenticate();
+    const isLogged = useSelector(selectStatusLoggin);
+    const { user } = useSelector(selectAuth);
 
     useEffect(() => {
         window.addEventListener("scroll", () => {
@@ -34,14 +35,10 @@ const WebsiteLayout = () => {
             setHeaderFixed(scrollTop > 1000 ? true : false);
         });
 
-        const getCate = async () => {
-            const { data } = await getAll();
-            setCategories(data);
-        };
-        getCate();
+        dispatch(getCates());
 
-        if (auth.user) {
-            dispatch(getWishlist(auth.user._id));
+        if (isLogged) {
+            dispatch(getWishlist(user._id));
         }
     }, []);
 
@@ -76,7 +73,7 @@ const WebsiteLayout = () => {
     }
 
     const handleShowWishlist = () => {
-        if (!auth.user) {
+        if (!isLogged) {
             toast.info("Vui lòng đăng nhập để xem danh sách yêu thích");
         } else {
             dispatch(showWishlist(true));
@@ -139,13 +136,11 @@ const WebsiteLayout = () => {
                                 </div>
                             </li>
 
-                            {auth && (
+                            {isLogged ? (
                                 <li className="relative after:content-[''] after:absolute after:w-[1px] after:h-3.5 after:bg-gray-50 after:left-3 after:top-1/2 after:-translate-y-1/2 uppercase text-sm pl-6 text-gray-50 font-light opacity-80 transition ease-linear duration-200 hover:text-white hover:opacity-100">
-                                    <Link to={auth.user.role ? '/admin/' : '/my-account/'}>Hello, {auth.user.fullName}</Link>
+                                    <Link to={user.role ? '/admin/' : '/my-account/'}>Hello, {user.fullName}</Link>
                                 </li>
-                            )}
-
-                            {!auth && (
+                            ) : (
                                 <>
                                     <li className="relative after:content-[''] after:absolute after:w-[1px] after:h-3.5 after:bg-gray-50 after:left-3 after:top-1/2 after:-translate-y-1/2 uppercase text-sm pl-6 text-gray-50 font-light opacity-80 transition ease-linear duration-200 hover:text-white hover:opacity-100">
                                         <Link to="/login">Đăng nhập</Link>

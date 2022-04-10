@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CartType } from "../../../types/cart";
 import { formatCurrency, updateTitle } from "../../../utils";
-import { finishOrder, getListIdVoucher, isAuthenticate } from "../../../utils/localStorage";
+import { finishOrder, getListIdVoucher } from "../../../utils/localStorage";
 import { LocationType } from "../../../types/location";
 import { getAllProvince, getDistrictById, getDistrictByProvince, getProvinceById, getWardByDistrict, getWardById } from "../../../api/location";
 import { add as addOrder } from "../../../api/order";
@@ -22,6 +22,8 @@ import { OrderLogsType } from "../../../types/orderLogs";
 import { sendMailOrder, sendMailOrderToAdmin } from "../../../api/sendMail";
 import { toast } from "react-toastify";
 import Loading from "../../../components/Loading";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../../redux/authSlice";
 
 type InputsType = {
     fullName: string,
@@ -62,7 +64,7 @@ const schema = yup.object().shape({
 })
 
 const CheckoutPage = () => {
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
     const [loading, setLoading] = useState(false);
     const cart: CartType[] = JSON.parse(localStorage.getItem("cart") as string) || [];
     const [provinces, setProvinces] = useState<LocationType[]>();

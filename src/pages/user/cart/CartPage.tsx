@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CartType } from "../../../types/cart";
 import { formatCurrency, updateTitle } from "../../../utils";
-import { addVoucher, isAuthenticate, removeItemCart, removeVoucher, updateQuantity } from "../../../utils/localStorage";
+import { addVoucher, removeItemCart, removeVoucher, updateQuantity } from "../../../utils/localStorage";
 import Swal from "sweetalert2";
 import CartNav from "../../../components/user/CartNav";
 import { checkValidVoucher } from "../../../api/voucher";
 import { VoucherType } from "../../../types/voucher";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../../redux/authSlice";
 
 type CartPageProps = {
     onRenderCart: (args: any) => void
@@ -70,7 +72,7 @@ const CartPage = ({ onRenderCart }: CartPageProps) => {
         updateTitle("Giỏ hàng");
     }, []);
 
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
 
     const handleUpdateQuantity = (cartId: string, e: any) => {
         setDisableBtnUpdate(false);

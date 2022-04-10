@@ -15,14 +15,15 @@ import { getAll as getAllSize } from "../../api/size";
 import ProductRelated from "../../components/user/ProductRelated";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { addToCart, isAuthenticate } from "../../utils/localStorage";
+import { addToCart } from "../../utils/localStorage";
 import CommentProduct from "../../components/user/CommentProduct";
 import CommentList from "../../components/user/CommentList";
 import { checkUserHeart } from "../../api/favorites";
 import { getAvgStar, getTotalRating } from "../../api/rating";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addWishlist } from "../../redux/wishlistSlice";
+import { selectAuth } from "../../redux/authSlice";
 
 type InputsType = {
     ice: number,
@@ -36,7 +37,7 @@ type ProductDetailPageProps = {
 }
 
 const ProductDetailPage = ({ onRenderCart }: ProductDetailPageProps) => {
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
     const [product, setProduct] = useState<ProductType>();
     const [quantity, setQuantity] = useState<number>(1);
     const [toppings, setToppings] = useState<ToppingType[]>();

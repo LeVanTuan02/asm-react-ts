@@ -2,11 +2,7 @@ import { CartType } from "../types/cart";
 import { VoucherType } from "../types/voucher";
 
 export const isAuthenticate = () => {
-    const auth = JSON.parse(localStorage.getItem("auth") as string);
-
-    if (!auth) return false;
-
-    return auth;
+    return JSON.parse(JSON.parse(localStorage.getItem("persist:root") as string).auth).value;
 }
 
 const getCart = () => {

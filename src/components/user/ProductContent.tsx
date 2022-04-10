@@ -6,13 +6,13 @@ import { checkUserHeart } from "../../api/favorites";
 import { clientUpdate, get as getProduct } from "../../api/product";
 import { ProductType } from "../../types/product";
 import { formatCurrency } from "../../utils";
-import { isAuthenticate } from "../../utils/localStorage";
 import FilterProduct from "./FilterProduct";
 import Pagination from "./Pagination";
 import { getAvgStar, getTotalRating } from "../../api/rating";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addWishlist } from "../../redux/wishlistSlice";
+import { selectAuth } from "../../redux/authSlice";
 
 type ProductContentProps = {
     url: string,
@@ -73,7 +73,7 @@ const ProductContent = ({ url, page, getProducts, parameter }: ProductContentPro
         setFilter(data);
     }
 
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
     const dispatch = useDispatch();
     const handleFavorites = async (productId: string, slug: string) => {
         if (!user) {

@@ -3,9 +3,10 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
 import { checkPassword } from "../../../api/auth";
-import { isAuthenticate } from "../../../utils/localStorage";
 import { update } from "../../../api/user";
 import { toast } from "react-toastify";
+import { selectAuth } from "../../../redux/authSlice";
+import { useSelector } from "react-redux";
 
 type InputsType = {
     oldPassword: string,
@@ -18,7 +19,7 @@ const schema = yup.object().shape({
         .string()
         .required("Vui lòng nhập mật khẩu hiện tại")
         .test("is_confirm", "Mật khẩu hiện tại không chính xác", async function (value: string) {
-            const { user } = isAuthenticate();
+            const { user } = useSelector(selectAuth);
             try {
                 const { data } = await checkPassword({ _id: user._id, password: value });
                 if (data.success) return 1;
@@ -43,7 +44,7 @@ const schema = yup.object().shape({
 });
 
 const AdminUpdatePassword = () => {
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
 
     const {
         register,

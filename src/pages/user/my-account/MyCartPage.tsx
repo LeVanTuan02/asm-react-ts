@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { getByUserId } from "../../../api/order";
 import Pagination from "../../../components/user/Pagination";
+import { selectAuth } from "../../../redux/authSlice";
 import { OrderType } from "../../../types/order";
 import { formatCurrency, formatDate, updateTitle } from "../../../utils";
-import { isAuthenticate } from "../../../utils/localStorage";
 
 const MyCartPage = () => {
     const [orders, setOrders] = useState<OrderType[]>();
     const [totalOrder, setTotalOrder] = useState<number>(0);
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
 
     const { page } = useParams();
 

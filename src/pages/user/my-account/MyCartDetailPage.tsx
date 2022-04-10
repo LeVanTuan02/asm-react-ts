@@ -8,14 +8,15 @@ import { get as getVoucher } from "../../../api/voucher";
 import Swal from "sweetalert2";
 import OrderLogs from "../../../components/OrderLogs";
 import { add } from "../../../api/orderLogs";
-import { isAuthenticate } from "../../../utils/localStorage";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../../redux/authSlice";
 
 const MyCartDetailPage = () => {
     const [order, setOrder] = useState<OrderType>({});
     const [orderDetail, setOrderDetail] = useState<OrderDetailType[]>();
     const [voucherText, setVoucherText] = useState<string>();
     const [showCartLog, setShowCartLog] = useState(false);
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
 
     const { id } = useParams();
 

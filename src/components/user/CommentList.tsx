@@ -1,11 +1,12 @@
-import { faAngleLeft, faAngleRight, faStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { selectAuth } from "../../redux/authSlice";
 import Swal from 'sweetalert2';
 import { get as getCmt, remove as deleteCmt } from '../../api/comment';
 import { get as getRating } from '../../api/rating';
 import { formatDateNews } from '../../utils';
-import { isAuthenticate } from '../../utils/localStorage';
 import Pagination from './Pagination';
 
 type CommentListProps = {
@@ -17,7 +18,7 @@ type CommentListProps = {
 
 const CommentList = ({ productId, reRender: productDetailRerender, slug, page }: CommentListProps) => {
     const [comments, setComments] = useState<any[]>();
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
     const [reRender, setRerender] = useState<boolean>(false);
     const [totalCmt, setTotalCmt] = useState<number>(0);
 

@@ -1,22 +1,16 @@
-import { useDispatch } from "react-redux";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink, Outlet } from "react-router-dom";
+import { logout, selectAuth } from "../../redux/authSlice";
 import { clearWishlist } from "../../redux/wishlistSlice";
-import { isAuthenticate } from "../../utils/localStorage";
 
-type PropsType = {
-    onLogout: () => void
-}
-
-const MyAccountLayout = ({ onLogout }: PropsType) => {
+const MyAccountLayout = () => {
     const dispatch = useDispatch();
-    const { user } = isAuthenticate();
-    const navigate = useNavigate();
+
+    const { user } = useSelector(selectAuth);
 
     const handleLogout = () => {
-        localStorage.removeItem("auth");
+        dispatch(logout());
         dispatch(clearWishlist());
-        navigate("/login");
-        onLogout();
     }
     
     return (

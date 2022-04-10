@@ -75,10 +75,7 @@ import NewsByCatePage from "./pages/user/NewsByCatePage";
 import { ToastContainer } from 'react-toastify';
 
 const App = () => {
-    const [logged, setLogged] = useState(false);
     const [renderCart, setRenderCart] = useState(false);
-
-    const handleLogin = () => setLogged(!logged);
 
     return (
         <>
@@ -101,13 +98,13 @@ const App = () => {
                     <Route path="bai-viet/:slug" element={<NewsDetail />} />
                     <Route path="lien-he" element={<ContactPage />} />
                     <Route path="cua-hang" element={<StorePage />} />
-                    <Route path="login" element={<LoginPage onLogin={handleLogin} />} />
+                    <Route path="login" element={<LoginPage />} />
                     <Route path="register" element={<RegisterPage />} />
                     <Route path="forgot" element={<ForgotPage />} />
                     <Route path="cart" element={<CartPage onRenderCart={setRenderCart} />} />
                     <Route path="checkout" element={<CheckoutPage />} />
                     <Route path="thank-you" element={<ThankPage />} />
-                    <Route path="my-account" element={<PrivateRouter page="user"><MyAccountLayout onLogout={handleLogin} /></PrivateRouter>}>
+                    <Route path="my-account" element={<PrivateRouter page="user"><MyAccountLayout /></PrivateRouter>}>
                         <Route index element={<UpdateInfoPage />} />
                         <Route path="update-password" element={<UpdatePasswordPage />} />
                         <Route path="cart" element={<MyCartPage />} />

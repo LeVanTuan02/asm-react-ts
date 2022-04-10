@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { getByUserId, remove } from "../../../api/address";
 import { getDistrictById, getProvinceById, getWardById } from "../../../api/location";
 import Loading from "../../../components/Loading";
 import Pagination from "../../../components/user/Pagination";
+import { selectAuth } from "../../../redux/authSlice";
 import { AddressType } from "../../../types/address";
 import { updateTitle } from "../../../utils";
-import { isAuthenticate } from "../../../utils/localStorage";
 
 const AddressPage = () => {
     const [loading, setLoading] = useState(false);
     const [address, setAddress] = useState<AddressType[]>();
     const [totalAddress, setTotalAddress] = useState(0);
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
 
     const { page } = useParams();
 

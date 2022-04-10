@@ -2,11 +2,12 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { checkPassword } from "../../../api/auth";
-import { isAuthenticate } from "../../../utils/localStorage";
 import { updateMyInfo } from "../../../api/user";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import { updateTitle } from "../../../utils";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../../redux/authSlice";
 
 type InputsType = {
     oldPassword: string,
@@ -19,7 +20,7 @@ const schema = yup.object().shape({
         .string()
         .required("Vui lòng nhập mật khẩu hiện tại")
         .test("is_confirm", "Mật khẩu hiện tại không chính xác", async function (value: string) {
-            const { user } = isAuthenticate();
+            const { user } = useSelector(selectAuth);
             try {
                 const { data } = await checkPassword({ _id: user._id, password: value });
                 if (data.success) return 1;
@@ -44,7 +45,7 @@ const schema = yup.object().shape({
 });
 
 const UpdatePasswordPage = () => {
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
 
     const {
         register,

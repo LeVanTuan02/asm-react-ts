@@ -1,16 +1,17 @@
 import { faProductHunt } from "@fortawesome/free-brands-svg-icons";
 import { faCode, faComment, faNewspaper, faSearch, faShoppingCart, faSlidersH, faStore, faThList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { isAuthenticate } from "../../utils/localStorage";
+import { logout, selectAuth } from "../../redux/authSlice";
 
 const AdminLayout = () => {
-    const { user } = isAuthenticate();
-    const navigate = useNavigate();
+    const { user } = useSelector(selectAuth);
+
+    const dispatch = useDispatch();
 
     const handleLogout = () => {
-        localStorage.removeItem("auth");
-        navigate("/login");
+        dispatch(logout());
     }
 
     return (

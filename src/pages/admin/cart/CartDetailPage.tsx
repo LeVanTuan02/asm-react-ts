@@ -8,10 +8,10 @@ import { get as getVoucher } from "../../../api/voucher";
 import Swal from "sweetalert2";
 import OrderLogs from "../../../components/OrderLogs";
 import { add } from "../../../api/orderLogs";
-import { isAuthenticate } from "../../../utils/localStorage";
 import { sendMailCancelCart, sendMailOrderSuccess } from "../../../api/sendMail";
 import Loading from "../../../components/Loading";
-import axios from "axios";
+import { selectAuth } from "../../../redux/authSlice";
+import { useSelector } from "react-redux";
 
 const CartDetailPage = () => {
     const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ const CartDetailPage = () => {
 
     const { id } = useParams();
 
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
 
     useEffect(() => {
         const getOrder = async () => {

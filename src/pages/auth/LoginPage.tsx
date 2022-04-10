@@ -7,7 +7,8 @@ import { toast } from "react-toastify";
 import { useEffect } from "react";
 import { updateTitle } from "../../utils";
 import { getWishlist } from "../../redux/wishlistSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { selectStatusLoggin, signin as signinAction } from "../../redux/authSlice";
 
 type InputsType = {
     email: string
@@ -24,12 +25,10 @@ const schema = yup.object().shape({
         .required("Vui lòng nhập mật khẩu")
 });
 
-type LoginPageProps = {
-    onLogin: () => void
-}
-
-const LoginPage = ({ onLogin }: LoginPageProps) => {
+const LoginPage = () => {
     const dispatch = useDispatch();
+
+    const isLogged = useSelector(selectStatusLoggin);
 
     const {
         register,
@@ -44,7 +43,9 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
             if (!data.user.active) {
                 toast.info("Tài khoản của bạn đã bị khóa, vui lòng liên hệ QTV");
             } else {
-                localStorage.setItem("auth", JSON.stringify(data));
+                dispatch(signinAction(data));
+                dispatch(getWishlist(data.user._id));
+
                 toast.success("Đăng nhập thành công");
 
                 if (data.user.role) {
@@ -52,19 +53,17 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
                 } else {
                     navigate("/");
                 }
-
-                dispatch(getWishlist(data.user._id));
-                
-                onLogin();
             }
             
         } catch (error: any) {
-            toast.error(error.response.data.message);
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
     };
 
     useEffect(() => {
         updateTitle("Đăng nhập");
+
+        if (isLogged) navigate("/");
     }, []);
 
     return (

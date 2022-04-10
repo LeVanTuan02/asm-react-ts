@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { isAuthenticate } from "../../../utils/localStorage";
+import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LocationType } from "../../../types/location";
 import { getAllProvince, getDistrictByProvince, getWardByDistrict } from "../../../api/location";
 import { updateTitle, uploadFile } from "../../../utils";
-import { updateMyInfo } from "../../../api/user";
 import { toast } from "react-toastify";
 import Loading from "../../../components/Loading";
+import { selectAuth, updateMyAccount } from "../../../redux/authSlice";
 
 type InputsType = {
     fullName: string,
@@ -54,7 +54,8 @@ const UpdateInfoPage = () => {
     const [districts, setDistricts] = useState<LocationType[]>();
     const [wards, setWards] = useState<LocationType[]>();
 
-    const { token, user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         updateTitle("Cập nhật tài khoản");
@@ -115,9 +116,8 @@ const UpdateInfoPage = () => {
                 dataInput.avatar = await uploadFile(dataInput.avatar[0]);
             }
     
-            updateMyInfo(dataInput)
-                .then(() => localStorage.setItem("auth", JSON.stringify({ token, user: dataInput })))
-                .then(() => toast.success("Cập nhật tài khoản thành công"));
+            dispatch(updateMyAccount(dataInput));
+            toast.success("Cập nhật tài khoản thành công");
         } catch (error) {
             toast.error("Đã có lỗi xảy ra");
         }

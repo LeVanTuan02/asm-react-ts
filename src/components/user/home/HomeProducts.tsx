@@ -5,16 +5,16 @@ import { Link } from "react-router-dom";
 import { clientUpdate, getAll, getById as getProduct } from "../../../api/product";
 import { ProductType } from "../../../types/product";
 import { formatCurrency } from "../../../utils";
-import { isAuthenticate } from "../../../utils/localStorage";
 import { checkUserHeart } from "../../../api/favorites";
 import { getAvgStar } from "../../../api/rating";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addWishlist } from "../../../redux/wishlistSlice";
+import { selectAuth } from "../../../redux/authSlice";
 
 const HomeProducts = () => {
     const [products, setProducts] = useState<ProductType[]>();
-    const { user } = isAuthenticate();
+    const { user } = useSelector(selectAuth);
 
     useEffect(() => {
         const getProducts = async () => {
