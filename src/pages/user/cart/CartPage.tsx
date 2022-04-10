@@ -4,30 +4,23 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CartType } from "../../../types/cart";
 import { formatCurrency, updateTitle } from "../../../utils";
-import { addVoucher, removeItemCart, removeVoucher, updateQuantity } from "../../../utils/localStorage";
 import Swal from "sweetalert2";
 import CartNav from "../../../components/user/CartNav";
 import { checkValidVoucher } from "../../../api/voucher";
 import { VoucherType } from "../../../types/voucher";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectAuth } from "../../../redux/authSlice";
+import { addVoucher, removeItemCart, removeVoucher, selectCart, selectVoucher, updateQuantity } from "../../../redux/cartSlice";
 
-type CartPageProps = {
-    onRenderCart: (args: any) => void
-}
-
-const CartPage = ({ onRenderCart }: CartPageProps) => {
-    const [cartQnt, setCartQnt] = useState<{ id: string, quantity: number }[]>();
-    const [cart, setCart] = useState<CartType[]>(() => {
-        return JSON.parse(localStorage.getItem("cart") as string) || [];
-    })
+const CartPage = () => {
+    const dispatch = useDispatch();
+    const cart: CartType[] = useSelector(selectCart);
+    const vouchers: VoucherType[] = useSelector(selectVoucher);
+    const [cartQnt, setCartQnt] = useState<{ id: string, quantity: number }[]>([]);
     const [disableBtnUpdate, setDisableBtnUpdate] = useState<boolean>(true);
     const [totalPrice, setTotalPrice] = useState<number>(0);
     const [voucher, setVoucher] = useState<string>();
-    const [vouchers, setVouchers] = useState<VoucherType[]>(() => {
-        return JSON.parse(localStorage.getItem("voucher") as string) || [];
-    });
     const [totalPriceVoucher, setTotalPriceVoucher] = useState<number>(0);
 
     useEffect(() => {
@@ -55,7 +48,7 @@ const CartPage = ({ onRenderCart }: CartPageProps) => {
 
         const getPriceDecrease = () => {
             let totalDecrease = 0;
-            vouchers.forEach((item) => {
+            vouchers?.forEach((item) => {
                 if (item.condition) {
                     totalDecrease += item.conditionNumber;
                 } else {
@@ -114,11 +107,9 @@ const CartPage = ({ onRenderCart }: CartPageProps) => {
 
     const handleUpdateQnt = () => {
         if (!disableBtnUpdate) {
-            updateQuantity(cartQnt, () => {
-                toast.success("Cập nhật thành công");
-                setCart(JSON.parse(localStorage.getItem("cart") as string));
-                setDisableBtnUpdate(true);
-            })
+            dispatch(updateQuantity(cartQnt));
+            toast.success("Cập nhật thành công");
+            setDisableBtnUpdate(true);
         }
     }
 
@@ -133,25 +124,20 @@ const CartPage = ({ onRenderCart }: CartPageProps) => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                removeItemCart(cartId, () => {
-                    Swal.fire(
-                        'Thành công!',
-                        'Sản phẩm đã bị xóa.',
-                        'success'
-                    )
-                    onRenderCart((prev: any) => !prev);
-                    setCart(JSON.parse(localStorage.getItem("cart") as string));
-                });
+                dispatch(removeItemCart(cartId));
+                Swal.fire(
+                    'Thành công!',
+                    'Sản phẩm đã bị xóa.',
+                    'success'
+                );
             }
         })
         
     }
 
     const handleRemoveVoucher = (id: string) => {
-        removeVoucher(id, () => {
-            toast.success("Đã xóa mã Voucher");
-            setVouchers(JSON.parse(localStorage.getItem("voucher") as string));
-        });
+        dispatch(removeVoucher(id));
+        toast.success("Đã xóa mã Voucher");
     }
 
     const handleAddVoucher = async (e: any) => {
@@ -167,11 +153,9 @@ const CartPage = ({ onRenderCart }: CartPageProps) => {
                 if (!response.success) {
                     toast.info(response.message);
                 } else {
-                    addVoucher(response.voucherData, () => {
-                        toast.success("Áp mã giảm giá thành công");
-                        setVoucher("");
-                        setVouchers(JSON.parse(localStorage.getItem("voucher") as string));
-                    });
+                    dispatch(addVoucher(response.voucherData));
+                    toast.success("Áp mã giảm giá thành công");
+                    setVoucher("");
                 }
             }
         }

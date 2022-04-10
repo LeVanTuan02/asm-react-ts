@@ -67,7 +67,6 @@ import ProductDetailPage from "./pages/user/ProductDetailPage";
 import ProductPage from "./pages/user/ProductPage";
 import StorePage from "./pages/user/StorePage";
 import PrivateRouter from "./components/admin/PrivateRouter";
-import { useState } from "react";
 import NewsDetail from "./pages/user/NewsDetail";
 import ProductSearchPage from "./pages/user/ProductSearchPage";
 import ProductByCate from "./pages/user/ProductByCate";
@@ -75,8 +74,6 @@ import NewsByCatePage from "./pages/user/NewsByCatePage";
 import { ToastContainer } from 'react-toastify';
 
 const App = () => {
-    const [renderCart, setRenderCart] = useState(false);
-
     return (
         <>
             <Routes>
@@ -89,8 +86,8 @@ const App = () => {
                     <Route path="danh-muc/:slug/page/:page" element={<ProductByCate />} />
                     <Route path="tim-kiem/:keyword" element={<ProductSearchPage />} />
                     <Route path="tim-kiem/:keyword/page/:page" element={<ProductSearchPage />} />
-                    <Route path="san-pham/:slug" element={<ProductDetailPage onRenderCart={setRenderCart} />} />
-                    <Route path="san-pham/:slug/page/:page" element={<ProductDetailPage onRenderCart={setRenderCart} />} />
+                    <Route path="san-pham/:slug" element={<ProductDetailPage />} />
+                    <Route path="san-pham/:slug/page/:page" element={<ProductDetailPage />} />
                     <Route path="tin-tuc" element={<NewsPage />} />
                     <Route path="tin-tuc/:slug" element={<NewsByCatePage />} />
                     <Route path="tin-tuc/:slug/page/:page" element={<NewsByCatePage />} />
@@ -101,7 +98,7 @@ const App = () => {
                     <Route path="login" element={<LoginPage />} />
                     <Route path="register" element={<RegisterPage />} />
                     <Route path="forgot" element={<ForgotPage />} />
-                    <Route path="cart" element={<CartPage onRenderCart={setRenderCart} />} />
+                    <Route path="cart" element={<CartPage />} />
                     <Route path="checkout" element={<CheckoutPage />} />
                     <Route path="thank-you" element={<ThankPage />} />
                     <Route path="my-account" element={<PrivateRouter page="user"><MyAccountLayout /></PrivateRouter>}>

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CartType } from "../../../types/cart";
 import { formatCurrency, updateTitle } from "../../../utils";
-import { finishOrder, getListIdVoucher } from "../../../utils/localStorage";
 import { LocationType } from "../../../types/location";
 import { getAllProvince, getDistrictById, getDistrictByProvince, getProvinceById, getWardByDistrict, getWardById } from "../../../api/location";
 import { add as addOrder } from "../../../api/order";
@@ -22,8 +21,9 @@ import { OrderLogsType } from "../../../types/orderLogs";
 import { sendMailOrder, sendMailOrderToAdmin } from "../../../api/sendMail";
 import { toast } from "react-toastify";
 import Loading from "../../../components/Loading";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectAuth } from "../../../redux/authSlice";
+import { finishOrder, getListIdVoucher, selectCart, selectListIdVoucher, selectVoucher } from "../../../redux/cartSlice";
 
 type InputsType = {
     fullName: string,
@@ -64,14 +64,15 @@ const schema = yup.object().shape({
 })
 
 const CheckoutPage = () => {
+    const dispatch = useDispatch();
     const { user } = useSelector(selectAuth);
     const [loading, setLoading] = useState(false);
-    const cart: CartType[] = JSON.parse(localStorage.getItem("cart") as string) || [];
+    const cart: CartType[] = useSelector(selectCart);
     const [provinces, setProvinces] = useState<LocationType[]>();
     const [districts, setDistricts] = useState<LocationType[]>();
     const [wards, setWards] = useState<LocationType[]>();
     const [totalPrice, setTotalPrice] = useState<number>(0);
-    const vouchers: VoucherType[] = JSON.parse(localStorage.getItem("voucher") as string) || [];
+    const vouchers: VoucherType[] = useSelector(selectVoucher);
     const [totalPriceVoucher, setTotalPriceVoucher] = useState<number>(0);
     const [listAddress, setListAddress] = useState<AddressType[]>();
     const [showAddress, setShowAddress] = useState<boolean>(false);
@@ -91,10 +92,10 @@ const CheckoutPage = () => {
     }
 
     const navigate = useNavigate();
+    const listIdVoucher = useSelector(selectListIdVoucher);
+
     const onSubmit: SubmitHandler<InputsType> = async dataInput => {
         setLoading(true);
-
-        const listIdVoucher = getListIdVoucher();
         const address = await getAddress(dataInput.address, dataInput.wardsCode, dataInput.districtCode, dataInput.provinceCode);
         // save order
         const orderData = {
@@ -184,11 +185,10 @@ const CheckoutPage = () => {
             toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
 
-        finishOrder(() => {
-            setLoading(false);
-            toast.success("Đặt hàng thành công");
-            navigate("/thank-you");
-        });
+        dispatch(finishOrder());
+        setLoading(false);
+        toast.success("Đặt hàng thành công");
+        navigate("/thank-you");
     }
 
     useEffect(() => {
@@ -247,6 +247,7 @@ const CheckoutPage = () => {
             getListAdd();
         }
 
+        dispatch(getListIdVoucher());
         updateTitle("Thanh toán");
     }, []);
 

@@ -15,7 +15,6 @@ import { getAll as getAllSize } from "../../api/size";
 import ProductRelated from "../../components/user/ProductRelated";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import { addToCart } from "../../utils/localStorage";
 import CommentProduct from "../../components/user/CommentProduct";
 import CommentList from "../../components/user/CommentList";
 import { checkUserHeart } from "../../api/favorites";
@@ -24,6 +23,7 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { addWishlist } from "../../redux/wishlistSlice";
 import { selectAuth } from "../../redux/authSlice";
+import { addCart } from "../../redux/cartSlice";
 
 type InputsType = {
     ice: number,
@@ -32,11 +32,7 @@ type InputsType = {
     topping: string,
 }
 
-type ProductDetailPageProps = {
-    onRenderCart: (args: any) => void,
-}
-
-const ProductDetailPage = ({ onRenderCart }: ProductDetailPageProps) => {
+const ProductDetailPage = () => {
     const { user } = useSelector(selectAuth);
     const [product, setProduct] = useState<ProductType>();
     const [quantity, setQuantity] = useState<number>(1);
@@ -94,12 +90,10 @@ const ProductDetailPage = ({ onRenderCart }: ProductDetailPageProps) => {
             sugar: +sugar,
         }
 
-        addToCart(cartData, () => {
-            onRenderCart((prev: any) => !prev);
-            toast.success(`Thêm ${product.name} vào giỏ hàng thành công`);
-            reset();
-            setQuantity(1);
-        });
+        dispatch(addCart(cartData));
+        toast.success(`Thêm ${product.name} vào giỏ hàng thành công`);
+        reset();
+        setQuantity(1);
     }
 
     const { slug, page } = useParams();

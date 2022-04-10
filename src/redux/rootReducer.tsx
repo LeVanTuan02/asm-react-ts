@@ -12,6 +12,7 @@ import voucherReducer from "./voucherSlice";
 import userReducer from "./userSlice";
 import wishlistReducer from "./wishlistSlice";
 import authReducer from "./authSlice";
+import cartReducer from "./cartSlice";
 
 const store = combineReducers({
     size: sizeReducer,
@@ -26,7 +27,8 @@ const store = combineReducers({
     voucher: voucherReducer,
     user: userReducer,
     wishlist: wishlistReducer,
-    auth: authReducer
+    auth: authReducer,
+    cart: cartReducer
 })
 
 export default store;
