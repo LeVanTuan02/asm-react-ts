@@ -4,14 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { clientUpdate, get } from "../../api/product";
-import { get as getSize } from "../../api/size";
+import { get as getSize, useGetSizesQuery } from "../../api/size";
 import { get as getTopping } from "../../api/topping";
 import { ProductType } from "../../types/product";
 import { formatCurrency, updateTitle } from "../../utils";
 import { ToppingType } from "../../types/topping";
-import { SizeType } from "../../types/size";
 import { getAll } from "../../api/topping";
-import { getAll as getAllSize } from "../../api/size";
 import ProductRelated from "../../components/user/ProductRelated";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
@@ -37,7 +35,7 @@ const ProductDetailPage = () => {
     const [product, setProduct] = useState<ProductType>();
     const [quantity, setQuantity] = useState<number>(1);
     const [toppings, setToppings] = useState<ToppingType[]>();
-    const [sizes, setSizes] = useState<SizeType[]>();
+    const { data: sizes } = useGetSizesQuery({ sort: "name", order: "desc"});
     // const [showBtnClear, setShowBtnClear] = useState<boolean>(false);
     const [toppingDefault, setToppingDefault] = useState<string>();
     const [reRender, setRerender] = useState<boolean>(false);
@@ -124,12 +122,6 @@ const ProductDetailPage = () => {
             setToppings(data);
         };
         getToppings();
-
-        const getSizes = async () => {
-            const { data } = await getAllSize("name", "desc");
-            setSizes(data);
-        };
-        getSizes();
     }, [slug]);
 
     useEffect(() => {

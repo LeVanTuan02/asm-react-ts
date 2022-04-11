@@ -2,9 +2,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Link } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { addSize } from "../../../redux/sizeSlice";
 import { toast } from "react-toastify";
+import { useAddSizeMutation } from "../../../api/size";
 
 type InputsType = {
     name: string,
@@ -22,7 +21,7 @@ const schema = yup.object().shape({
 })
 
 const AddSizePage = () => {
-    const dispatch = useDispatch();
+    const [ addSize ] = useAddSizeMutation();
 
     const {
         register,
@@ -33,11 +32,11 @@ const AddSizePage = () => {
 
     const onSubmit: SubmitHandler<InputsType> = async data => {
         try {
-            dispatch(addSize(data));
-
-            toast.success("Thêm size thành công");
-
-            reset();
+            addSize(data).unwrap()
+                .then(() => {
+                    toast.success("Thêm size thành công");
+                    reset();
+                })
         } catch (error: any) {
             toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }

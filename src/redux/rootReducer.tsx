@@ -13,6 +13,7 @@ import userReducer from "./userSlice";
 import wishlistReducer from "./wishlistSlice";
 import authReducer from "./authSlice";
 import cartReducer from "./cartSlice";
+import { sizeApi } from "../api/size";
 
 const store = combineReducers({
     size: sizeReducer,
@@ -28,7 +29,8 @@ const store = combineReducers({
     user: userReducer,
     wishlist: wishlistReducer,
     auth: authReducer,
-    cart: cartReducer
+    cart: cartReducer,
+    [sizeApi.reducerPath]: sizeApi.reducer
 })
 
 export default store;

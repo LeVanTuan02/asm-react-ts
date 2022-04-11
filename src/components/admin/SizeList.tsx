@@ -1,19 +1,11 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { deleteSize, getSizes, selectSize } from "../../redux/sizeSlice";
-import { SizeType } from "../../types/size";
+import { useDeleteSizeMutation, useGetSizesQuery } from "../../api/size";
 import { formatCurrency } from "../../utils";
 
 const SizeList = () => {
-    const dispatch = useDispatch();
-
-    const sizeList: SizeType[] = useSelector(selectSize);
-
-    useEffect(() => {
-        dispatch(getSizes());
-    }, []);
+    const { data: sizeList, isLoading, isError } = useGetSizesQuery({});
+    const [ deleteSize ] = useDeleteSizeMutation();
 
     const handleRemove = async (id?: string) => {
         Swal.fire({
@@ -24,14 +16,16 @@ const SizeList = () => {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                dispatch(deleteSize(id));
-                Swal.fire(
-                    'Thành công!',
-                    'Đã xóa thành công.',
-                    'success'
-                )
+                deleteSize(id).unwrap()
+                    .then(() => {
+                        Swal.fire(
+                            'Thành công!',
+                            'Đã xóa thành công.',
+                            'success'
+                        )
+                    })
             }
         })
     }

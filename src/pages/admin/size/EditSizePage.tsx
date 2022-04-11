@@ -2,10 +2,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { get } from "../../../api/size";
+import { get, useUpdateSizeMutation } from "../../../api/size";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { updateSize } from "../../../redux/sizeSlice";
 import { toast } from "react-toastify";
 
 type InputsType = {
@@ -24,7 +22,7 @@ const schema = yup.object().shape({
 })
 
 const EditSizePage = () => {
-    const dispatch = useDispatch();
+    const [ updateSize ] = useUpdateSizeMutation();
 
     const { id } = useParams();
 
@@ -39,11 +37,12 @@ const EditSizePage = () => {
 
     const onSubmit: SubmitHandler<InputsType> = async data => {
         try {
-            dispatch(updateSize(data));
-
-            toast.success("Cập nhật size thành công");
-
-            navigate("/admin/size");
+            updateSize(data).unwrap()
+                .then(() => {
+                    toast.success("Cập nhật size thành công");
+        
+                    navigate("/admin/size");
+                })
         } catch (error: any) {
             toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }
@@ -104,7 +103,7 @@ const EditSizePage = () => {
                             </div>
                         </div>
                         <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                            <button type="submit" className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"> Thêm size </button>
+                            <button type="submit" className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cập nhật Size</button>
                         </div>
                     </div>
                 </form>
