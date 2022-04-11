@@ -8,6 +8,8 @@ import { sizeApi } from "../api/size";
 import { productApi } from "../api/product";
 import { sliderApi } from "../api/slider";
 import { cateProductApi } from "../api/category";
+import { userApi } from "../api/user";
+import { newsApi } from "../api/news";
 
 const persistConfig = {
     key: "root",
@@ -22,7 +24,9 @@ const middleware = [
     sizeApi.middleware,
     productApi.middleware,
     sliderApi.middleware,
-    cateProductApi.middleware
+    cateProductApi.middleware,
+    userApi.middleware,
+    newsApi.middleware
 ]
 
 export const store = createStore(persistedReducer, applyMiddleware(...middleware));

@@ -1,3 +1,4 @@
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 import { NewsType } from "../types/news";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
@@ -53,3 +54,19 @@ export const relatedPost = (id: string | undefined, cateId: string | undefined, 
     if (limit) url += `&_start=${start}&_limit=${limit}`;  
     return instance.get(url);
 }
+
+export const newsApi = createApi({
+    reducerPath: "newsApi",
+    baseQuery: fetchBaseQuery({
+        baseUrl: "http://localhost:8080/api"
+    }),
+    endpoints: (builder) => ({
+        getNews: builder.query<NewsType[], string>({
+            query: () => `${DB_NAME}`
+        })
+    })
+})
+
+export const {
+    useGetNewsQuery
+} = newsApi;

@@ -17,6 +17,8 @@ import { sizeApi } from "../api/size";
 import { productApi } from "../api/product";
 import { sliderApi } from "../api/slider";
 import { cateProductApi } from "../api/category";
+import { userApi } from "../api/user";
+import { newsApi } from "../api/news";
 
 const store = combineReducers({
     size: sizeReducer,
@@ -36,7 +38,9 @@ const store = combineReducers({
     [sizeApi.reducerPath]: sizeApi.reducer,
     [productApi.reducerPath]: productApi.reducer,
     [sliderApi.reducerPath]: sliderApi.reducer,
-    [cateProductApi.reducerPath]: cateProductApi.reducer
+    [cateProductApi.reducerPath]: cateProductApi.reducer,
+    [userApi.reducerPath]: userApi.reducer,
+    [newsApi.reducerPath]: newsApi.reducer,
 })
 
 export default store;

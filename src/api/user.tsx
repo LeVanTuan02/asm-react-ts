@@ -1,3 +1,4 @@
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 import { UserType } from "../types/user";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
@@ -50,3 +51,19 @@ export const updateMyInfo = (userData: UserType, { token, user } = isAuthenticat
         }
     });
 }
+
+export const userApi = createApi({
+    reducerPath: "userApi",
+    baseQuery: fetchBaseQuery({
+        baseUrl: "http://localhost:8080/api"
+    }),
+    endpoints: (builder) => ({
+        getUsers: builder.query<UserType[], string>({
+            query: () => `${DB_NAME}`
+        })
+    })
+})
+
+export const {
+    useGetUsersQuery
+} = userApi;
