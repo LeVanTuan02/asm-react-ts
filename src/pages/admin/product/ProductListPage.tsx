@@ -1,11 +1,11 @@
-import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
+import { useGetProductsQuery } from "../../../api/product";
 import AdminPagination from "../../../components/admin/AdminPagination";
 import ListProduct from "../../../components/admin/ListProduct";
-import { selectTotalProduct } from "../../../redux/productSlice";
 
 const ProductListPage = () => {
-    const totalItem = useSelector(selectTotalProduct);
+    const { data: products } = useGetProductsQuery({});
+    const totalItem = products?.length || 0;
 
     const { page } = useParams();
 

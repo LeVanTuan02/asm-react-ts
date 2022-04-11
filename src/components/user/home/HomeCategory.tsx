@@ -1,18 +1,8 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAll } from "../../../api/category";
-import { CategoryType } from "../../../types/category";
+import { useGetCatesProductQuery } from "../../../api/category";
 
 const HomeCategory = () => {
-    const [categories, setCategories] = useState<CategoryType[]>();
-
-    useEffect(() => {
-        const getCate = async () => {
-            const { data } = await getAll(0, 4);
-            setCategories(data);
-        };
-        getCate();
-    }, []);
+    const { data: categories } = useGetCatesProductQuery("");
 
     return (
         <section className="container max-w-6xl mx-auto py-7 px-3">

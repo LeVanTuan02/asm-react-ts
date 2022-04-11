@@ -7,8 +7,8 @@ import { CategoryType } from "../../../types/category";
 import { uploadFile } from "../../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { getCates, selectCatesProduct } from "../../../redux/categoryProductSlice";
-import { addProduct } from "../../../redux/productSlice";
 import { toast } from "react-toastify";
+import { useAddProductMutation } from "../../../api/product";
 
 type InputsType = {
     name: string,
@@ -44,6 +44,7 @@ const schema = yup.object().shape({
 const AddProductPage = () => {
     const dispatch = useDispatch();
     const categories: CategoryType[] = useSelector(selectCatesProduct);
+    const [ addProduct ] = useAddProductMutation();
     const [preview, setPreview] = useState<string>();
 
     useEffect(() => {
@@ -65,11 +66,12 @@ const AddProductPage = () => {
         try {
             const url = await uploadFile(data.image[0]);
 
-            dispatch(addProduct({ ...data, image: url, price: +data.price, status: +data.status }));
-
-            toast.success("Thêm sản phẩm thành công")
-            setPreview("");
-            reset();
+            addProduct({ ...data, image: url, price: +data.price, status: +data.status }).unwrap()
+                .then(() => {
+                    toast.success("Thêm sản phẩm thành công")
+                    setPreview("");
+                    reset();
+                })
         } catch (error: any) {
             toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }

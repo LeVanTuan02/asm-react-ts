@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { add, getAll, remove, update } from "../api/product";
+import { add, getAll, productApi, remove, update } from "../api/product";
 import { ProductType } from "../types/product";
 
 type ProductState = {

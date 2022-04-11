@@ -1,3 +1,4 @@
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 import { SliderType } from "../types/slider";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
@@ -40,3 +41,21 @@ export const update = (slider: SliderType, { token, user } = isAuthenticate()) =
         }
     });
 }
+
+export const sliderApi = createApi({
+    reducerPath: "sliderApi",
+    baseQuery: fetchBaseQuery({
+        baseUrl: "http://localhost:8080/api"
+    }),
+    tagTypes: ["Slider"],
+    endpoints: (builder) => ({
+        getSliders: builder.query<SliderType[], string>({
+            query: () => `${DB_NAME}/?_sort=createdAt&_order=desc`,
+            providesTags: ["Slider"]
+        }),
+    })
+})
+
+export const {
+    useGetSlidersQuery
+} = sliderApi;

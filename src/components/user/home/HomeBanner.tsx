@@ -1,20 +1,10 @@
-import { useEffect, useState } from "react";
 import Slider from "react-slick";
-import { getAll } from "../../../api/slider";
-import { SliderType } from "../../../types/slider";
+import { useGetSlidersQuery } from "../../../api/slider";
 import NextArrow from "../../admin/NextArrow";
 import PrevArrow from "../../admin/PrevArrow";
 
 const HomeBanner = () => {
-    const [sliders, setSliders] = useState<SliderType[]>();
-
-    useEffect(() => {
-        const getSliders = async () => {
-            const { data } = await getAll();
-            setSliders(data);
-        };
-        getSliders();
-    }, []);
+    const { data: sliders } = useGetSlidersQuery("");
 
     const settings = {
         autoplay: true,

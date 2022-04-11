@@ -1,3 +1,4 @@
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 import { CategoryType } from "../types/category";
 import { isAuthenticate } from "../utils/localStorage";
 import instance from "./instance";
@@ -41,3 +42,21 @@ export const update = (category: CategoryType, { token, user } = isAuthenticate(
         }
     });
 }
+
+export const cateProductApi = createApi({
+    reducerPath: "cateProductApi",
+    baseQuery: fetchBaseQuery({
+        baseUrl: "http://localhost:8080/api"
+    }),
+    tagTypes: ["CateProduct"],
+    endpoints: (builder) => ({
+        getCatesProduct: builder.query<CategoryType[], string>({
+            query: () => `${DB_NAME}`,
+            providesTags: ["CateProduct"]
+        })
+    })
+})
+
+export const {
+    useGetCatesProductQuery
+} = cateProductApi;

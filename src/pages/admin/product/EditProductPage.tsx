@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { get } from "../../../api/product";
+import { get, useUpdateProductMutation } from "../../../api/product";
 import { CategoryType } from "../../../types/category";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { uploadFile } from "../../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { getCates, selectCatesProduct } from "../../../redux/categoryProductSlice";
-import { updateProduct } from "../../../redux/productSlice";
 import { toast } from "react-toastify";
 
 type InputsType = {
@@ -43,6 +42,7 @@ const EditProductPage = () => {
     const dispatch = useDispatch();
     const [preview, setPreview] = useState<string>();
     const categories: CategoryType[] = useSelector(selectCatesProduct);
+    const [ updateProduct ] = useUpdateProductMutation();
 
     const { slug } = useParams();
 
@@ -61,10 +61,11 @@ const EditProductPage = () => {
                 data.image = await uploadFile(data.image[0]);
             }
 
-            dispatch(updateProduct(data));
-
-            toast.success("Cập nhật SP thành công");
-            navigate("/admin/product");
+            updateProduct(data).unwrap()
+                .then(() => {
+                    toast.success("Cập nhật SP thành công");
+                    navigate("/admin/product");
+                })
         } catch (error: any) {
             toast.error("Có lỗi xảy ra, vui lòng thử lại");
         }

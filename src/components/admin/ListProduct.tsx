@@ -1,9 +1,6 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { deleteProduct, getProducts, selectProducts } from "../../redux/productSlice";
-import { ProductType } from "../../types/product";
+import { useDeleteProductMutation, useGetProductsQuery } from "../../api/product";
 
 type ListProductProps = {
     start: number,
@@ -11,13 +8,8 @@ type ListProductProps = {
 }
 
 const ListProduct = ({ start, limit }: ListProductProps) => {
-    const dispatch = useDispatch();
-
-    const products: ProductType[] = useSelector(selectProducts);
-
-    useEffect(() => {
-        dispatch(getProducts({ start, limit }));
-    }, [start]);
+    const { data: products } = useGetProductsQuery({ start, limit });
+    const [ deleteProduct ] = useDeleteProductMutation();
 
     const handleRemove = async (id?: string) => {
         Swal.fire({
@@ -30,12 +22,14 @@ const ListProduct = ({ start, limit }: ListProductProps) => {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                dispatch(deleteProduct(id));
-                Swal.fire(
-                    'Thành công!',
-                    'Đã xóa thành công.',
-                    'success'
-                )
+                deleteProduct(id).unwrap()
+                    .then(() => {
+                        Swal.fire(
+                            'Thành công!',
+                            'Đã xóa thành công.',
+                            'success'
+                        )
+                    })
             }
         })
     }
