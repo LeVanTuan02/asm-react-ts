@@ -284,24 +284,24 @@ const WebsiteLayout = () => {
                             <p className="text-gray-300 text-justify"> Chúng tôi mong muốn tạo nên hương vị thức uống tuyệt vời nhất. Là điểm đến đầu tiên dành cho bạn khi muốn thưởng thức trọn vẹn của tách Coffee </p>
                             <ul className="flex text-white">
                                 <li className="mr-3 mt-3">
-                                    <Link to="https://www.facebook.com/LeVanTuan.Info/" target="_blank">
+                                    <a href="https://www.facebook.com/LeVanTuan.Info/" target="_blank">
                                         <FontAwesomeIcon icon={faFacebookF} />
-                                    </Link>
+                                    </a>
                                 </li>
                                 <li className="mr-3 mt-3">
-                                    <Link to="https://www.youtube.com/c/L%C3%AAV%C4%83nTu%C3%A2n02/" target="_blank">
+                                    <a href="https://www.youtube.com/c/L%C3%AAV%C4%83nTu%C3%A2n02/" target="_blank">
                                         <FontAwesomeIcon icon={faYoutube} />
-                                    </Link>
+                                    </a>
                                 </li>
                                 <li className="mr-3 mt-3">
-                                    <Link to="https://www.instagram.com/_tuan02/" target="_blank">
+                                    <a href="https://www.instagram.com/_tuan02/" target="_blank">
                                         <FontAwesomeIcon icon={faInstagram} />
-                                    </Link>
+                                    </a>
                                 </li>
                                 <li className="mr-3 mt-3">
-                                    <Link to="https://www.tiktok.com/@tuandemo" target="_blank">
+                                    <a href="https://www.tiktok.com/@tuandemo" target="_blank">
                                         <FontAwesomeIcon icon={faTiktok} />
-                                    </Link>
+                                    </a>
                                 </li>
                             </ul>
                         </div>
@@ -316,17 +316,17 @@ const WebsiteLayout = () => {
                                 <li className="flex">
                                     <div className="min-w-[25px]">
                                         <FontAwesomeIcon icon={faPhoneAlt} />
-                                    </div> Hotline: <Link to="tel:0347247244">&nbsp; 0347247244</Link>
+                                    </div> Hotline: <a href="tel:0347247244">&nbsp; 0347247244</a>
                                 </li>
                                 <li className="flex">
                                     <div className="min-w-[25px]">
                                         <FontAwesomeIcon icon={faEnvelope} />
-                                    </div> Email: <Link to="mailto:tuanlvph14271@fpt.edu.vn">&nbsp; tuanlvph14271@fpt.edu.vn</Link>
+                                    </div> Email: <a href="mailto:tuanlvph14271@fpt.edu.vn">&nbsp; tuanlvph14271@fpt.edu.vn</a>
                                 </li>
                                 <li className="flex">
                                     <div className="min-w-[25px]">
                                         <FontAwesomeIcon icon={faFacebookF} />
-                                    </div> Facebook: <Link to="https://www.facebook.com/LeVanTuan.Info/" target="_blank">&nbsp; Lê Văn Tuân</Link>
+                                    </div> Facebook: <a href="https://www.facebook.com/LeVanTuan.Info/" target="_blank">&nbsp; Lê Văn Tuân</a>
                                 </li>
                             </ul>
                         </div>
@@ -335,12 +335,12 @@ const WebsiteLayout = () => {
 
                             <div className="fb-page" data-href="https://www.facebook.com/fpt.poly" data-tabs="" data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
                                 <blockquote cite="https://www.facebook.com/fpt.poly" className="fb-xfbml-parse-ignore">
-                                    <Link to="https://www.facebook.com/fpt.poly">Cao đẳng FPT Polytechnic</Link>
+                                    <a href="https://www.facebook.com/fpt.poly">Cao đẳng FPT Polytechnic</a>
                                 </blockquote>
                             </div>
                         </div>
                     </div>
-                    <div className="text-center text-gray-300 mt-9"> Copyright 2022 © <strong> Bản quyền thuộc về <Link to="https://www.facebook.com/LeVanTuan.Info/" target="_blank">TuanDemo</Link>
+                    <div className="text-center text-gray-300 mt-9"> Copyright 2022 © <strong> Bản quyền thuộc về <a href="https://www.facebook.com/LeVanTuan.Info/" target="_blank">TuanDemo</a>
                         </strong>
                     </div>
                 </div>
