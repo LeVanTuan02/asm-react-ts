@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 
 type InputsType = {
     title: string,
-    thumbnail: string,
+    thumbnail: string | any,
     description: string,
     content: string,
     category: string,

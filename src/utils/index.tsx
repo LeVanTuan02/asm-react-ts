@@ -24,8 +24,8 @@ export const formatDate = (dateString: Date | string) => {
 };
 
 // định dạng ngày tạo bài viết
-export const formatDateNews = (dateString: string) => {
-    const date = new Date(dateString);
+export const formatDateNews = (dateString?: string) => {
+    const date = new Date(dateString || "");
     return `${date.getDate()} Tháng ${date.getMonth() + 1}, ${date.getFullYear()}`;
 }
 

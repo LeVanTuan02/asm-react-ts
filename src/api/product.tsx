@@ -30,12 +30,12 @@ export const search = (start = 0, limit = 0, sort = "createdAt", order = "desc",
     return instance.get(url);
 }
 
-export const get = (slug: string) => {
+export const get = (slug?: string) => {
     const url = `/${DB_NAME}/${slug}/?_expand=categoryId`;
     return instance.get(url);
 }
 
-export const getById = (id: string) => {
+export const getById = (id?: string) => {
     const url = `/${DB_NAME}/${id}/?_expand=categoryId`;
     return instance.get(url);
 }
@@ -80,11 +80,11 @@ export const getFavorites = () => {
 export const productApi = createApi({
     reducerPath: "productApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:8080/api"
+        baseUrl: "https://asm-nodejs.vercel.app/api"
     }),
     tagTypes: ["Product"],
     endpoints: (builder) => ({
-        getProducts: builder.query<ProductType[], {start?: number, limit?: number, sort?: string, order?: string}>({
+        getProducts: builder.query<any[], {start?: number, limit?: number, sort?: string, order?: string}>({
             query: ({start = 0, limit = 0, sort = "createdAt", order = "desc"}) => {
                 let url = `/${DB_NAME}/?_expand=categoryId&_sort=${sort}&_order=${order}`;
                 if (limit) url += `&_start=${start}&_limit=${limit}`;

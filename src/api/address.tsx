@@ -24,7 +24,7 @@ export const add = (address: AddressType) => {
     return instance.post(url, address);
 };
 
-export const remove = (id: string) => {
+export const remove = (id?: string) => {
     const url = `/${DB_NAME}/${id}`;
     return instance.delete(url);
 }

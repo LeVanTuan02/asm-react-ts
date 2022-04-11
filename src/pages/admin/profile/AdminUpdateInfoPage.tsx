@@ -20,7 +20,7 @@ type InputsType = {
     districtCode: number,
     wardsCode: number,
     address: string,
-    avatar: string,
+    avatar: string | any,
 }
 
 const schema = yup.object().shape({

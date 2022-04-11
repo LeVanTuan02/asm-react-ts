@@ -145,7 +145,7 @@ const ProductDetailPage = () => {
     }
     
     const dispatch = useDispatch();
-    const handleFavorites = async (productId: string, slug: string) => {
+    const handleFavorites = async (productId?: string, slug?: string) => {
         if (!user) {
             toast.info("Vui lòng đăng nhập để yêu thích sản phẩm");
         } else {
@@ -173,7 +173,7 @@ const ProductDetailPage = () => {
     }
 
     // render star
-    const renderStar = (ratingNumber?: number) => {
+    const renderStar = (ratingNumber: number) => {
         const ratingArr = [];
         for (let i = 0; i < ratingNumber; i++) {
             ratingArr.push((
@@ -219,7 +219,7 @@ const ProductDetailPage = () => {
                             <h1 className="font-semibold text-[28px] text-gray-800 pb-1 mb-3 relative after:content-[''] after:absolute after:top-[100%] after:left-0 after:w-8 after:h-1 after:bg-gray-300">{product?.name}</h1>
                             <ul className="flex items-center mt-4">
                                 <li className="flex text-yellow-400 text-xs pr-4 relative after:content-[''] after:absolute after:right-2 after:top-1/2 after:-translate-y-1/2 after:w-[1px] after:bg-gray-300 after:h-4">
-                                    {renderStar(product?.ratingNumber)}
+                                    {renderStar(product?.ratingNumber || 0)}
                                 </li>
                                 <li className="pr-4 relative after:content-[''] after:absolute after:right-2 after:top-1/2 after:-translate-y-1/2 after:w-[1px] after:bg-gray-300 after:h-4">{product?.totalRating} Đánh giá</li>
                                 <li>10 Đã bán</li>

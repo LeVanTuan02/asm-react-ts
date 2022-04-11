@@ -27,7 +27,7 @@ const schema = yup.object().shape({
 
 type CommentProductProps = {
     productId?: string,
-    productData: ProductType
+    productData?: ProductType
     onReRender: (arg0: any) => void
 };
 

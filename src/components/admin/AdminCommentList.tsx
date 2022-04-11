@@ -12,7 +12,7 @@ type AdminCommentListProps = {
 }
 
 const AdminCommentList = ({ onSetTotal, start, limit }: AdminCommentListProps) => {
-    const [comments, setComments] = useState<CommentType[]>();
+    const [comments, setComments] = useState<any[]>();
     const { id } = useParams();
 
     useEffect(() => {

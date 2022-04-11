@@ -292,7 +292,7 @@ export const sendMailOrderToAdmin = (cart: CartType[], vouchers: VoucherType[], 
     return instance.post(url, sendMailData);
 }
 
-export const sendMailCancelCart = (orderDetail?: OrderDetailType[], voucherText?: string, orderInfo?: OrderType2) => {
+export const sendMailCancelCart = (orderDetail: any[], voucherText?: string, orderInfo?: any) => {
     const url = `/${API_NAME}`;
 
     let htmlContent = `
@@ -418,7 +418,7 @@ export const sendMailCancelCart = (orderDetail?: OrderDetailType[], voucherText?
     return instance.post(url, sendMailData);
 }
 
-export const sendMailOrderSuccess = (orderDetail?: OrderDetailType[], voucherText?: string, orderInfo?: OrderType2) => {
+export const sendMailOrderSuccess = (orderDetail: any[], voucherText?: string, orderInfo?: any) => {
     const url = `/${API_NAME}`;
 
     let htmlContent = `

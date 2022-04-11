@@ -5,7 +5,7 @@ export type NewsType = {
     thumbnail: string,
     description: string,
     content: string,
-    category: string,
+    category: string | any,
     status: number,
-    createdAt?: Date,
+    createdAt?: string,
 };

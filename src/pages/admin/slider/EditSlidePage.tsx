@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 
 type InputsType = {
     title: string,
-    image: string,
+    image: string | any,
     url: string,
     status: number
 }

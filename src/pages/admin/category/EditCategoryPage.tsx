@@ -17,7 +17,7 @@ const schema = yup.object().shape({
 
 type InputsType = {
     name: string,
-    image: string,
+    image: string | any,
 }
 
 const EditCategoryPage = () => {

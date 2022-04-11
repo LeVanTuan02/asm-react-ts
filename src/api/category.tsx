@@ -46,11 +46,11 @@ export const update = (category: CategoryType, { token, user } = isAuthenticate(
 export const cateProductApi = createApi({
     reducerPath: "cateProductApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:8080/api"
+        baseUrl: "https://asm-nodejs.vercel.app/api"
     }),
     tagTypes: ["CateProduct"],
     endpoints: (builder) => ({
-        getCatesProduct: builder.query<CategoryType[], string>({
+        getCatesProduct: builder.query<any[], string>({
             query: () => `${DB_NAME}`,
             providesTags: ["CateProduct"]
         })

@@ -46,7 +46,7 @@ export const update = (size: SizeType, { token, user } = isAuthenticate()) => {
 export const sizeApi = createApi({
     reducerPath: "sizeApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:8080/api"
+        baseUrl: "https://asm-nodejs.vercel.app/api"
     }),
     tagTypes: ["Size"],
     endpoints: (builder) => ({

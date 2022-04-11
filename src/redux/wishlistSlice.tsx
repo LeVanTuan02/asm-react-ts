@@ -22,7 +22,7 @@ export const getWishlist = createAsyncThunk(
 
 export const addWishlist = createAsyncThunk(
     "wishlist/addWishlist",
-    async ({ userId, productId}: { userId: string, productId: string }) => {
+    async ({ userId, productId}: { userId: string, productId?: string }) => {
         return add({ userId, productId }).then(async () => {
             const { data } = await getAll(userId);
             return data;

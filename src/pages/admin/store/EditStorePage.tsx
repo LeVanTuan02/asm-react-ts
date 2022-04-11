@@ -16,7 +16,7 @@ type InputsType = {
     timeStart: string,
     timeEnd: string,
     map: string,
-    image: string,
+    image: string | any,
 }
 
 const schema = yup.object().shape({

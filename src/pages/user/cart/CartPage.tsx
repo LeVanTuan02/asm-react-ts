@@ -135,7 +135,7 @@ const CartPage = () => {
         
     }
 
-    const handleRemoveVoucher = (id: string) => {
+    const handleRemoveVoucher = (id?: string) => {
         dispatch(removeVoucher(id));
         toast.success("Đã xóa mã Voucher");
     }

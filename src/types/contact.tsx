@@ -4,7 +4,7 @@ export type ContactType = {
     content: string,
     email: string,
     phone: string,
-    store: string,
+    store: string | any,
     status?: number,
-    createdAt?: Date,
+    createdAt?: string,
 }

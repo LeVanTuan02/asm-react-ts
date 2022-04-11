@@ -95,7 +95,7 @@ const EditUserPage = () => {
 
     const navigate = useNavigate();
 
-    const onSubmit: SubmitHandler<InputsType> = async data => {
+    const onSubmit: SubmitHandler<InputsType> = async (data: any) => {
         try {
             if (typeof data.avatar === "object" && data.avatar.length) {
                 data.avatar = await uploadFile(data.avatar[0]);

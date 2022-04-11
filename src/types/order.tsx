@@ -16,14 +16,14 @@ export type OrderType = {
 
 export type OrderDetailType = {
     _id?: string,
-    orderId: string,
-    productId: string,
+    orderId: string | any,
+    productId: string | any,
     productPrice: number,
-    sizeId: string,
+    sizeId: string | any,
     sizePrice: number,
     quantity: number,
     ice: number,
     sugar: number,
-    toppingId: string,
+    toppingId: string | any,
     toppingPrice: number,
 }

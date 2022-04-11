@@ -29,7 +29,7 @@ const middleware = [
     newsApi.middleware
 ]
 
-export const store = createStore(persistedReducer, applyMiddleware(...middleware));
+export const store = createStore(persistedReducer, applyMiddleware<any>(...middleware));
 export default persistStore(store);
 
 setupListeners(store.dispatch);

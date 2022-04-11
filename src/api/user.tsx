@@ -55,7 +55,7 @@ export const updateMyInfo = (userData: UserType, { token, user } = isAuthenticat
 export const userApi = createApi({
     reducerPath: "userApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:8080/api"
+        baseUrl: "https://asm-nodejs.vercel.app/api"
     }),
     endpoints: (builder) => ({
         getUsers: builder.query<UserType[], string>({

@@ -75,7 +75,7 @@ const ProductContent = ({ url, page, getProducts, parameter }: ProductContentPro
 
     const { user } = useSelector(selectAuth);
     const dispatch = useDispatch();
-    const handleFavorites = async (productId: string, slug: string) => {
+    const handleFavorites = async (productId?: string, slug?: string) => {
         if (!user) {
             toast.info("Vui lòng đăng nhập để yêu thích sản phẩm");
         } else {
@@ -103,7 +103,7 @@ const ProductContent = ({ url, page, getProducts, parameter }: ProductContentPro
     }
 
     // render star
-    const renderStar = (ratingNumber?: number) => {
+    const renderStar = (ratingNumber: number) => {
         const ratingArr = [];
         for (let i = 0; i < ratingNumber; i++) {
             ratingArr.push((
@@ -152,7 +152,7 @@ const ProductContent = ({ url, page, getProducts, parameter }: ProductContentPro
                                         </h3>
                                         <ul className="flex items-center mt-4">
                                             <li className="flex text-yellow-400 text-xs pr-6 relative after:content-[''] after:absolute after:right-3 after:top-1/2 after:-translate-y-1/2 after:w-[1px] after:bg-gray-300 after:h-4">
-                                                {renderStar(item.ratingNumber)}
+                                                {renderStar(item.ratingNumber || 0)}
                                             </li>
                                             <li className="pr-6 relative after:content-[''] after:absolute after:right-3 after:top-1/2 after:-translate-y-1/2 after:w-[1px] after:bg-gray-300 after:h-4">{item.totalRating} Đánh giá</li>
                                             <li>10 Đã bán</li>
@@ -186,7 +186,7 @@ const ProductContent = ({ url, page, getProducts, parameter }: ProductContentPro
                                         <p className="uppercase text-xs text-gray-400">{item.categoryId.name}</p>
                                         <Link to={`/san-pham/${item.slug}`} className="block font-semibold text-lg">{item.name}</Link>
                                         <ul className="flex text-yellow-500 text-xs justify-center pt-1">
-                                            {renderStar(item.ratingNumber)}
+                                            {renderStar(item.ratingNumber || 0)}
                                         </ul>
                                         <div className="text-sm pt-1">{formatCurrency(item.price)}</div>
                                     </div>

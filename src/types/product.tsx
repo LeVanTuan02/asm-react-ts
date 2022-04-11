@@ -7,7 +7,7 @@ export type ProductType = {
     status: number,
     view?: number,
     favorites?: number,
-    categoryId: string,
+    categoryId: string| any,
     slug?: string,
     ratingNumber?: number,
     totalRating?: number,
@@ -16,6 +16,6 @@ export type ProductType = {
 export type FavoritesProductType = {
     _id?: string,
     userId: string,
-    productId: string,
+    productId?: string,
     createdAt?: Date
 }

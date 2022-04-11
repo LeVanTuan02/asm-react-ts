@@ -10,7 +10,7 @@ export const getAll = () => {
     return instance.get(url);
 };
 
-export const get = (id: string) => {
+export const get = (id?: string) => {
     const url = `/${DB_NAME}/${id}`;
     return instance.get(url);
 }
@@ -45,7 +45,7 @@ export const update = (slider: SliderType, { token, user } = isAuthenticate()) =
 export const sliderApi = createApi({
     reducerPath: "sliderApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:8080/api"
+        baseUrl: "https://asm-nodejs.vercel.app/api"
     }),
     tagTypes: ["Slider"],
     endpoints: (builder) => ({

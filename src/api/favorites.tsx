@@ -27,7 +27,7 @@ export const remove = (id: string, { token, user } = isAuthenticate()) => {
     });
 }
 
-export const checkUserHeart = (userId: string, productId: string) => {
+export const checkUserHeart = (userId: string, productId?: string) => {
     const url = `/${DB_NAME}/?userId=${userId}&productId=${productId}`;
     return instance.get(url);
 }

@@ -267,7 +267,7 @@ const CheckoutPage = () => {
         getPriceDecrease();
     }, [totalPrice]);
 
-    const handleChangeProvince = async (code: number) => {
+    const handleChangeProvince = async (code: any) => {
         const { data: { districts } } = await getDistrictByProvince(code);
         reset({
             districtCode: 0,
@@ -276,7 +276,7 @@ const CheckoutPage = () => {
         setDistricts(districts);
     }
 
-    const handleChangeDistrict = async (code: number) => {
+    const handleChangeDistrict = async (code: any) => {
         const { data: { wards } } = await getWardByDistrict(code);
         reset({
             wardsCode: 0
@@ -288,7 +288,7 @@ const CheckoutPage = () => {
         setShowAddress(!showAddress);
     }
 
-    const handleChangeAddress = async (id: string) => {
+    const handleChangeAddress = async (id?: string) => {
         const { data: { fullName, phone, email, provinceCode, districtCode, wardsCode, address } } = await getAddressById(id);
         await handleChangeProvince(provinceCode);
         await handleChangeDistrict(districtCode);

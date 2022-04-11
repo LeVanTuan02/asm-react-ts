@@ -56,7 +56,7 @@ const AddressPage = () => {
         updateTitle("Thông tin thanh toán");
     }, []);
 
-    const handleRemoveAddress = async (id: string) => {
+    const handleRemoveAddress = async (id?: string) => {
         Swal.fire({
             title: 'Bạn có chắc chắn muốn xóa không?',
             text: "Bạn không thể hoàn tác sau khi xóa!",

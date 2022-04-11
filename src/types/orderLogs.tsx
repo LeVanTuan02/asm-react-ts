@@ -1,5 +1,6 @@
 export type OrderLogsType = {
-    orderId?: string,
+    orderId?: string | any,
     status: number,
-    userId?: string,
+    userId?: string | any,
+    createdAt?: string
 }

@@ -15,7 +15,7 @@ type InputsType = {
     price: number,
     description: string,
     categoryId: string,
-    image: string,
+    image: string | any,
     status: number
 }
 

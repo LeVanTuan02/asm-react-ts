@@ -15,7 +15,7 @@ export const search = (keyword: string) => {
     return instance.get(url);
 }
 
-export const get = (id: string) => {
+export const get = (id?: string) => {
     const url = `/${DB_NAME}/${id}`;
     return instance.get(url);
 }

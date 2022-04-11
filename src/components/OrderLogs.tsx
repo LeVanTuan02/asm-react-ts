@@ -66,7 +66,7 @@ const OrderLogs = ({ isShow, onHandleShow, orderId, order }: OrderLogsProps) => 
             
                         <div className="logs__inner-body-group">
                             <label className="logs__inner-body-label">Thời gian đặt hàng</label>
-                            <input type="text" className="logs__inner-body-control" disabled value={formatDate(order.createdAt)} />
+                            <input type="text" className="logs__inner-body-control" disabled value={formatDate(order.createdAt || "")} />
                         </div>
             
                         <div className="logs__inner-body-group">
@@ -81,7 +81,7 @@ const OrderLogs = ({ isShow, onHandleShow, orderId, order }: OrderLogsProps) => 
                                     <td>{++index}</td>
                                     <td>{item.status == 0 ? "Mới đặt hàng" : item.status === 1 ? "Đã xác nhận" : item.status === 2 ? "Đang giao hàng" : item.status === 3 ? "Đã giao hàng" : "Đã hủy"}</td>
                                     <td>{item.userId ? `${item.userId.fullName} (${item.userId.username})` : order.customerName}</td>
-                                    <td>{formatDate(item.createdAt)}</td>
+                                    <td>{formatDate(item.createdAt || "")}</td>
                                 </tr>
                             ))}
                         </table>

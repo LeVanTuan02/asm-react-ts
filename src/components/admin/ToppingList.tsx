@@ -19,7 +19,7 @@ const ToppingList = ({ start, limit }: ToppingListProps) => {
         dispatch(getToppings({ start, limit }));
     }, [start]);
 
-    const handleRemove = async (id: string) => {
+    const handleRemove = async (id?: string) => {
         Swal.fire({
             title: 'Bạn có chắc chắn muốn xóa không?',
             text: "Bạn không thể hoàn tác sau khi xóa!",

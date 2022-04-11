@@ -32,7 +32,7 @@ const HomeProducts = () => {
     }, []);
 
     const dispatch = useDispatch();
-    const handleFavorites = async (productId: string, slug: string) => {
+    const handleFavorites = async (productId?: string, slug?: string) => {
         if (!user) {
             toast.info("Vui lòng đăng nhập để yêu thích sản phẩm");
         } else {
@@ -60,7 +60,7 @@ const HomeProducts = () => {
     }
 
     // render star
-    const renderStar = (ratingNumber?: number) => {
+    const renderStar = (ratingNumber: number) => {
         const ratingArr = [];
         for (let i = 0; i < ratingNumber; i++) {
             ratingArr.push((
@@ -108,7 +108,7 @@ const HomeProducts = () => {
                             <p className="uppercase text-xs text-gray-400">{item.categoryId.name}</p>
                             <Link to={`/san-pham/${item.slug}`} className="block font-semibold text-lg">{item.name}</Link>
                             <ul className="flex text-yellow-500 text-xs justify-center pt-1">
-                                {renderStar(item.ratingNumber)}
+                                {renderStar(item.ratingNumber || 0)}
                             </ul>
                             <div className="text-sm pt-1">{formatCurrency(item.price)}</div>
                         </div>

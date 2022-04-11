@@ -23,7 +23,7 @@ const StorePage = () => {
         updateTitle("Cửa hàng");
     }, []);
 
-    const handleClickStore = async (id: string) => {
+    const handleClickStore = async (id?: string) => {
         const { data } = await get(id);
         setGoogleMap({
             id: data._id,

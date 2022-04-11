@@ -13,7 +13,7 @@ import { selectAuth, updateMyAccount } from "../../../redux/authSlice";
 type InputsType = {
     fullName: string,
     phone: string,
-    avatar: string,
+    avatar: string | any,
     email: string,
     provinceCode: number,
     districtCode: number,

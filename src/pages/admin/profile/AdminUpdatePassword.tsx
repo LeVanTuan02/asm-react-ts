@@ -21,15 +21,15 @@ const AdminUpdatePassword = () => {
         oldPassword: yup
             .string()
             .required("Vui lòng nhập mật khẩu hiện tại")
-            .test("is_confirm", "Mật khẩu hiện tại không chính xác", async function (value: string) {
+            .test("is_confirm", "Mật khẩu hiện tại không chính xác", async function (value: any) {
                 try {
                     const { data } = await checkPassword({ _id: user._id, password: value });
-                    if (data.success) return 1;
+                    if (data.success) return true;
                 } catch (error: any) {
                     console.log({ error });
                 }
     
-                return 0;
+                return false;
             }),
         newPassword: yup
             .string()
