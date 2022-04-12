@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import { selectAuth } from "../../../redux/authSlice";
 
 const MyCartDetailPage = () => {
-    const [order, setOrder] = useState<any>();
+    const [order, setOrder] = useState<any>({});
     const [orderDetail, setOrderDetail] = useState<OrderDetailType[]>();
     const [voucherText, setVoucherText] = useState<string>();
     const [showCartLog, setShowCartLog] = useState(false);

@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 
 const CartDetailPage = () => {
     const [loading, setLoading] = useState(false);
-    const [order, setOrder] = useState<any>();
+    const [order, setOrder] = useState<any>({});
     const [orderDetail, setOrderDetail] = useState<OrderDetailType[]>([]);
     const [voucherText, setVoucherText] = useState<string>();
     const [showCartLog, setShowCartLog] = useState(false);

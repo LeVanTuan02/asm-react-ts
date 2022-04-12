@@ -24,17 +24,13 @@ const NewsContent = ({ page, getNews, parameter, url }: NewsContentProps) => {
     const start = (page - 1) * limit > 0 ? (page - 1) * limit : 0;
 
     useEffect(() => {
-        const getTotalNews = async () => {
+        const getDataNews = async () => {
             const { data } = await getNews(0, 0, parameter);
             setEmptyNews(!data.length ? true : false);
             setTotalNews(data.length);
-            setNews(data);
-        };
-        getTotalNews();
 
-        const getDataNews = async () => {
-            const { data } = await getNews(start, limit, parameter);
-            setNews(data);
+            const { data: newsData } = await getNews(start, limit, parameter);
+            setNews(newsData);
         };
         getDataNews();
     }, [page, parameter]);
