@@ -80,7 +80,7 @@ export const getFavorites = () => {
 export const productApi = createApi({
     reducerPath: "productApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://asm-nodejs.vercel.app/api"
+        baseUrl: "https://yotea-nodejs.herokuapp.com/api"
     }),
     tagTypes: ["Product"],
     endpoints: (builder) => ({

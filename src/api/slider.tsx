@@ -45,7 +45,7 @@ export const update = (slider: SliderType, { token, user } = isAuthenticate()) =
 export const sliderApi = createApi({
     reducerPath: "sliderApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://asm-nodejs.vercel.app/api"
+        baseUrl: "https://yotea-nodejs.herokuapp.com/api"
     }),
     tagTypes: ["Slider"],
     endpoints: (builder) => ({

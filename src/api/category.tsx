@@ -46,7 +46,7 @@ export const update = (category: CategoryType, { token, user } = isAuthenticate(
 export const cateProductApi = createApi({
     reducerPath: "cateProductApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://asm-nodejs.vercel.app/api"
+        baseUrl: "https://yotea-nodejs.herokuapp.com/api"
     }),
     tagTypes: ["CateProduct"],
     endpoints: (builder) => ({

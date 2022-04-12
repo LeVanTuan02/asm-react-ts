@@ -55,7 +55,7 @@ export const updateMyInfo = (userData: UserType, { token, user } = isAuthenticat
 export const userApi = createApi({
     reducerPath: "userApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://asm-nodejs.vercel.app/api"
+        baseUrl: "https://yotea-nodejs.herokuapp.com/api"
     }),
     endpoints: (builder) => ({
         getUsers: builder.query<UserType[], string>({

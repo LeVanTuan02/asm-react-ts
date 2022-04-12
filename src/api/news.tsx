@@ -58,7 +58,7 @@ export const relatedPost = (id: string | undefined, cateId: string | undefined, 
 export const newsApi = createApi({
     reducerPath: "newsApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://asm-nodejs.vercel.app/api"
+        baseUrl: "https://yotea-nodejs.herokuapp.com/api"
     }),
     endpoints: (builder) => ({
         getNews: builder.query<NewsType[], string>({
